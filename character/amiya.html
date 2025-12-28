@@ -7,7 +7,7 @@
 </head>
 <body>
 <div>
-    <img src="/img/amiya_icon.jpg" alt="Icon" width="200" height="200">
+    <img src="/img/guard_icon.jpg" alt="Icon" width="200" height="200">
     <div>
         <h1>Amiya's Infomation</h1>
         <p>Amiya is a 5★ Rhodes Island Core Caster Operator in Arknights and one of the main characters of the Main
@@ -23,6 +23,18 @@
         <img src="/img/att.png" alt="Attributes" style="height: 915px; width: auto;">
     </div>
 
+    <script>
+        function showSkill(skillId) {
+            document.getElementById('displayArea').style.display = 'block';
+            var img = document.getElementById('displayImage');
+            if (skillId === 'skill1') {
+                img.src = '/img/s1_details.png';
+            } else if (skillId === 'skill2') {
+                img.src = '/img/s2_details.png';
+            }
+        }
+    </script>
+
     <div style="flex: 1; font-size:20px">
         <h2>Operator Details</h2>
         <p><strong>Role:</strong> Guard</p>
@@ -35,7 +47,7 @@
                         onmouseover="document.getElementById('gif1').style.display='block'"
                         onmouseout="document.getElementById('gif1').style.display='none'"
                         style="padding: 0; border: 3px solid #D8BEE5; border-radius: 8px; cursor: pointer;
-                        background: transparent; transition: transform 0.2s ease;"
+                        transition: transform 0.2s ease;"
                         onmouseenter="this.style.transform='scale(1.1)'"
                         onmouseleave="this.style.transform='scale(1)'">
                     <img src="/img/Skill-Guardmiya1.jpg" alt="Skill 1"
@@ -46,7 +58,7 @@
                      style="display: none; position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%);
                      background: linear-gradient(135deg, #C8CEEE, #F3E4F5); padding: 12px; border: 3px solid #D8BEE5; border-radius: 10px; z-index: 1000; white-space: nowrap;">
                     <img src="/img/amiya_s1.gif" alt="Skill 1"
-                         style="width: 300px; height: auto; border-radius: 5px; display: block;">
+                         style="width: 300px; height: auto  ; border-radius: 5px; display: block;">
                     <div style="text-align: center; color: #000000; font-size: 14px; margin-top: 8px;
                     font-weight: bold;">
                         Ying Xiao - Fleeting Night
@@ -62,7 +74,7 @@
                         onmouseover="document.getElementById('gif2').style.display='block'"
                         onmouseout="document.getElementById('gif2').style.display='none'"
                         style="padding: 0; border: 3px solid #D8BEE5; border-radius: 8px; cursor: pointer;
-                        background: transparent; transition: transform 0.2s ease;"
+                        transition: transform 0.2s ease;"
                         onmouseenter="this.style.transform='scale(1.1)'"
                         onmouseleave="this.style.transform='scale(1)'">
                     <img src="/img/Skill-Guardmiya2.jpg" alt="Skill 2"
@@ -92,18 +104,5 @@
         </div>
     </div>
 </div>
-
-<script>
-    function showSkill(skillId) {
-        document.getElementById('displayArea').style.display = 'block';
-        var img = document.getElementById('displayImage');
-        if (skillId === 'skill1') {
-            img.src = '/img/s1_details.png';
-        } else if (skillId === 'skill2') {
-            img.src = '/img/s2_details.png';
-        }
-    }
-</script>
-
 </body>
 </html>

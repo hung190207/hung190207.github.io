@@ -18,57 +18,92 @@
     </div>
 </div>
 <div style="display: flex; gap: 20px; align-items: flex-start; margin: 20px 0">
-    <img src="/img/amiya.jpg" alt="Small Image" width="700" height="1280">
-    <div style="flex: 1px; font-size:20px">
+    <div style="display: flex; gap: 10px;">
+        <img src="/img/amiya.jpg" alt="Small Image" width="500" height="915">
+        <img src="/img/att.png" alt="Attributes" style="height: 915px; width: auto;">
+    </div>
+
+    <div style="flex: 1; font-size:20px">
         <h2>Operator Details</h2>
         <p><strong>Role:</strong> Guard</p>
         <p><strong>Rarity:</strong> 5*</p>
         <p><strong>Position:</strong> Ground (Melee)</p>
         <h3>Abilities</h3>
-        <div style="display: flex; gap: 15px;">
-            <!-- Ability 1 -->
-            <div style="position: relative; display: inline-block; cursor: pointer;"
-                 onmouseover="document.getElementById('gif1').style.display='block'"
-                 onmouseout="document.getElementById('gif1').style.display='none'">
-
-                <img src="/img/Skill-Guardmiya1.jpg" alt="Skill 1"
-                     style="width: 64px; height: 64px; transition: transform 0.2s ease;"
-                     onmouseover="this.style.transform='scale(1.1)'"
-                     onmouseout="this.style.transform='scale(1)'">
+        <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+            <div style="position: relative; display: inline-block;">
+                <button onclick="showSkill('skill1')"
+                        onmouseover="document.getElementById('gif1').style.display='block'"
+                        onmouseout="document.getElementById('gif1').style.display='none'"
+                        style="padding: 0; border: 3px solid #D8BEE5; border-radius: 8px; cursor: pointer;
+                        background: transparent; transition: transform 0.2s ease;"
+                        onmouseenter="this.style.transform='scale(1.1)'"
+                        onmouseleave="this.style.transform='scale(1)'">
+                    <img src="/img/Skill-Guardmiya1.jpg" alt="Skill 1"
+                         style="width: 64px; height: 64px; display: block; border-radius: 5px;">
+                </button>
 
                 <div id="gif1"
-                     style="display: none; position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #2a2a2a, #1a1a1a); padding: 12px; border: 3px solid #f4e6a8; border-radius: 10px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8); z-index: 1000; white-space: nowrap;">
+                     style="display: none; position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%);
+                     background: linear-gradient(135deg, #C8CEEE, #F3E4F5); padding: 12px; border: 3px solid #D8BEE5; border-radius: 10px; z-index: 1000; white-space: nowrap;">
                     <img src="/img/amiya_s1.gif" alt="Skill 1"
                          style="width: 300px; height: auto; border-radius: 5px; display: block;">
-                    <div style="text-align: center; color: #f4e6a8; font-size: 14px; margin-top: 8px; font-weight: bold;">
+                    <div style="text-align: center; color: #000000; font-size: 14px; margin-top: 8px;
+                    font-weight: bold;">
                         Ying Xiao - Fleeting Night
                     </div>
-                    <div style="position: absolute; top: 100%; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 12px solid #f4e6a8;"></div>
+                    <div style="position: absolute; top: 100%; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 12px solid transparent;
+                    border-right: 12px solid transparent; border-top: 12px solid #D8BEE5;"></div>
                 </div>
             </div>
 
-            <!-- Ability 2 -->
-            <div style="position: relative; display: inline-block; cursor: pointer;"
-                 onmouseover="document.getElementById('gif2').style.display='block'"
-                 onmouseout="document.getElementById('gif2').style.display='none'">
 
-                <img src="/img/Skill-Guardmiya2.jpg" alt="Skill 2"
-                     style="width: 64px; height: 64px; transition: transform 0.2s ease;"
-                     onmouseover="this.style.transform='scale(1.1)'"
-                     onmouseout="this.style.transform='scale(1)'">
+            <div style="position: relative; display: inline-block;">
+                <button onclick="showSkill('skill2')"
+                        onmouseover="document.getElementById('gif2').style.display='block'"
+                        onmouseout="document.getElementById('gif2').style.display='none'"
+                        style="padding: 0; border: 3px solid #D8BEE5; border-radius: 8px; cursor: pointer;
+                        background: transparent; transition: transform 0.2s ease;"
+                        onmouseenter="this.style.transform='scale(1.1)'"
+                        onmouseleave="this.style.transform='scale(1)'">
+                    <img src="/img/Skill-Guardmiya2.jpg" alt="Skill 2"
+                         style="width: 64px; height: 64px; display: block; border-radius: 5px;">
+                </button>
 
                 <div id="gif2"
-                     style="display: none; position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #2a2a2a, #1a1a1a); padding: 12px; border: 3px solid #f4e6a8; border-radius: 10px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8); z-index: 1000; white-space: nowrap;">
+                     style="display: none; position: absolute; bottom: calc(100% + 15px); left: 50%; transform: translateX(-50%);
+                     background: linear-gradient(135deg, #C8CEEE, #F3E4F5); padding: 12px; border: 3px solid #D8BEE5; border-radius: 10px; z-index: 1000; white-space: nowrap;">
                     <img src="/img/amiya_s2.gif" alt="Skill 2"
                          style="width: 300px; height: auto; border-radius: 5px; display: block;">
-                    <div style="text-align: center; color: #f4e6a8; font-size: 14px; margin-top: 8px; font-weight: bold;">
+                    <div style="text-align: center; color: #000000; font-size: 14px; margin-top: 8px;
+                    font-weight: bold;">
                         Ying Xiao - Shadowless
                     </div>
-                    <div style="position: absolute; top: 100%; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 12px solid #f4e6a8;"></div>
+                    <div style="position: absolute; top: 100%; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 12px solid transparent;
+                    border-right: 12px solid transparent; border-top: 12px solid #D8BEE5;"></div>
                 </div>
+            </div>
+        </div>
+
+        <div>
+            <div id="displayArea" style="display: none;">
+                <img id="displayImage" src="" alt="Skill Display"
+                     style="max-width: 100%; height: auto; border-radius: 10px;">
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function showSkill(skillId) {
+        document.getElementById('displayArea').style.display = 'block';
+        var img = document.getElementById('displayImage');
+        if (skillId === 'skill1') {
+            img.src = '/img/s1_details.png';
+        } else if (skillId === 'skill2') {
+            img.src = '/img/s2_details.png';
+        }
+    }
+</script>
+
 </body>
 </html>

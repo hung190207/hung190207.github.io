@@ -1,0 +1,31 @@
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.05); /* Nền mờ */
+    backdrop-filter: blur(10px); /* Hiệu ứng kính */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: white;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: #00d2ff; /* Màu xanh neon làm điểm nhấn */
+    box-shadow: 0 10px 30px rgba(0, 210, 255, 0.2);
+}
+
+.tag {
+    font-size: 0.7rem;
+    background: #00d2ff;
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+}

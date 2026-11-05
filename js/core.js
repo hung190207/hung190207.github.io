@@ -1,13 +1,9 @@
-/* ==========================================================================
-   FILE: js/core.js - Hệ thống Âm thanh, Đồng hồ UTC+7, Điểm số & Sidebar
-   ========================================================================== */
 const HANOI_OFFSET_MS = 7 * 60 * 60 * 1000;
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const STORAGE_KEY = 'vietnamguesser_daily_data';
 const HISTORY_KEY = 'vietnamguesser_history';
 const MODES = ['image', 'sound', 'history', 'map'];
 
-// 1. Âm thanh Click số 3
 let audioCtx = null;
 const customClickAudio = new Audio('click3.mp3');
 let useCustomAudioFile = false;
@@ -50,7 +46,6 @@ function triggerClickPulse(startTime, startFreq, endFreq, duration, gainLevel) {
     osc.stop(startTime + duration);
 }
 
-// 2. Đồng hồ đếm ngược UTC+7 (Hà Nội)
 function getHanoiDateString() {
     const hanoiTime = new Date(Date.now() + HANOI_OFFSET_MS);
     return hanoiTime.toISOString().slice(0, 10);
@@ -74,7 +69,6 @@ function updateCountdownTimers() {
     checkAndSyncDailyScores();
 }
 
-// 3. Quản lý Điểm số (Trang chủ & Sidebar bên trái)
 function getDefaultScoreData(dateStr) {
     return {
         date: dateStr,
@@ -113,11 +107,9 @@ function renderScoresToUI(scores) {
         if (scoreEl) scoreEl.textContent = modeScore.toLocaleString('en-US');
     });
 
-    // Điểm tổng ở Trang chủ
     const totalScoreEl = document.getElementById('total-score');
     if (totalScoreEl) totalScoreEl.textContent = total.toLocaleString('en-US');
 
-    // Điểm tổng ở Bảng bên trái (Sidebar)
     const sidebarScoreEl = document.getElementById('sidebar-today-score');
     if (sidebarScoreEl) sidebarScoreEl.textContent = total.toLocaleString('en-US');
 }
@@ -131,11 +123,9 @@ function saveModeScore(mode, newScore) {
     }
 }
 
-// 4. Điều hướng giữa Menu chính và Sidebar các Mode chơi
 function openGameMode(mode) {
     playClickSound();
 
-    // Đánh dấu active trên Sidebar bên trái
     document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
     const activeNav = document.getElementById(`nav-mode-${mode}`);
     if (activeNav) activeNav.classList.add('active');
@@ -149,7 +139,6 @@ function openGameMode(mode) {
     } else {
         setTimeout(() => {
             alert('Chế độ này sẽ được tích hợp ở bước tiếp theo!');
-            // Giữ highlight ở mode image nếu đang đứng trong màn hình image
             document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
             const imgNav = document.getElementById('nav-mode-image');
             if (imgNav) imgNav.classList.add('active');

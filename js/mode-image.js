@@ -1,6 +1,4 @@
-/* ==========================================================================
-   FILE: js/mode-image.js - Chế độ Đoán Hình Ảnh (Món Ăn Việt Nam)
-   ========================================================================== */
+// Section: Giải mã và chuẩn hóa chuỗi
 
 function decodeStr(encoded) {
     return decodeURIComponent(escape(atob(encoded)));
@@ -16,126 +14,241 @@ function normalizeVN(str) {
         .replace(/\s+/g, ' ');
 }
 
-/**
- * Tạo chuỗi gợi ý tên món ăn giống hình mẫu (Main title: S______ ____ _____)
- * - Nếu tổng số chữ cái (không tính khoảng trắng) < 7: chỉ hiện đúng 1 ký tự đầu tiên.
- * - Nếu tổng số chữ cái >= 7: hiện vài ký tự (chữ cái đầu của các từ).
- */
 function buildMaskedTitleClue(fullName) {
     const totalLetters = fullName.replace(/\s+/g, '').length;
     const words = fullName.trim().split(/\s+/);
-
     if (totalLetters < 7) {
-        // Dưới 7 chữ cái -> Chỉ hiện đúng 1 ký tự đầu tiên của toàn bộ tên món
-        return words
-            .map((word, wordIdx) => {
-                return Array.from(word)
-                    .map((ch, charIdx) => (wordIdx === 0 && charIdx === 0 ? ch : '_'))
-                    .join('');
-            })
-            .join(' ');
+        return words.map((w, wi) => Array.from(w).map((c, ci) => (wi === 0 && ci === 0 ? c : '_')).join('')).join(' ');
     } else {
-        // Từ 7 chữ cái trở lên -> Hiện vài ký tự (chữ cái đầu mỗi từ)
-        return words
-            .map(word => {
-                return Array.from(word)
-                    .map((ch, charIdx) => (charIdx === 0 ? ch : '_'))
-                    .join('');
-            })
-            .join(' ');
+        return words.map(w => Array.from(w).map((c, ci) => (ci === 0 ? c : '_')).join('')).join(' ');
     }
 }
 
-// Dữ liệu 4 món ăn: Phở, Cơm tấm, Bánh mì, Bún thịt nướng
-const IMAGE_ROUNDS = [
-    {
-        round: 1,
-        difficulty: 'Dễ',
-        // "Phở" (3 chữ cái < 7 -> Chỉ lộ 1 ký tự: P__)
-        acceptedEncoded: ['cGjhu58=', 'cGjhu58gYsOz', 'cGjhu58gZ8Og'],
-        displayNameEncoded: 'UGjhu58=',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Pho-Beef-Noodles-2008.jpg/1024px-Pho-Beef-Noodles-2008.jpg',
-        featureClue: 'Món ăn có nước dùng trong và ngọt thanh ninh từ xương, thơm mùi quế, hồi, thảo quả, ăn cùng sợi bánh trắng mềm và hành lá.',
-        originClue: 'Ra đời tại miền Bắc Việt Nam (cội nguồn từ Nam Định và Hà Nội) vào đầu thế kỷ 20.'
-    },
-    {
-        round: 2,
-        difficulty: 'Dễ',
-        // "Cơm tấm" (6 chữ cái < 7 -> Chỉ lộ 1 ký tự: C__ ___)
-        acceptedEncoded: ['Y8ahbSB04bqlbQ==', 'Y8ahbSB04bqlbSBzxrDhu51uIGLDrCBjaOG6ow=='],
-        displayNameEncoded: 'Q8ahbSB04bqlbQ==',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg/1024px-C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg',
-        featureClue: 'Nấu từ những hạt gạo bị vỡ khi xay xát, thường ăn kèm sườn nướng, bì, chả trứng, mỡ hành và nước mắm chua ngọt.',
-        originClue: 'Xuất xứ từ vùng đồng bằng sông Cửu Long (miền Tây Nam Bộ) và trở thành món ăn biểu tượng của Sài Gòn – TP.HCM.'
-    },
-    {
-        round: 3,
-        difficulty: 'Dễ',
-        // "Bánh mì" (6 chữ cái < 7 -> Chỉ lộ 1 ký tự: B___ __)
-        acceptedEncoded: ['YsOhbmggbcOs', 'YsOhbmggbcOsIHZp4buHdCBuYW0=', 'YsOhbmggbcOsIHRo4buLdA=='],
-        displayNameEncoded: 'QsOhbmggbcOs',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/B%C3%A1nh_m%C3%AC_th%E1%BB%8Bt_n%C6%B0%E1%BB%9Bng%2C_2021.jpg/1024px-B%C3%A1nh_m%C3%AC_th%E1%BB%8Bt_n%C6%B0%E1%BB%9Bng%2C_2021.jpg',
-        featureClue: 'Vỏ nướng giòn rụm bên ngoài, ruột mềm xốp bên trong, phết pate, bơ, kẹp thịt, chả lụa, đồ chua và ngò rí.',
-        originClue: 'Hình thành tại Sài Gòn từ sự giao thoa ẩm thực Việt – Pháp, biến tấu từ ổ bánh baguette thành món ăn đường phố thuần Việt.'
-    },
-    {
-        round: 4,
-        difficulty: 'Trung bình',
-        // "Bún thịt nướng" (12 chữ cái > 7 -> Lộ vài ký tự: B__ t___ n____)
-        acceptedEncoded: ['YsO6biB0aOG7i3Qgbsaw4bubbmc='],
-        displayNameEncoded: 'QsO6biB0aOG7i3Qgbsaw4bubbmc=',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Bun_thit_nuong_1.jpg/1024px-Bun_thit_nuong_1.jpg',
-        featureClue: 'Món bún trộn khô (không chan nước lèo nóng), gồm thịt heo ướp sả nướng vàng thơm, đồ chua, đậu phộng rang và nước mắm chua ngọt.',
-        originClue: 'Có nguồn gốc từ miền Trung và miền Nam Việt Nam, đặc biệt phổ biến tại Sài Gòn và các tỉnh Nam Bộ.'
-    }
-];
 
+// Make dish difficulty database with encoded names and clues to prevent cheating
+
+const DISH_DATABASE = {
+    easy: [
+        {
+            id: 'pho',
+            acceptedEncoded: ['cGjhu58='],
+            displayNameEncoded: 'UGjhu58=',
+            image: 'img/pho.jpeg',
+            featureClue: 'Món ăn có nước dùng trong và ngọt thanh ninh từ xương, thơm mùi quế, hồi, thảo quả, ăn cùng sợi bánh trắng mềm.',
+            originClue: 'Ra đời tại miền Bắc Việt Nam, cội nguồn từ Nam Định và Hà Nội vào đầu thế kỷ 20.'
+        },
+        {
+            id: 'com_tam',
+            acceptedEncoded: ['Y8ahbSB04bqlbQ=='],
+            displayNameEncoded: 'Q8ahbSB04bqlbQ==',
+            image: 'img/com_tam.webp',
+            featureClue: 'Nấu từ những hạt gạo bị vỡ khi xay xát, thường ăn kèm sườn nướng, bì, chả trứng, mỡ hành và nước mắm chua ngọt.',
+            originClue: 'Xuất xứ từ vùng đồng bằng sông Cửu Long và trở thành món ăn biểu tượng của Sài Gòn – TP.HCM.'
+        },
+        {
+            id: 'banh_mi',
+            acceptedEncoded: ['YsOhbmggbcOs'],
+            displayNameEncoded: 'QsOhbmggbcOs',
+            image: 'img/banh_mi.jpg',
+            featureClue: 'Vỏ nướng giòn rụm bên ngoài, ruột mềm xốp bên trong, phết pate, bơ, kẹp thịt, chả lụa, đồ chua và ngò rí.',
+            originClue: 'Hình thành tại Sài Gòn từ sự giao thoa ẩm thực Việt – Pháp, biến tấu từ ổ bánh baguette thành món ăn đường phố.'
+        },
+        {
+            id: 'bun_thit_nuong',
+            acceptedEncoded: ['YsO6biB0aOG7i3Qgbsaw4bubbmc='],
+            displayNameEncoded: 'QsO6biB0aOG7i3Qgbsaw4bubbmc=',
+            image: 'img/bun_thit_nuong.png',
+            featureClue: 'Món bún trộn khô không chan nước lèo nóng, gồm thịt heo ướp sả nướng vàng thơm, đồ chua, đậu phộng rang và nước mắm chua ngọt.',
+            originClue: 'Có nguồn gốc từ miền Trung và miền Nam Việt Nam, đặc biệt phổ biến tại Sài Gòn và các tỉnh Nam Bộ.'
+        },
+        {
+            id: 'bun_bo_hue',
+            acceptedEncoded: ['YsO6biBiw7IgaHXhur8='],
+            displayNameEncoded: 'QsO6biBiw7IgSHXhur8=',
+            image: 'img/bun-bo-hue.webp',
+            featureClue: 'Món bún nổi tiếng với sợi bún to, nước dùng đậm đà vị sả và mắm ruốc đặc trưng, ăn kèm thịt bò, chả và giò heo.',
+            originClue: 'Xuất xứ từ vùng đất cố đô Huế, mang đậm phong cách ẩm thực miền Trung.'
+        }
+    ],
+
+    medium: [],
+
+    hard: []
+};
+
+
+// Get all unique dish names from the database
+
+function getAllDatabaseDishNames() {
+    const allItems = [
+        ...DISH_DATABASE.easy,
+        ...DISH_DATABASE.medium,
+        ...DISH_DATABASE.hard
+    ];
+    const uniqueNames = new Set(allItems.map(item => decodeStr(item.displayNameEncoded)));
+    return Array.from(uniqueNames);
+}
+
+
+// Choose 3 daily rounds from the database, ensuring no duplicates and respecting saved IDs if provided
+
+function pickDailyRounds(savedIds) {
+    const usedIds = new Set();
+
+    function pickFromPool(pool, fallbackPool, preferredId) {
+        const source = pool.length > 0 ? pool : fallbackPool;
+        if (preferredId) {
+            const found = source.find(item => item.id === preferredId && !usedIds.has(item.id));
+            if (found) {
+                usedIds.add(found.id);
+                return found;
+            }
+        }
+        const available = source.filter(item => !usedIds.has(item.id));
+        const chosen = available[Math.floor(Math.random() * available.length)] || source[0];
+        usedIds.add(chosen.id);
+        return chosen;
+    }
+
+    const r1 = pickFromPool(DISH_DATABASE.easy, DISH_DATABASE.easy, savedIds ? savedIds[0] : null);
+    const r2 = pickFromPool(DISH_DATABASE.medium, DISH_DATABASE.easy, savedIds ? savedIds[1] : null);
+    const r3 = pickFromPool(DISH_DATABASE.hard, DISH_DATABASE.easy, savedIds ? savedIds[2] : null);
+
+    return [
+        { ...r1, round: 1, difficulty: 'Dễ' },
+        { ...r2, round: 2, difficulty: 'Trung bình' },
+        { ...r3, round: 3, difficulty: 'Khó' }
+    ];
+}
+
+
+// Manage the state of the daily image rounds, including scores, unlocked clues, and current round index
+
+let activeDailyRounds = [];
 let currentRoundIndex = 0;
-let totalImageSessionScore = 0;
-let unlockedCluesCount = 0; // 0: chưa mở, 1: đã mở Gợi ý 1, 2: đã mở Gợi ý 2, 3: đã mở Gợi ý tên
+let roundScores = [0, 0, 0];
+let unlockedCluesCount = 0;
 let roundFinished = false;
 
+const IMAGE_STORAGE_KEY = 'vietnamguesser_image_daily_status';
+
+function getImageDailyStatus() {
+    const today = getHanoiDateString();
+    try {
+        const data = JSON.parse(localStorage.getItem(IMAGE_STORAGE_KEY));
+        if (data && data.date === today) return data;
+    } catch (e) {}
+    return null;
+}
+
+function saveImageDailyStatus(completed, scoresArray, roundIdx, cluesCount) {
+    const today = getHanoiDateString();
+    const roundIds = activeDailyRounds.map(r => r.id);
+    const data = {
+        date: today,
+        completed: completed,
+        scores: scoresArray,
+        currentRoundIndex: roundIdx,
+        unlockedCluesCount: cluesCount,
+        roundIds: roundIds
+    };
+    localStorage.setItem(IMAGE_STORAGE_KEY, JSON.stringify(data));
+}
+
 function initImageMode() {
+    const dailyStatus = getImageDailyStatus();
+
+    if (dailyStatus && dailyStatus.roundIds) {
+        activeDailyRounds = pickDailyRounds(dailyStatus.roundIds);
+        roundScores = dailyStatus.scores || [0, 0, 0];
+
+        if (dailyStatus.completed) {
+            renderFinalScoreScreen(roundScores);
+            return;
+        }
+
+        currentRoundIndex = dailyStatus.currentRoundIndex || 0;
+        unlockedCluesCount = dailyStatus.unlockedCluesCount || 0;
+        loadRoundScreen(currentRoundIndex, unlockedCluesCount);
+        return;
+    }
+
+    activeDailyRounds = pickDailyRounds(null);
     currentRoundIndex = 0;
-    totalImageSessionScore = 0;
-    loadImageRound(currentRoundIndex);
+    roundScores = [0, 0, 0];
+    unlockedCluesCount = 0;
+    saveImageDailyStatus(false, roundScores, currentRoundIndex, unlockedCluesCount);
+    loadRoundScreen(currentRoundIndex, unlockedCluesCount);
 }
 
 function getCurrentRoundMaxScore() {
-    let penalty = 0;
-    if (unlockedCluesCount >= 1) penalty += 300;
-    if (unlockedCluesCount >= 2) penalty += 300;
-    if (unlockedCluesCount >= 3) penalty += 400;
-    return Math.max(500, 1500 - penalty);
+    if (unlockedCluesCount === 0) return 3000;
+    if (unlockedCluesCount === 1) return 2000;
+    if (unlockedCluesCount === 2) return 1000;
+    return 500;
 }
 
-function loadImageRound(index) {
-    const data = IMAGE_ROUNDS[index];
-    unlockedCluesCount = 0;
+
+// Show the round interface with image, clues, and guess input
+
+function loadRoundScreen(index, savedClues = 0) {
+    const data = activeDailyRounds[index];
+    unlockedCluesCount = savedClues;
     roundFinished = false;
 
-    document.getElementById('img-round-number').textContent = `Round ${data.round}`;
-    document.getElementById('img-difficulty-badge').textContent = data.difficulty;
-    document.getElementById('img-potential-score').textContent = `+${getCurrentRoundMaxScore()} điểm`;
+    const container = document.getElementById('image-mode-view');
+    container.innerHTML = `
+        <h2 class="game-mode-heading">ĐOÁN HÌNH ẢNH</h2>
 
-    const imgEl = document.getElementById('dish-image');
-    imgEl.src = data.image;
+        <div class="round-bar">
+            <span id="img-round-number" class="round-title">Round ${data.round} / 3</span>
+            <span id="img-difficulty-badge" class="badge-difficulty">${data.difficulty}</span>
+            <span id="img-potential-score" class="badge-score">+${getCurrentRoundMaxScore()} điểm</span>
+        </div>
 
-    const inputEl = document.getElementById('guess-input');
-    inputEl.value = '';
-    inputEl.disabled = false;
-    inputEl.focus();
+        <div class="image-stage">
+            <img id="dish-image" src="${data.image}" alt="Dish">
+        </div>
 
-    document.getElementById('guess-submit-btn').style.display = 'inline-block';
-    document.getElementById('next-round-btn').style.display = 'none';
-    document.getElementById('round-feedback').textContent = '';
-    document.getElementById('round-feedback').className = 'round-feedback';
+        <div class="clues-bar">
+            <button id="btn-clue-1" class="btn-clue" onclick="handleClueButtonClick(1)">
+                <i class="fa-solid fa-unlock"></i> GỢI Ý 1
+            </button>
+            <button id="btn-clue-2" class="btn-clue" onclick="handleClueButtonClick(2)" disabled>
+                <i class="fa-solid fa-lock"></i> GỢI Ý 2
+            </button>
+            <button id="btn-clue-3" class="btn-clue" onclick="handleClueButtonClick(3)" disabled>
+                <i class="fa-solid fa-lock"></i> GỢI Ý TÊN
+            </button>
+        </div>
+
+        <div id="unlocked-clues-container" class="unlocked-clues-container">
+            <div id="clue-line-1" class="clue-line" style="display: none;"></div>
+            <div id="clue-line-2" class="clue-line" style="display: none;"></div>
+            <div id="clue-line-3" class="clue-line" style="display: none;"></div>
+        </div>
+
+        <div class="guess-controls" style="position:relative;">
+            <input 
+                type="text" 
+                id="guess-input" 
+                class="guess-input" 
+                placeholder="Nhập tên món ăn tại đây..." 
+                autocomplete="off"
+            >
+            <button id="guess-submit-btn" class="btn-guess" onclick="submitImageGuess()">ĐOÁN</button>
+            <button id="next-round-btn" class="btn-guess" style="display:none;" onclick="nextImageRound()">TIẾP THEO ➔</button>
+        </div>
+
+        <div id="round-feedback" class="round-feedback"></div>
+    `;
 
     updateClueButtonsAndLines();
+    setupAutocomplete();
 }
 
 function updateClueButtonsAndLines() {
-    const data = IMAGE_ROUNDS[currentRoundIndex];
+    const data = activeDailyRounds[currentRoundIndex];
     const btnClue1 = document.getElementById('btn-clue-1');
     const btnClue2 = document.getElementById('btn-clue-2');
     const btnClue3 = document.getElementById('btn-clue-3');
@@ -144,7 +257,8 @@ function updateClueButtonsAndLines() {
     const line2 = document.getElementById('clue-line-2');
     const line3 = document.getElementById('clue-line-3');
 
-    // Nút 1: Đặc điểm món ăn
+    if (!btnClue1) return;
+
     btnClue1.disabled = false;
     if (unlockedCluesCount >= 1) {
         btnClue1.classList.add('unlocked');
@@ -153,11 +267,10 @@ function updateClueButtonsAndLines() {
         line1.innerHTML = `<span class="clue-label">Đặc điểm:</span> ${data.featureClue}`;
     } else {
         btnClue1.classList.remove('unlocked');
-        btnClue1.innerHTML = '<i class="fa-solid fa-unlock"></i> MỞ GỢI Ý 1 (-300đ)';
+        btnClue1.innerHTML = '<i class="fa-solid fa-unlock"></i> GỢI Ý 1';
         line1.style.display = 'none';
     }
 
-    // Nút 2: Nơi tạo ra món ăn
     btnClue2.disabled = unlockedCluesCount < 1;
     if (unlockedCluesCount >= 2) {
         btnClue2.classList.add('unlocked');
@@ -166,24 +279,22 @@ function updateClueButtonsAndLines() {
         line2.innerHTML = `<span class="clue-label">Nơi xuất xứ:</span> ${data.originClue}`;
     } else {
         btnClue2.classList.remove('unlocked');
-        btnClue2.innerHTML = '<i class="fa-solid fa-lock"></i> MỞ GỢI Ý 2 (-300đ)';
+        btnClue2.innerHTML = '<i class="fa-solid fa-lock"></i> GỢI Ý 2';
         line2.style.display = 'none';
     }
 
-    // Nút 3: Gợi ý tên món ăn (ẩn bằng dấu gạch dưới giống hình mẫu)
     btnClue3.disabled = unlockedCluesCount < 2;
     if (unlockedCluesCount >= 3) {
         const decodedName = decodeStr(data.displayNameEncoded);
         const maskedTitle = buildMaskedTitleClue(decodedName);
-        const letterCount = decodedName.replace(/\s+/g, '').length;
 
         btnClue3.classList.add('unlocked');
         btnClue3.innerHTML = '<i class="fa-solid fa-lock-open"></i> ĐÃ MỞ GỢI Ý TÊN';
         line3.style.display = 'block';
-        line3.innerHTML = `<span class="clue-label">Tên món ăn (${letterCount} chữ cái):</span> <span class="title-mask">${maskedTitle}</span>`;
+        line3.innerHTML = `<span class="clue-label">Tên món:</span> <span class="title-mask">${maskedTitle}</span>`;
     } else {
         btnClue3.classList.remove('unlocked');
-        btnClue3.innerHTML = '<i class="fa-solid fa-lock"></i> MỞ GỢI Ý TÊN (-400đ)';
+        btnClue3.innerHTML = '<i class="fa-solid fa-lock"></i> GỢI Ý TÊN';
         line3.style.display = 'none';
     }
 
@@ -194,20 +305,80 @@ function handleClueButtonClick(clueLevel) {
     if (roundFinished) return;
     playClickSound();
 
-    if (clueLevel === 1 && unlockedCluesCount < 1) {
-        unlockedCluesCount = 1;
-    } else if (clueLevel === 2 && unlockedCluesCount === 1) {
-        unlockedCluesCount = 2;
-    } else if (clueLevel === 3 && unlockedCluesCount === 2) {
-        unlockedCluesCount = 3;
-    }
+    if (clueLevel === 1 && unlockedCluesCount === 0) unlockedCluesCount = 1;
+    else if (clueLevel === 2 && unlockedCluesCount === 1) unlockedCluesCount = 2;
+    else if (clueLevel === 3 && unlockedCluesCount === 2) unlockedCluesCount = 3;
 
+    saveImageDailyStatus(false, roundScores, currentRoundIndex, unlockedCluesCount);
     updateClueButtonsAndLines();
 }
+
+
+// Autocomplete for Guess Input
+
+function setupAutocomplete() {
+    const inputEl = document.getElementById('guess-input');
+    if (!inputEl) return;
+
+    const dishNames = getAllDatabaseDishNames();
+
+    let dropdown = document.getElementById('autocomplete-list');
+    if (!dropdown) {
+        dropdown = document.createElement('div');
+        dropdown.id = 'autocomplete-list';
+        dropdown.className = 'autocomplete-items';
+        inputEl.parentNode.style.position = 'relative';
+        inputEl.parentNode.appendChild(dropdown);
+    }
+
+    inputEl.addEventListener('input', function () {
+        const val = this.value;
+        closeAutocomplete();
+        if (!val) return;
+
+        const normalizedVal = normalizeVN(val);
+        const matchingDishes = dishNames.filter(d => normalizeVN(d).includes(normalizedVal));
+        if (matchingDishes.length === 0) return;
+
+        matchingDishes.forEach(dish => {
+            const item = document.createElement('div');
+            const idx = normalizeVN(dish).indexOf(normalizedVal);
+            const originalPart = dish.substr(idx, val.length);
+            const highlighted = dish.substring(0, idx) + '<strong>' + originalPart + '</strong>' + dish.substring(idx + val.length);
+
+            item.innerHTML = `<i class="fa-solid fa-utensils" style="margin-right:8px; color:var(--cyan-dim);"></i> ${highlighted}`;
+            item.addEventListener('click', function () {
+                inputEl.value = dish;
+                closeAutocomplete();
+                inputEl.focus();
+            });
+            dropdown.appendChild(item);
+        });
+    });
+
+    inputEl.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            submitImageGuess();
+        }
+    });
+
+    document.addEventListener('click', function (e) {
+        if (e.target !== inputEl) closeAutocomplete();
+    });
+}
+
+function closeAutocomplete() {
+    const dropdown = document.getElementById('autocomplete-list');
+    if (dropdown) dropdown.innerHTML = '';
+}
+
+
+// Check answer and submit the guess for the current round
 
 function submitImageGuess() {
     if (roundFinished) return;
     playClickSound();
+    closeAutocomplete();
 
     const inputEl = document.getElementById('guess-input');
     const userGuess = normalizeVN(inputEl.value);
@@ -219,48 +390,100 @@ function submitImageGuess() {
         return;
     }
 
-    const currentData = IMAGE_ROUNDS[currentRoundIndex];
+    const currentData = activeDailyRounds[currentRoundIndex];
     const isCorrect = currentData.acceptedEncoded.some(enc => {
-        const decodedAns = decodeStr(enc);
-        return normalizeVN(decodedAns) === userGuess;
+        return normalizeVN(decodeStr(enc)) === userGuess;
     });
 
-    if (isCorrect) {
-        roundFinished = true;
-        const earned = getCurrentRoundMaxScore();
-        totalImageSessionScore += earned;
+    roundFinished = true;
+    const earned = isCorrect ? getCurrentRoundMaxScore() : 0;
+    roundScores[currentRoundIndex] = earned;
 
-        saveModeScore('image', totalImageSessionScore);
+    const totalCurrentScore = roundScores.reduce((a, b) => a + b, 0);
+    saveModeScore('image', totalCurrentScore);
 
-        const dishName = decodeStr(currentData.displayNameEncoded);
-        feedbackEl.innerHTML = `Chính xác! Đó là món <strong>${dishName}</strong> (+${earned.toLocaleString('en-US')} điểm)`;
-        feedbackEl.className = 'round-feedback success';
-
-        inputEl.disabled = true;
-        document.getElementById('guess-submit-btn').style.display = 'none';
-
-        const nextBtn = document.getElementById('next-round-btn');
-        nextBtn.style.display = 'inline-block';
-        nextBtn.textContent = currentRoundIndex < IMAGE_ROUNDS.length - 1 ? 'CÂU TIẾP THEO ➔' : 'HOÀN THÀNH';
+    if (currentRoundIndex < activeDailyRounds.length - 1) {
+        saveImageDailyStatus(false, roundScores, currentRoundIndex + 1, 0);
     } else {
-        if (unlockedCluesCount < 3) {
-            unlockedCluesCount++;
-            updateClueButtonsAndLines();
-            feedbackEl.textContent = 'Chưa chính xác! Hệ thống đã mở thêm gợi ý tiếp theo cho bạn.';
-        } else {
-            feedbackEl.textContent = 'Chưa chính xác! Hãy nhìn kỹ gợi ý tên món ăn bên trên nhé.';
-        }
+        saveImageDailyStatus(true, roundScores, currentRoundIndex, unlockedCluesCount);
+    }
+
+    const dishName = decodeStr(currentData.displayNameEncoded);
+    if (isCorrect) {
+        feedbackEl.innerHTML = `Chính xác! Đó là món <strong>${dishName}</strong> +${earned.toLocaleString('en-US')} điểm`;
+        feedbackEl.className = 'round-feedback success';
+    } else {
+        feedbackEl.innerHTML = `Rất tiếc! Đáp án đúng là <strong>${dishName}</strong> - 0 điểm`;
         feedbackEl.className = 'round-feedback error';
     }
+
+    inputEl.disabled = true;
+    document.getElementById('guess-submit-btn').style.display = 'none';
+
+    const nextBtn = document.getElementById('next-round-btn');
+    nextBtn.style.display = 'inline-block';
+    nextBtn.textContent = currentRoundIndex < activeDailyRounds.length - 1 ? 'VÒNG TIẾP THEO ➔' : 'XEM KẾT QUẢ TỔNG';
 }
 
 function nextImageRound() {
     playClickSound();
-    if (currentRoundIndex < IMAGE_ROUNDS.length - 1) {
+    if (currentRoundIndex < activeDailyRounds.length - 1) {
         currentRoundIndex++;
-        loadImageRound(currentRoundIndex);
+        unlockedCluesCount = 0;
+        saveImageDailyStatus(false, roundScores, currentRoundIndex, unlockedCluesCount);
+        loadRoundScreen(currentRoundIndex, unlockedCluesCount);
     } else {
-        alert(`Chúc mừng bạn đã hoàn thành chế độ Đoán Hình Ảnh!\nTổng điểm đạt được: ${totalImageSessionScore.toLocaleString('en-US')} điểm.`);
-        backToMainMenu();
+        const totalSessionScore = roundScores.reduce((a, b) => a + b, 0);
+        saveModeScore('image', totalSessionScore);
+        saveImageDailyStatus(true, roundScores, currentRoundIndex, unlockedCluesCount);
+        renderFinalScoreScreen(roundScores);
     }
+}
+
+
+// Total Points Table
+
+function renderFinalScoreScreen(scoresArray) {
+    const totalSum = scoresArray.reduce((a, b) => a + b, 0);
+    const container = document.getElementById('image-mode-view');
+
+    let roundsHtml = '';
+    activeDailyRounds.forEach((round, idx) => {
+        const dishName = decodeStr(round.displayNameEncoded);
+        const pts = scoresArray[idx];
+        roundsHtml += `
+            <div class="round-recap-card">
+                <div class="recap-header">
+                    <span class="recap-round-title">Round ${round.round} - ${round.difficulty}</span>
+                    <span class="recap-points">${pts.toLocaleString('en-US')} pts</span>
+                </div>
+                <div class="recap-body">
+                    <img src="${round.image}" class="recap-thumb" alt="Dish">
+                    <div class="recap-info">
+                        <h4>${dishName}</h4>
+                        <p>${round.originClue}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = `
+        <div class="final-score-container">
+            <h2 class="game-mode-heading">TỔNG KẾT HÔM NAY</h2>
+            
+            <div class="final-score-banner">
+                <div class="final-score-number">${totalSum.toLocaleString('en-US')}</div>
+                <div class="final-score-sub">Điểm tổng kết 3 vòng</div>
+            </div>
+
+            <div style="width: 100%; display: flex; flex-direction: column; gap: 14px;">
+                ${roundsHtml}
+            </div>
+
+            <button class="btn-action" onclick="backToMainMenu()" style="margin-top: 10px;">
+                <i class="fa-solid fa-house"></i> Về Menu chính
+            </button>
+        </div>
+    `;
 }

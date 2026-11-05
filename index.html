@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,619 +9,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
     <!-- Icon FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root {
-            --bg-color: #0e1117;
-            --sidebar-bg: #12161f;
-            --card-bg: #161b22;
-            --card-hover: #1f2633;
-            --text-color: #f0f6fc;
-            --text-muted: #8b949e;
-            --primary-blue: #0070f3;
-            --cyan-glow: #00f0ff;
-            --cyan-dim: #00a8ff;
-            --glow-shadow: 0 0 15px rgba(0, 240, 255, 0.35);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-        }
-
-        body {
-            font-family: 'Quicksand', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* ==========================================================================
-           VIEW 1: TRANG CHỦ (MAIN MENU CĂN GIỮA)
-           ========================================================================== */
-        #main-menu-wrapper {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 2.5rem 1rem 2rem;
-        }
-
-        header.main-header {
-            text-align: center;
-            margin-bottom: 2rem;
-            cursor: pointer;
-        }
-
-        .logo {
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--cyan-glow);
-            text-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
-            letter-spacing: -1px;
-        }
-
-        .subtitle {
-            color: var(--text-color);
-            font-size: 1rem;
-            letter-spacing: 3px;
-            margin-top: 6px;
-            opacity: 0.8;
-            font-weight: 500;
-        }
-
-        .view-container {
-            width: 100%;
-            max-width: 850px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex-grow: 1;
-        }
-
-        .section-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 1.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-color);
-        }
-
-        .modes-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            width: 100%;
-            margin-bottom: 2rem;
-        }
-
-        .mode-card {
-            background-color: var(--card-bg);
-            border: 1.5px solid rgba(0, 112, 243, 0.15);
-            border-radius: 16px;
-            padding: 20px 24px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .mode-card:hover {
-            transform: translateY(-3px);
-            background-color: var(--card-hover);
-            border-color: var(--cyan-dim);
-            box-shadow: 0 8px 24px rgba(0, 168, 255, 0.15);
-        }
-
-        .mode-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .mode-title i {
-            color: var(--cyan-dim);
-        }
-
-        .mode-desc {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
-
-        .card-stats {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 12px;
-        }
-
-        .score-display span {
-            color: var(--cyan-glow);
-            font-weight: 700;
-        }
-
-        .timer-display {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .score-banner {
-            width: 100%;
-            background: linear-gradient(90deg, #0052cc, #00a8ff);
-            border-radius: 50px;
-            padding: 16px 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: white;
-            box-shadow: var(--glow-shadow);
-            margin-bottom: 1.5rem;
-        }
-
-        .btn-action {
-            background-color: transparent;
-            border: 2px solid var(--primary-blue);
-            color: var(--text-color);
-            font-family: inherit;
-            font-size: 0.95rem;
-            font-weight: 700;
-            padding: 12px 28px;
-            border-radius: 50px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-action:hover {
-            background-color: rgba(0, 112, 243, 0.15);
-            border-color: var(--cyan-glow);
-        }
-
-        footer.main-footer {
-            margin-top: 2.5rem;
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-        }
-
-        .footer-links a:hover {
-            color: var(--cyan-glow);
-        }
-
-        /* ==========================================================================
-           VIEW 2: GIAO DIỆN TRONG CHẾ ĐỘ CHƠI (CÓ SIDEBAR BÊN TRÁI GIỐNG HÌNH 2)
-           ========================================================================== */
-        #game-layout-wrapper {
-            display: none;
-            min-height: 100vh;
-            width: 100%;
-            flex-direction: row;
-        }
-
-        /* Bảng điều hướng bên trái (Sidebar) */
-        .game-sidebar {
-            width: 240px;
-            min-width: 240px;
-            background-color: var(--sidebar-bg);
-            border-right: 1px solid rgba(255, 255, 255, 0.06);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 1.5rem 0;
-        }
-
-        .sidebar-top {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar-logo {
-            font-size: 1.65rem;
-            font-weight: 700;
-            color: var(--cyan-glow);
-            text-shadow: 0 0 15px rgba(0, 240, 255, 0.35);
-            padding: 0 1.4rem 1.5rem;
-            cursor: pointer;
-            letter-spacing: -0.5px;
-        }
-
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 1.4rem;
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            border-left: 3px solid transparent;
-            transition: all 0.2s ease;
-        }
-
-        .sidebar-item i {
-            width: 20px;
-            text-align: center;
-            font-size: 1rem;
-        }
-
-        .sidebar-item:hover {
-            color: var(--text-color);
-            background-color: rgba(0, 168, 255, 0.06);
-        }
-
-        .sidebar-item.active {
-            color: var(--text-color);
-            background: linear-gradient(90deg, rgba(0, 168, 255, 0.18), rgba(0, 168, 255, 0.02));
-            border-left-color: var(--cyan-glow);
-        }
-
-        .sidebar-item.active i {
-            color: var(--cyan-glow);
-        }
-
-        /* Phần đáy của Sidebar (Links & Today score) */
-        .sidebar-bottom {
-            padding: 0 1.4rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .sidebar-links {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            font-size: 0.8rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            padding-bottom: 1rem;
-        }
-
-        .sidebar-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .sidebar-links a:hover {
-            color: var(--cyan-glow);
-        }
-
-        .sidebar-score-box {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 4px;
-        }
-
-        .sidebar-score-label {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-color);
-        }
-
-        .sidebar-score-values {
-            text-align: right;
-            line-height: 1.25;
-        }
-
-        .sidebar-score-current {
-            display: block;
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: var(--cyan-glow);
-        }
-
-        .sidebar-score-max {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-        }
-
-        /* Khu vực chơi chính bên phải */
-        .game-main-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 2rem 1.5rem 1.5rem;
-        }
-
-        .game-stage-wrapper {
-            width: 100%;
-            max-width: 780px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .game-mode-heading {
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .round-bar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 1.1rem;
-        }
-
-        .round-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-        }
-
-        .badge-difficulty {
-            background: linear-gradient(135deg, #0070f3, #00c6ff);
-            color: #fff;
-            font-size: 0.78rem;
-            font-weight: 700;
-            padding: 3px 12px;
-            border-radius: 50px;
-            box-shadow: 0 0 10px rgba(0, 198, 255, 0.4);
-        }
-
-        .badge-score {
-            color: var(--cyan-glow);
-            font-size: 0.9rem;
-            font-weight: 700;
-        }
-
-        /* Khung chứa hình ảnh món ăn */
-        .image-stage {
-            width: 100%;
-            height: 410px;
-            background-color: var(--card-bg);
-            border: 1.5px solid rgba(0, 168, 255, 0.25);
-            border-radius: 12px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 14px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-        }
-
-        .image-stage img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            pointer-events: none;
-        }
-
-        /* Thanh 3 nút mở khóa gợi ý bên dưới ảnh (Đã bỏ nút Ảnh gốc) */
-        .clues-bar {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            width: 100%;
-            max-width: 680px;
-            margin-bottom: 14px;
-        }
-
-        .btn-clue {
-            background-color: var(--card-bg);
-            border: 1.5px solid rgba(255, 255, 255, 0.12);
-            color: var(--text-color);
-            font-family: inherit;
-            font-size: 0.82rem;
-            font-weight: 700;
-            padding: 11px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            text-transform: uppercase;
-        }
-
-        .btn-clue:hover:not(:disabled) {
-            background-color: var(--card-hover);
-            border-color: var(--cyan-dim);
-        }
-
-        .btn-clue.unlocked {
-            border-color: rgba(0, 240, 255, 0.45);
-            background-color: rgba(0, 168, 255, 0.12);
-            color: var(--cyan-glow);
-        }
-
-        .btn-clue:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        /* Danh sách các dòng Gợi ý hiển thị bên dưới nút giống hình mẫu */
-        .unlocked-clues-container {
-            width: 100%;
-            max-width: 720px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .clue-line {
-            font-size: 0.98rem;
-            font-weight: 600;
-            color: var(--text-color);
-            text-align: center;
-            line-height: 1.5;
-            animation: fadeIn 0.25s ease;
-        }
-
-        .clue-line .clue-label {
-            color: var(--cyan-dim);
-            font-weight: 700;
-        }
-
-        .clue-line .title-mask {
-            font-family: 'Quicksand', monospace;
-            letter-spacing: 2px;
-            color: var(--cyan-glow);
-            font-weight: 700;
-            font-size: 1.08rem;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Khu vực Ô nhập đáp án & Nút ĐOÁN */
-        .guess-controls {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-            max-width: 540px;
-            margin-top: 2px;
-        }
-
-        .guess-input {
-            flex: 1;
-            background-color: var(--card-bg);
-            border: 1.5px solid rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
-            padding: 13px 16px;
-            color: var(--text-color);
-            font-family: inherit;
-            font-size: 0.98rem;
-            font-weight: 500;
-            outline: none;
-            user-select: text;
-            transition: border-color 0.2s;
-        }
-
-        .guess-input:focus {
-            border-color: var(--cyan-glow);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
-        }
-
-        .btn-guess {
-            background: linear-gradient(135deg, #0070f3, #00c6ff);
-            border: none;
-            color: #fff;
-            font-family: inherit;
-            font-size: 0.95rem;
-            font-weight: 700;
-            padding: 0 26px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 0 14px rgba(0, 168, 255, 0.35);
-            text-transform: uppercase;
-        }
-
-        .btn-guess:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.55);
-        }
-
-        .round-feedback {
-            margin-top: 14px;
-            font-size: 1rem;
-            font-weight: 700;
-            min-height: 24px;
-            text-align: center;
-        }
-
-        .round-feedback.success { color: #00f0ff; }
-        .round-feedback.error { color: #ff6b6b; }
-        .round-feedback.warning { color: #ffd166; }
-
-        .game-footer {
-            margin-top: 2rem;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-align: center;
-        }
-
-        @media (max-width: 820px) {
-            #game-layout-wrapper {
-                flex-direction: column;
-            }
-            .game-sidebar {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-                padding: 1rem;
-                gap: 1rem;
-            }
-            .sidebar-nav {
-                flex-direction: row;
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-            .sidebar-item {
-                padding: 8px 12px;
-                border-left: none;
-                border-radius: 8px;
-            }
-            .clues-bar {
-                grid-template-columns: 1fr;
-            }
-            .image-stage {
-                height: 270px;
-            }
-        }
-    </style>
+    <!-- Tách file CSS ra riêng -->
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <!-- ==========================================================================
-         1. GIAO DIỆN TRANG CHỦ (MAIN MENU)
+         1. Main Menu Interface
          ========================================================================== -->
     <div id="main-menu-wrapper">
         <header class="main-header" onclick="backToMainMenu()">
@@ -630,49 +26,57 @@
 
         <main class="view-container">
             <h2 class="section-title">Chọn chế độ đoán</h2>
-            
+
             <div class="modes-grid">
                 <div class="mode-card" onclick="openGameMode('image')">
                     <div>
                         <h3 class="mode-title"><i class="fa-regular fa-image"></i> ... qua hình ảnh</h3>
-                        <p class="mode-desc">Đoán các món ăn đặc sản, địa danh du lịch, phong cảnh hoặc văn hóa của Việt Nam qua ảnh chụp thực tế.</p>
+                        <p class="mode-desc">Đoán các món ăn đặc sản, địa danh du lịch, phong cảnh hoặc văn hóa của Việt
+                            Nam qua ảnh chụp thực tế.</p>
                     </div>
                     <div class="card-stats">
                         <div class="score-display">Điểm: <span id="score-image">0</span></div>
-                        <div class="timer-display"><i class="fa-regular fa-clock"></i> Lượt tiếp theo: <span class="countdown-timer">00:00:00</span></div>
+                        <div class="timer-display"><i class="fa-regular fa-clock"></i> Reset lúc: <span
+                                class="countdown-timer">00:00:00</span></div>
                     </div>
                 </div>
 
                 <div class="mode-card" onclick="openGameMode('sound')">
                     <div>
                         <h3 class="mode-title"><i class="fa-solid fa-volume-high"></i> ... qua âm thanh</h3>
-                        <p class="mode-desc">Nghe và đoán các bài hát Việt Nam, giọng nói vùng miền, tiếng động đời thường đặc trưng hoặc các chương trình xưa.</p>
+                        <p class="mode-desc">Nghe và đoán các bài hát Việt Nam, giọng nói vùng miền, tiếng động đời
+                            thường đặc trưng hoặc các chương trình xưa.</p>
                     </div>
                     <div class="card-stats">
                         <div class="score-display">Điểm: <span id="score-sound">0</span></div>
-                        <div class="timer-display"><i class="fa-regular fa-clock"></i> Lượt tiếp theo: <span class="countdown-timer">00:00:00</span></div>
+                        <div class="timer-display"><i class="fa-regular fa-clock"></i> Reset lúc: <span
+                                class="countdown-timer">00:00:00</span></div>
                     </div>
                 </div>
 
                 <div class="mode-card" onclick="openGameMode('history')">
                     <div>
                         <h3 class="mode-title"><i class="fa-solid fa-landmark"></i> ... qua lịch sử & nhân vật</h3>
-                        <p class="mode-desc">Thử tài hiểu biết về các anh hùng hào kiệt, nhân vật nổi tiếng, sự kiện lịch sử oai hùng của dân tộc Việt Nam.</p>
+                        <p class="mode-desc">Thử tài hiểu biết về các anh hùng hào kiệt, nhân vật nổi tiếng, sự kiện
+                            lịch sử oai hùng của dân tộc Việt Nam.</p>
                     </div>
                     <div class="card-stats">
                         <div class="score-display">Điểm: <span id="score-history">0</span></div>
-                        <div class="timer-display"><i class="fa-regular fa-clock"></i> Lượt tiếp theo: <span class="countdown-timer">00:00:00</span></div>
+                        <div class="timer-display"><i class="fa-regular fa-clock"></i> Reset lúc: <span
+                                class="countdown-timer">00:00:00</span></div>
                     </div>
                 </div>
 
                 <div class="mode-card" onclick="openGameMode('map')">
                     <div>
                         <h3 class="mode-title"><i class="fa-solid fa-earth-asia"></i> ... qua bản đồ</h3>
-                        <p class="mode-desc">Đoán tên tỉnh thành, vị trí, ranh giới địa lý hoặc các địa điểm đặc biệt trên bản đồ chữ S Việt Nam.</p>
+                        <p class="mode-desc">Đoán tên tỉnh thành, vị trí, ranh giới địa lý hoặc các địa điểm đặc biệt
+                            trên bản đồ chữ S Việt Nam.</p>
                     </div>
                     <div class="card-stats">
                         <div class="score-display">Điểm: <span id="score-map">0</span></div>
-                        <div class="timer-display"><i class="fa-regular fa-clock"></i> Lượt tiếp theo: <span class="countdown-timer">00:00:00</span></div>
+                        <div class="timer-display"><i class="fa-regular fa-clock"></i> Reset lúc: <span
+                                class="countdown-timer">00:00:00</span></div>
                     </div>
                 </div>
             </div>
@@ -683,7 +87,7 @@
             </div>
 
             <button class="btn-action" onclick="handleReplayClick()">
-                <i class="fa-solid fa-arrow-rotate-left"></i> Chơi lại các ngày trước
+                <i class="fa-solid fa-arrow-rotate-left"></i> Lịch sử điểm các ngày
             </button>
         </main>
 
@@ -698,10 +102,9 @@
     </div>
 
     <!-- ==========================================================================
-         2. GIAO DIỆN KHI VÀO CHẾ ĐỘ CHƠI (CÓ BẢNG BÊN TRÁI GIỐNG HÌNH 2)
+         2. Game Mode Interface
          ========================================================================== -->
     <div id="game-layout-wrapper">
-        <!-- Bảng bên trái (Left Sidebar) -->
         <aside class="game-sidebar">
             <div class="sidebar-top">
                 <div class="sidebar-logo" onclick="backToMainMenu()">Vietnamguesser</div>
@@ -736,63 +139,14 @@
                     <span class="sidebar-score-label">Điểm hôm nay:</span>
                     <div class="sidebar-score-values">
                         <span id="sidebar-today-score" class="sidebar-score-current">0</span>
-                        <span class="sidebar-score-max">/ 24 000</span>
                     </div>
                 </div>
             </div>
         </aside>
 
-        <!-- Khu vực màn hình chơi ở giữa -->
         <div class="game-main-area">
             <div id="image-mode-view" class="game-stage-wrapper">
-                <h2 class="game-mode-heading">ĐOÁN HÌNH ẢNH</h2>
-
-                <div class="round-bar">
-                    <span id="img-round-number" class="round-title">Round 1</span>
-                    <span id="img-difficulty-badge" class="badge-difficulty">Dễ</span>
-                    <span id="img-potential-score" class="badge-score">+1500 điểm</span>
-                </div>
-
-                <!-- Khung hiển thị ảnh -->
-                <div class="image-stage">
-                    <img id="dish-image" src="" alt="Vietnamese Dish">
-                </div>
-
-                <!-- Tổ hợp 3 nút mở khóa gợi ý (Đã bỏ nút Ảnh gốc) -->
-                <div class="clues-bar">
-                    <button id="btn-clue-1" class="btn-clue" onclick="handleClueButtonClick(1)">
-                        <i class="fa-solid fa-unlock"></i> GỢI Ý 1 (-300đ)
-                    </button>
-                    <button id="btn-clue-2" class="btn-clue" onclick="handleClueButtonClick(2)" disabled>
-                        <i class="fa-solid fa-lock"></i> GỢI Ý 2 (-300đ)
-                    </button>
-                    <button id="btn-clue-3" class="btn-clue" onclick="handleClueButtonClick(3)" disabled>
-                        <i class="fa-solid fa-lock"></i> GỢI Ý TÊN (-400đ)
-                    </button>
-                </div>
-
-                <!-- Các dòng gợi ý đã mở khóa hiển thị ngay bên dưới giống hình mẫu -->
-                <div id="unlocked-clues-container" class="unlocked-clues-container">
-                    <div id="clue-line-1" class="clue-line" style="display: none;"></div>
-                    <div id="clue-line-2" class="clue-line" style="display: none;"></div>
-                    <div id="clue-line-3" class="clue-line" style="display: none;"></div>
-                </div>
-
-                <!-- Ô nhập câu trả lời & nút ĐOÁN -->
-                <div class="guess-controls">
-                    <input 
-                        type="text" 
-                        id="guess-input" 
-                        class="guess-input" 
-                        placeholder="Nhập tên món ăn tại đây..." 
-                        autocomplete="off"
-                        onkeydown="if(event.key === 'Enter') submitImageGuess()"
-                    >
-                    <button id="guess-submit-btn" class="btn-guess" onclick="submitImageGuess()">ĐOÁN</button>
-                    <button id="next-round-btn" class="btn-guess" style="display:none;" onclick="nextImageRound()">TIẾP THEO ➔</button>
-                </div>
-
-                <div id="round-feedback" class="round-feedback"></div>
+                <!-- Nội dung Round chơi sẽ được render động bằng script -->
             </div>
 
             <div class="game-footer">
@@ -801,9 +155,9 @@
         </div>
     </div>
 
-    <!-- Nạp từng file Script độc lập -->
     <script src="js/security.js"></script>
     <script src="js/core.js"></script>
     <script src="js/mode-image.js"></script>
 </body>
+
 </html>

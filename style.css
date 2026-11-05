@@ -26,7 +26,6 @@ body {
     overflow-x: hidden;
 }
 
-/* 1. Trang chủ (Main Menu) */
 #main-menu-wrapper {
     min-height: 100vh;
     display: flex;
@@ -211,7 +210,6 @@ footer.main-footer {
     color: var(--cyan-glow);
 }
 
-/* 2. Giao diện trong Game (Sidebar trái + Stage phải) */
 #game-layout-wrapper {
     display: none;
     min-height: 100vh;
@@ -554,7 +552,6 @@ footer.main-footer {
 .round-feedback.error { color: #ff6b6b; }
 .round-feedback.warning { color: #ffd166; }
 
-/* Dropdown Autosuggestion */
 .autocomplete-items {
     position: absolute;
     bottom: 100%;
@@ -584,7 +581,6 @@ footer.main-footer {
     color: var(--cyan-glow);
 }
 
-/* 3. Bảng tổng kết kết quả (Final Score Screen giống ảnh mẫu 2) */
 .final-score-container {
     width: 100%;
     max-width: 720px;

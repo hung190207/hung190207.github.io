@@ -97,9 +97,20 @@
 
     <!-- Game Layout -->
     <div id="game-layout-wrapper">
-        <aside class="game-sidebar">
+        <button id="mobile-menu-btn" class="mobile-menu-btn" onclick="toggleMobileSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+        <aside id="game-sidebar" class="game-sidebar">
             <div class="sidebar-top">
-                <div class="sidebar-logo" onclick="backToMainMenu()">Vietnamguesser</div>
+                <div class="sidebar-logo-row">
+                    <div class="sidebar-logo" onclick="backToMainMenu()">Vietnamguesser</div>
+                    <button class="sidebar-close-btn" onclick="closeMobileSidebar()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
                 <nav class="sidebar-nav">
                     <div id="nav-mode-image" class="sidebar-item active" onclick="openGameMode('image')">
                         <i class="fa-regular fa-image"></i>
@@ -149,5 +160,4 @@
     <script src="js/core.js"></script>
     <script src="js/mode-image.js"></script>
 </body>
-
 </html>

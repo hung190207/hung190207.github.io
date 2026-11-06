@@ -150,10 +150,33 @@ function saveModeScore(mode, newScore) {
 }
 
 
+// Section: Mobile Sidebar Controls
+
+function toggleMobileSidebar() {
+    playClickSound();
+    const sidebar = document.getElementById('game-sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (sidebar && overlay) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+    }
+}
+
+function closeMobileSidebar() {
+    const sidebar = document.getElementById('game-sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (sidebar && overlay) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+    }
+}
+
+
 // Section: Navigation
 
 function openGameMode(mode, isReload = false) {
     if (!isReload) playClickSound();
+    closeMobileSidebar();
 
     document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
     const activeNav = document.getElementById(`nav-mode-${mode}`);
@@ -178,6 +201,7 @@ function openGameMode(mode, isReload = false) {
 
 function backToMainMenu() {
     playClickSound();
+    closeMobileSidebar();
     localStorage.removeItem(ACTIVE_MODE_KEY);
     document.getElementById('game-layout-wrapper').style.display = 'none';
     document.getElementById('main-menu-wrapper').style.display = 'flex';

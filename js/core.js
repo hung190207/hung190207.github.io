@@ -178,23 +178,34 @@ function openGameMode(mode, isReload = false) {
     if (!isReload) playClickSound();
     closeMobileSidebar();
 
-    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-    const activeNav = document.getElementById(`nav-mode-${mode}`);
-    if (activeNav) activeNav.classList.add('active');
+    if (typeof stopSoundPlayer === 'function' && mode !== 'sound') {
+        stopSoundPlayer();
+    }
 
-    if (mode === 'image') {
-        localStorage.setItem(ACTIVE_MODE_KEY, 'image');
+    const imgView = document.getElementById('image-mode-view');
+    const soundView = document.getElementById('sound-mode-view');
+
+    if (mode === 'image' || mode === 'sound') {
+        document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+        const activeNav = document.getElementById(`nav-mode-${mode}`);
+        if (activeNav) activeNav.classList.add('active');
+
+        localStorage.setItem(ACTIVE_MODE_KEY, mode);
         document.getElementById('main-menu-wrapper').style.display = 'none';
         document.getElementById('game-layout-wrapper').style.display = 'flex';
-        if (typeof initImageMode === 'function') {
-            initImageMode();
+
+        if (mode === 'image') {
+            if (soundView) soundView.style.display = 'none';
+            if (imgView) imgView.style.display = 'flex';
+            if (typeof initImageMode === 'function') initImageMode();
+        } else if (mode === 'sound') {
+            if (imgView) imgView.style.display = 'none';
+            if (soundView) soundView.style.display = 'flex';
+            if (typeof initSoundMode === 'function') initSoundMode();
         }
     } else {
         setTimeout(() => {
             alert('Chế độ này sẽ được tích hợp ở bước tiếp theo!');
-            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-            const imgNav = document.getElementById('nav-mode-image');
-            if (imgNav) imgNav.classList.add('active');
         }, 80);
     }
 }
@@ -202,6 +213,9 @@ function openGameMode(mode, isReload = false) {
 function backToMainMenu() {
     playClickSound();
     closeMobileSidebar();
+    if (typeof stopSoundPlayer === 'function') {
+        stopSoundPlayer();
+    }
     localStorage.removeItem(ACTIVE_MODE_KEY);
     document.getElementById('game-layout-wrapper').style.display = 'none';
     document.getElementById('main-menu-wrapper').style.display = 'flex';
@@ -235,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateCountdownTimers, 1000);
 
     const savedMode = localStorage.getItem(ACTIVE_MODE_KEY);
-    if (savedMode === 'image') {
-        openGameMode('image', true);
+    if (savedMode === 'image' || savedMode === 'sound') {
+        openGameMode(savedMode, true);
     }
 });

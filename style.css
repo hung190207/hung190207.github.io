@@ -1,3 +1,4 @@
+/* Base Variables & Reset */
 :root {
     --bg-color: #0e1117;
     --sidebar-bg: #12161f;
@@ -26,6 +27,8 @@ body {
     overflow-x: hidden;
 }
 
+
+/* Main Menu */
 #main-menu-wrapper {
     min-height: 100vh;
     display: flex;
@@ -210,6 +213,8 @@ footer.main-footer {
     color: var(--cyan-glow);
 }
 
+
+/* Sidebar & Game Area */
 #game-layout-wrapper {
     display: none;
     min-height: 100vh;
@@ -323,19 +328,13 @@ footer.main-footer {
 
 .sidebar-score-values {
     text-align: right;
-    line-height: 1.25;
 }
 
 .sidebar-score-current {
     display: block;
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: var(--cyan-glow);
-}
-
-.sidebar-score-max {
-    font-size: 0.78rem;
-    color: var(--text-muted);
 }
 
 .game-main-area {
@@ -471,7 +470,6 @@ footer.main-footer {
     color: var(--text-color);
     text-align: center;
     line-height: 1.5;
-    animation: fadeIn 0.25s ease;
 }
 
 .clue-line .clue-label {
@@ -487,21 +485,24 @@ footer.main-footer {
     font-size: 1.08rem;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
-}
 
+/* Input & Autocomplete */
 .guess-controls {
     display: flex;
     gap: 10px;
     width: 100%;
     max-width: 540px;
     margin-top: 2px;
+    position: relative;
+}
+
+.guess-input-wrapper {
+    flex: 1;
+    position: relative;
 }
 
 .guess-input {
-    flex: 1;
+    width: 100%;
     background-color: var(--card-bg);
     border: 1.5px solid rgba(255, 255, 255, 0.15);
     border-radius: 8px;
@@ -527,7 +528,7 @@ footer.main-footer {
     font-family: inherit;
     font-size: 0.95rem;
     font-weight: 700;
-    padding: 0 26px;
+    padding: 13px 26px;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -548,27 +549,29 @@ footer.main-footer {
     text-align: center;
 }
 
-.round-feedback.success { color: #00f0ff; }
-.round-feedback.error { color: #ff6b6b; }
 .round-feedback.warning { color: #ffd166; }
 
 .autocomplete-items {
+    display: none;
     position: absolute;
-    bottom: 100%;
+    bottom: calc(100% + 6px);
     left: 0;
     right: 0;
     background-color: var(--card-bg);
     border: 1.5px solid var(--cyan-dim);
     border-radius: 8px;
-    z-index: 99;
-    max-height: 180px;
+    z-index: 1000;
+    max-height: 200px;
     overflow-y: auto;
-    margin-bottom: 6px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+}
+
+.autocomplete-items.show {
+    display: block;
 }
 
 .autocomplete-items div {
-    padding: 10px 14px;
+    padding: 11px 14px;
     cursor: pointer;
     color: var(--text-color);
     font-size: 0.95rem;
@@ -579,6 +582,87 @@ footer.main-footer {
 .autocomplete-items div:hover {
     background-color: var(--card-hover);
     color: var(--cyan-glow);
+}
+
+
+/* Results & Recap */
+.round-result-card {
+    width: 100%;
+    max-width: 680px;
+    background-color: var(--card-bg);
+    border: 1.5px solid rgba(0, 168, 255, 0.25);
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+.round-result-img {
+    width: 220px;
+    height: 260px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    flex-shrink: 0;
+}
+
+.round-result-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.round-result-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.round-result-origin {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.score-badge-box {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+.score-badge-header {
+    width: 100%;
+    background-color: #262c36;
+    color: var(--text-color);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 6px 0;
+    letter-spacing: 1px;
+}
+
+.score-badge-value {
+    width: 100%;
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 12px 0;
+    color: #fff;
+    background: linear-gradient(135deg, #0070f3, #00c6ff);
+}
+
+.score-badge-value.zero {
+    background: #e63956;
 }
 
 .final-score-container {
@@ -633,7 +717,7 @@ footer.main-footer {
 
 .recap-round-title {
     font-weight: 700;
-    color: #ff6b6b;
+    color: var(--cyan-dim);
     font-size: 1.05rem;
 }
 
@@ -673,4 +757,15 @@ footer.main-footer {
     font-size: 0.8rem;
     color: var(--text-muted);
     text-align: center;
+}
+
+@media (max-width: 680px) {
+    .round-result-card {
+        flex-direction: column;
+        align-items: center;
+    }
+    .round-result-img {
+        width: 100%;
+        height: 220px;
+    }
 }

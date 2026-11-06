@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,12 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-    <!-- ==========================================================================
-         1. Main Menu Interface
-         ========================================================================== -->
+    <!-- Main Menu -->
     <div id="main-menu-wrapper">
         <header class="main-header" onclick="backToMainMenu()">
             <h1 class="logo">Vietnamguesser</h1>
@@ -23,57 +19,57 @@
 
         <main class="view-container">
             <h2 class="section-title">Chọn chế độ đoán</h2>
-
+            
             <div class="modes-grid">
                 <div class="mode-card" onclick="openGameMode('image')">
                     <div>
                         <h3 class="mode-title"><i class="fa-regular fa-image"></i> ... qua hình ảnh</h3>
-                        <p class="mode-desc">Đoán các món ăn đặc sản, địa danh du lịch, phong cảnh hoặc văn hóa của Việt
-                            Nam qua ảnh chụp thực tế.</p>
+                        <p class="mode-desc">Đoán các món ăn đặc sản, địa danh du lịch, phong cảnh hoặc văn hóa của Việt Nam qua ảnh chụp thực tế.</p>
                     </div>
                     <div class="card-stats">
                         <div class="score-display">Điểm: <span id="score-image">0</span></div>
-                        <div class="timer-display"><i class="fa-regular fa-clock"></i> Reset lúc: <span
-                                class="countdown-timer">00:00:00</span></div>
+                        <div id="timer-container-image" class="timer-display" style="display: none;">
+                            <i class="fa-regular fa-clock"></i> Reset lúc: <span id="timer-image">00:00:00</span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="mode-card" onclick="openGameMode('sound')">
                     <div>
                         <h3 class="mode-title"><i class="fa-solid fa-volume-high"></i> ... qua âm thanh</h3>
-                        <p class="mode-desc">Nghe và đoán các bài hát Việt Nam, giọng nói vùng miền, tiếng động đời
-                            thường đặc trưng hoặc các chương trình xưa.</p>
+                        <p class="mode-desc">Nghe và đoán các bài hát Việt Nam, giọng nói vùng miền, tiếng động đời thường đặc trưng hoặc các chương trình xưa.</p>
                     </div>
                     <div class="card-stats">
                         <div class="score-display">Điểm: <span id="score-sound">0</span></div>
-                        <div class="timer-display"><i class="fa-regular fa-clock"></i> Reset lúc: <span
-                                class="countdown-timer">00:00:00</span></div>
+                        <div id="timer-container-sound" class="timer-display" style="display: none;">
+                            <i class="fa-regular fa-clock"></i> Reset lúc: <span id="timer-sound">00:00:00</span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="mode-card" onclick="openGameMode('history')">
                     <div>
                         <h3 class="mode-title"><i class="fa-solid fa-landmark"></i> ... qua lịch sử & nhân vật</h3>
-                        <p class="mode-desc">Thử tài hiểu biết về các anh hùng hào kiệt, nhân vật nổi tiếng, sự kiện
-                            lịch sử oai hùng của dân tộc Việt Nam.</p>
+                        <p class="mode-desc">Thử tài hiểu biết về các anh hùng hào kiệt, nhân vật nổi tiếng, sự kiện lịch sử oai hùng của dân tộc Việt Nam.</p>
                     </div>
                     <div class="card-stats">
                         <div class="score-display">Điểm: <span id="score-history">0</span></div>
-                        <div class="timer-display"><i class="fa-regular fa-clock"></i> Reset lúc: <span
-                                class="countdown-timer">00:00:00</span></div>
+                        <div id="timer-container-history" class="timer-display" style="display: none;">
+                            <i class="fa-regular fa-clock"></i> Reset lúc: <span id="timer-history">00:00:00</span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="mode-card" onclick="openGameMode('map')">
                     <div>
                         <h3 class="mode-title"><i class="fa-solid fa-earth-asia"></i> ... qua bản đồ</h3>
-                        <p class="mode-desc">Đoán tên tỉnh thành, vị trí, ranh giới địa lý hoặc các địa điểm đặc biệt
-                            trên bản đồ chữ S Việt Nam.</p>
+                        <p class="mode-desc">Đoán tên tỉnh thành, vị trí, ranh giới địa lý hoặc các địa điểm đặc biệt trên bản đồ chữ S Việt Nam.</p>
                     </div>
                     <div class="card-stats">
                         <div class="score-display">Điểm: <span id="score-map">0</span></div>
-                        <div class="timer-display"><i class="fa-regular fa-clock"></i> Reset lúc: <span
-                                class="countdown-timer">00:00:00</span></div>
+                        <div id="timer-container-map" class="timer-display" style="display: none;">
+                            <i class="fa-regular fa-clock"></i> Reset lúc: <span id="timer-map">00:00:00</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -98,9 +94,8 @@
         </footer>
     </div>
 
-    <!-- ==========================================================================
-         2. Game Mode Interface
-         ========================================================================== -->
+
+    <!-- Game Layout -->
     <div id="game-layout-wrapper">
         <aside class="game-sidebar">
             <div class="sidebar-top">
@@ -142,8 +137,7 @@
         </aside>
 
         <div class="game-main-area">
-            <div id="image-mode-view" class="game-stage-wrapper">
-            </div>
+            <div id="image-mode-view" class="game-stage-wrapper"></div>
 
             <div class="game-footer">
                 © 2026 Vietnamguesser
@@ -155,5 +149,4 @@
     <script src="js/core.js"></script>
     <script src="js/mode-image.js"></script>
 </body>
-
 </html>

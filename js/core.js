@@ -1,7 +1,10 @@
+// Section: Constants & Audio
+
 const HANOI_OFFSET_MS = 7 * 60 * 60 * 1000;
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const STORAGE_KEY = 'vietnamguesser_daily_data';
 const HISTORY_KEY = 'vietnamguesser_history';
+const ACTIVE_MODE_KEY = 'vietnamguesser_active_mode';
 const MODES = ['image', 'sound', 'history', 'map'];
 
 let audioCtx = null;
@@ -46,6 +49,9 @@ function triggerClickPulse(startTime, startFreq, endFreq, duration, gainLevel) {
     osc.stop(startTime + duration);
 }
 
+
+// Section: Daily Timer
+
 function getHanoiDateString() {
     const hanoiTime = new Date(Date.now() + HANOI_OFFSET_MS);
     return hanoiTime.toISOString().slice(0, 10);
@@ -62,12 +68,32 @@ function updateCountdownTimers() {
     const seconds = String(totalSeconds % 60).padStart(2, '0');
 
     const formattedTime = `${hours}:${minutes}:${seconds}`;
-    document.querySelectorAll('.countdown-timer').forEach(el => {
-        el.textContent = formattedTime;
+    const todayStr = getHanoiDateString();
+
+    MODES.forEach(mode => {
+        const timerContainer = document.getElementById(`timer-container-${mode}`);
+        const timerEl = document.getElementById(`timer-${mode}`);
+        if (timerContainer && timerEl) {
+            const statusKey = `vietnamguesser_${mode}_daily_status`;
+            try {
+                const statusData = JSON.parse(localStorage.getItem(statusKey));
+                if (statusData && statusData.date === todayStr && statusData.completed) {
+                    timerContainer.style.display = 'flex';
+                    timerEl.textContent = formattedTime;
+                } else {
+                    timerContainer.style.display = 'none';
+                }
+            } catch (e) {
+                timerContainer.style.display = 'none';
+            }
+        }
     });
 
     checkAndSyncDailyScores();
 }
+
+
+// Section: Score Management
 
 function getDefaultScoreData(dateStr) {
     return {
@@ -123,14 +149,18 @@ function saveModeScore(mode, newScore) {
     }
 }
 
-function openGameMode(mode) {
-    playClickSound();
+
+// Section: Navigation
+
+function openGameMode(mode, isReload = false) {
+    if (!isReload) playClickSound();
 
     document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
     const activeNav = document.getElementById(`nav-mode-${mode}`);
     if (activeNav) activeNav.classList.add('active');
 
     if (mode === 'image') {
+        localStorage.setItem(ACTIVE_MODE_KEY, 'image');
         document.getElementById('main-menu-wrapper').style.display = 'none';
         document.getElementById('game-layout-wrapper').style.display = 'flex';
         if (typeof initImageMode === 'function') {
@@ -148,10 +178,12 @@ function openGameMode(mode) {
 
 function backToMainMenu() {
     playClickSound();
+    localStorage.removeItem(ACTIVE_MODE_KEY);
     document.getElementById('game-layout-wrapper').style.display = 'none';
     document.getElementById('main-menu-wrapper').style.display = 'flex';
     const data = checkAndSyncDailyScores();
     renderScoresToUI(data.scores);
+    updateCountdownTimers();
 }
 
 function handleReplayClick() {
@@ -160,7 +192,7 @@ function handleReplayClick() {
         const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}');
         const dates = Object.keys(history);
         if (dates.length === 0) {
-            alert('Chưa có dữ liệu điểm các ngày trước. Điểm hôm nay sẽ lưu vào lịch sử sau 00:00 (UTC+7)!');
+            alert('Chưa có dữ liệu điểm các ngày trước.');
         } else {
             const summary = dates.map(d => {
                 const s = history[d];
@@ -177,4 +209,9 @@ document.addEventListener('DOMContentLoaded', () => {
     renderScoresToUI(initialData.scores);
     updateCountdownTimers();
     setInterval(updateCountdownTimers, 1000);
+
+    const savedMode = localStorage.getItem(ACTIVE_MODE_KEY);
+    if (savedMode === 'image') {
+        openGameMode('image', true);
+    }
 });

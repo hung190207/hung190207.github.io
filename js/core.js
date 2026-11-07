@@ -246,24 +246,6 @@ function backToMainMenu() {
     updateCountdownTimers();
 }
 
-function handleReplayClick() {
-    playClickSound();
-    setTimeout(() => {
-        const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '{}');
-        const dates = Object.keys(history);
-        if (dates.length === 0) {
-            alert('Chưa có dữ liệu điểm các ngày trước.');
-        } else {
-            const summary = dates.map(d => {
-                const s = history[d];
-                const sum = (s.image || 0) + (s.sound || 0) + (s.history || 0) + (s.map || 0);
-                return `• Ngày ${d}: Tổng ${sum.toLocaleString('en-US')} điểm`;
-            }).join('\n');
-            alert(`Lịch sử điểm các ngày trước:\n\n${summary}`);
-        }
-    }, 80);
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     const initialData = checkAndSyncDailyScores();
     renderScoresToUI(initialData.scores);

@@ -504,6 +504,8 @@ function submitSoundGuess() {
 
 // Final Result Screen
 
+let soundFinalKeydownHandler = null;
+
 function renderSoundFinalScreen(earnedScore) {
     stopSoundPlayer();
     const song = activeDailySong;
@@ -528,4 +530,17 @@ function renderSoundFinalScreen(earnedScore) {
             <i class="fa-solid fa-house"></i> Về Menu chính
         </button>
     `;
+
+    if (soundFinalKeydownHandler) {
+        document.removeEventListener('keydown', soundFinalKeydownHandler);
+    }
+    soundFinalKeydownHandler = function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.removeEventListener('keydown', soundFinalKeydownHandler);
+            soundFinalKeydownHandler = null;
+            backToMainMenu();
+        }
+    };
+    document.addEventListener('keydown', soundFinalKeydownHandler);
 }

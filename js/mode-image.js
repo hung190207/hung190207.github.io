@@ -367,6 +367,8 @@ function submitImageGuess() {
 
 // Round Result & Final Recap
 
+let imageResultKeydownHandler = null;
+
 function renderRoundResultScreen(index, earnedScore) {
     const data = activeDailyRounds[index];
     const dishName = getDishName(data);
@@ -393,11 +395,28 @@ function renderRoundResultScreen(index, earnedScore) {
             </div>
         </div>
 
-        <button class="btn-guess" onclick="nextImageRound()">${nextButtonText}</button>
+        <button id="next-round-action-btn" class="btn-guess" onclick="nextImageRound()">${nextButtonText}</button>
     `;
+
+    if (imageResultKeydownHandler) {
+        document.removeEventListener('keydown', imageResultKeydownHandler);
+    }
+    imageResultKeydownHandler = function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.removeEventListener('keydown', imageResultKeydownHandler);
+            imageResultKeydownHandler = null;
+            nextImageRound();
+        }
+    };
+    document.addEventListener('keydown', imageResultKeydownHandler);
 }
 
 function nextImageRound() {
+    if (imageResultKeydownHandler) {
+        document.removeEventListener('keydown', imageResultKeydownHandler);
+        imageResultKeydownHandler = null;
+    }
     playClickSound();
     if (currentRoundIndex < activeDailyRounds.length - 1) {
         currentRoundIndex++;
@@ -415,6 +434,8 @@ function nextImageRound() {
         renderFinalScoreScreen(roundScores);
     }
 }
+
+let finalScoreKeydownHandler = null;
 
 function renderFinalScoreScreen(scoresArray) {
     const totalSum = scoresArray.reduce((a, b) => a + b, 0);
@@ -459,4 +480,17 @@ function renderFinalScoreScreen(scoresArray) {
             </button>
         </div>
     `;
+
+    if (finalScoreKeydownHandler) {
+        document.removeEventListener('keydown', finalScoreKeydownHandler);
+    }
+    finalScoreKeydownHandler = function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.removeEventListener('keydown', finalScoreKeydownHandler);
+            finalScoreKeydownHandler = null;
+            backToMainMenu();
+        }
+    };
+    document.addEventListener('keydown', finalScoreKeydownHandler);
 }

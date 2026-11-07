@@ -206,8 +206,9 @@ function openGameMode(mode, isReload = false) {
 
     const imgView = document.getElementById('image-mode-view');
     const soundView = document.getElementById('sound-mode-view');
+    const mapView = document.getElementById('map-mode-view');
 
-    if (mode === 'image' || mode === 'sound') {
+    if (mode === 'image' || mode === 'sound' || mode === 'map') {
         document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
         const activeNav = document.getElementById(`nav-mode-${mode}`);
         if (activeNav) activeNav.classList.add('active');
@@ -216,15 +217,13 @@ function openGameMode(mode, isReload = false) {
         document.getElementById('main-menu-wrapper').style.display = 'none';
         document.getElementById('game-layout-wrapper').style.display = 'flex';
 
-        if (mode === 'image') {
-            if (soundView) soundView.style.display = 'none';
-            if (imgView) imgView.style.display = 'flex';
-            if (typeof initImageMode === 'function') initImageMode();
-        } else if (mode === 'sound') {
-            if (imgView) imgView.style.display = 'none';
-            if (soundView) soundView.style.display = 'flex';
-            if (typeof initSoundMode === 'function') initSoundMode();
-        }
+        if (imgView) imgView.style.display = mode === 'image' ? 'flex' : 'none';
+        if (soundView) soundView.style.display = mode === 'sound' ? 'flex' : 'none';
+        if (mapView) mapView.style.display = mode === 'map' ? 'flex' : 'none';
+
+        if (mode === 'image' && typeof initImageMode === 'function') initImageMode();
+        if (mode === 'sound' && typeof initSoundMode === 'function') initSoundMode();
+        if (mode === 'map' && typeof initMapMode === 'function') initMapMode();
     } else {
         setTimeout(() => {
             alert('Chế độ này sẽ được tích hợp ở bước tiếp theo!');
@@ -253,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateCountdownTimers, 1000);
 
     const savedMode = localStorage.getItem(ACTIVE_MODE_KEY);
-    if (savedMode === 'image' || savedMode === 'sound') {
+    if (savedMode === 'image' || savedMode === 'sound' || savedMode === 'map') {
         openGameMode(savedMode, true);
     }
 });

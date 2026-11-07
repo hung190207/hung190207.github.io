@@ -1,4 +1,4 @@
-// Section: Constants & Audio
+// Constants & Audio
 
 const HANOI_OFFSET_MS = 7 * 60 * 60 * 1000;
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
@@ -50,11 +50,36 @@ function triggerClickPulse(startTime, startFreq, endFreq, duration, gainLevel) {
 }
 
 
-// Section: Daily Timer
+// Shared Text & Daily Seed Helpers
+
+function normalizeVN(str) {
+    return str
+        .normalize('NFC')
+        .toLowerCase()
+        .trim()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/\s+/g, ' ');
+}
 
 function getHanoiDateString() {
     const hanoiTime = new Date(Date.now() + HANOI_OFFSET_MS);
     return hanoiTime.toISOString().slice(0, 10);
+}
+
+function getDailySeedHash(saltString) {
+    const str = `${getHanoiDateString()}::vietnamguesser::${saltString}`;
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < str.length; i++) {
+        h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+    }
+    h += h << 13;
+    h ^= h >>> 7;
+    h += h << 3;
+    h ^= h >>> 17;
+    h += h << 5;
+    return h >>> 0;
 }
 
 function updateCountdownTimers() {
@@ -93,7 +118,7 @@ function updateCountdownTimers() {
 }
 
 
-// Section: Score Management
+// Score Management
 
 function getDefaultScoreData(dateStr) {
     return {
@@ -150,7 +175,7 @@ function saveModeScore(mode, newScore) {
 }
 
 
-// Section: Mobile Sidebar Controls
+// Mobile Sidebar & Navigation
 
 function toggleMobileSidebar() {
     playClickSound();
@@ -170,9 +195,6 @@ function closeMobileSidebar() {
         overlay.classList.remove('active');
     }
 }
-
-
-// Section: Navigation
 
 function openGameMode(mode, isReload = false) {
     if (!isReload) playClickSound();

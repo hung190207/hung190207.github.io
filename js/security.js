@@ -1,4 +1,4 @@
-// Section: Security & DevTools Protection
+// Security & DevTools Protection
 
 (function () {
     document.addEventListener('contextmenu', function (e) {

@@ -13,6 +13,30 @@ function getYesterdayHistoryFigure() {
     return HISTORY_DATABASE[idx];
 }
 
+function getFigRole(fig) {
+    return isEn() && fig.roleEn ? fig.roleEn : fig.role;
+}
+
+function getFigEvent(fig) {
+    return isEn() && fig.eventEn ? fig.eventEn : fig.event;
+}
+
+function getFigRegion(fig) {
+    return isEn() && fig.regionEn ? fig.regionEn : fig.region;
+}
+
+function getFigEra(fig) {
+    return isEn() && fig.eraEn ? fig.eraEn : fig.era;
+}
+
+function getFigQuoteClue(fig) {
+    return isEn() && fig.quoteClueEn ? fig.quoteClueEn : fig.quoteClue;
+}
+
+function getFigEventClue(fig) {
+    return isEn() && fig.eventClueEn ? fig.eventClueEn : fig.eventClue;
+}
+
 function splitTokens(val) {
     return val
         .split(/[,–-]/)
@@ -109,30 +133,30 @@ function renderHistoryScreen() {
     const remClue1 = Math.max(0, CLUE_1_REQUIRED_GUESSES - guessCount);
     const remClue2 = Math.max(0, CLUE_2_REQUIRED_GUESSES - guessCount);
 
-    let clue1Label = 'GỢI Ý 1: CÂU NÓI';
+    let clue1Label = t('hist_clue_1');
     if (unlockedQuoteClue) {
-        clue1Label = 'ĐÃ MỞ GỢI Ý 1';
+        clue1Label = t('hist_clue_1_unlocked');
     } else if (!canUnlockClue1) {
-        clue1Label = `GỢI Ý 1: CÂU NÓI - SAU ${remClue1} LƯỢT`;
+        clue1Label = `${t('hist_clue_1')} - ${t('hist_after_guesses').replace('{n}', remClue1)}`;
     }
 
-    let clue2Label = 'GỢI Ý 2: SỰ KIỆN';
+    let clue2Label = t('hist_clue_2');
     if (unlockedEventClue) {
-        clue2Label = 'ĐÃ MỞ GỢI Ý 2';
+        clue2Label = t('hist_clue_2_unlocked');
     } else if (!canUnlockClue2) {
-        clue2Label = `GỢI Ý 2: SỰ KIỆN - SAU ${remClue2} LƯỢT`;
+        clue2Label = `${t('hist_clue_2')} - ${t('hist_after_guesses').replace('{n}', remClue2)}`;
     }
 
     const container = document.getElementById('history-mode-view');
     container.innerHTML = `
-        <h2 class="game-mode-heading">ĐOÁN NHÂN VẬT LỊCH SỬ</h2>
+        <h2 class="game-mode-heading">${t('hist_heading')}</h2>
 
         <div class="round-bar">
-            <span id="history-potential-score" class="badge-score">+${historyCompleted ? historyEarnedScore : getHistoryPotentialScore()} điểm</span>
+            <span id="history-potential-score" class="badge-score">+${historyCompleted ? historyEarnedScore : getHistoryPotentialScore()} ${t('points_suffix')}</span>
         </div>
 
         <div class="history-clue-panel">
-            <div class="history-clue-subtitle">Đoán nhân vật lịch sử Việt Nam của ngày hôm nay!</div>
+            <div class="history-clue-subtitle">${t('hist_subtitle')}</div>
             <div class="history-clue-buttons">
                 <button 
                     id="btn-hist-clue-quote" 
@@ -154,10 +178,10 @@ function renderHistoryScreen() {
                 </button>
             </div>
             <div id="hist-clue-quote-box" class="history-clue-box" style="display: ${unlockedQuoteClue ? 'block' : 'none'};">
-                <span class="clue-quote">${activeHistoryTarget.quoteClue}</span>
+                <span class="clue-quote">${getFigQuoteClue(activeHistoryTarget)}</span>
             </div>
             <div id="hist-clue-event-box" class="history-clue-box" style="display: ${unlockedEventClue ? 'block' : 'none'};">
-                <span style="color:var(--cyan-dim);font-weight:700;">Sự kiện lịch sử:</span> ${activeHistoryTarget.eventClue}
+                <span style="color:var(--cyan-glow);font-weight:700;">${t('hist_event_label')}</span> ${getFigEventClue(activeHistoryTarget)}
             </div>
         </div>
 
@@ -168,11 +192,11 @@ function renderHistoryScreen() {
                     type="text" 
                     id="history-guess-input" 
                     class="guess-input" 
-                    placeholder="Nhập tên nhân vật lịch sử..." 
+                    placeholder="${t('hist_input_placeholder')}" 
                     autocomplete="off"
                 >
             </div>
-            <button class="btn-guess" onclick="submitHistoryGuess()">ĐOÁN</button>
+            <button class="btn-guess" onclick="submitHistoryGuess()">${t('guess_btn')}</button>
         </div>
 
         <div id="history-round-feedback" class="round-feedback"></div>
@@ -180,26 +204,26 @@ function renderHistoryScreen() {
         <div class="loldle-board-scroll" style="display: ${hasGuessedOnce ? 'block' : 'none'};">
             <div class="loldle-grid">
                 <div class="loldle-header-row">
-                    <div class="loldle-col-header">Nhân vật</div>
-                    <div class="loldle-col-header">Vai trò</div>
-                    <div class="loldle-col-header">Sự kiện gắn liền</div>
-                    <div class="loldle-col-header">Vùng</div>
-                    <div class="loldle-col-header">Giai đoạn</div>
+                    <div class="loldle-col-header">${t('hist_col_char')}</div>
+                    <div class="loldle-col-header">${t('hist_col_role')}</div>
+                    <div class="loldle-col-header">${t('hist_col_event')}</div>
+                    <div class="loldle-col-header">${t('hist_col_region')}</div>
+                    <div class="loldle-col-header">${t('hist_col_era')}</div>
                 </div>
                 <div id="loldle-rows-container" style="display:flex;flex-direction:column;gap:10px;"></div>
             </div>
         </div>
 
         <div class="loldle-legend-box" style="display: ${hasGuessedOnce ? 'flex' : 'none'};">
-            <div class="legend-item"><span class="legend-swatch correct"></span> Chính xác</div>
-            <div class="legend-item"><span class="legend-swatch partial"></span> Đúng một phần</div>
-            <div class="legend-item"><span class="legend-swatch wrong"></span> Không khớp</div>
+            <div class="legend-item"><span class="legend-swatch correct"></span> ${t('hist_legend_correct')}</div>
+            <div class="legend-item"><span class="legend-swatch partial"></span> ${t('hist_legend_partial')}</div>
+            <div class="legend-item"><span class="legend-swatch wrong"></span> ${t('hist_legend_wrong')}</div>
         </div>
 
         <div id="history-victory-container" style="width:100%;display:flex;justify-content:center;"></div>
 
         <div class="yesterday-answer-line">
-            Đáp án của ngày hôm qua là <strong>${yesterdayFig.name}</strong>
+            ${t('yesterday_single')} <strong>${yesterdayFig.name}</strong>
         </div>
     `;
 
@@ -240,12 +264,12 @@ function renderGuessedHistoryRows() {
         row.className = 'loldle-guess-row';
         row.innerHTML = `
             <div class="loldle-tile tile-character">${fig.name}</div>
-            <div class="loldle-tile ${roleClass}">${fig.role}</div>
-            <div class="loldle-tile ${eventClass}">${fig.event}</div>
-            <div class="loldle-tile ${regionClass}">${fig.region}</div>
+            <div class="loldle-tile ${roleClass}">${getFigRole(fig)}</div>
+            <div class="loldle-tile ${eventClass}">${getFigEvent(fig)}</div>
+            <div class="loldle-tile ${regionClass}">${getFigRegion(fig)}</div>
             <div class="loldle-tile ${eraClass}">
                 ${eraArrowIcon ? `<div class="era-bg-arrow">${eraArrowIcon}</div>` : ''}
-                <span class="era-tile-content">${fig.era} ${eraArrowIcon}</span>
+                <span class="era-tile-content">${getFigEra(fig)} ${eraArrowIcon}</span>
             </div>
         `;
         rowsContainer.appendChild(row);
@@ -352,7 +376,7 @@ function submitHistoryGuess() {
     const rawGuess = normalizeVN(inputEl.value);
     if (!rawGuess) {
         if (feedbackEl) {
-            feedbackEl.textContent = 'Vui lòng nhập tên nhân vật trước khi đoán!';
+            feedbackEl.textContent = t('hist_empty_warning');
             feedbackEl.className = 'round-feedback warning';
         }
         return;
@@ -364,7 +388,7 @@ function submitHistoryGuess() {
 
     if (!matchedFig) {
         if (feedbackEl) {
-            feedbackEl.textContent = 'Không tìm thấy nhân vật này trong danh sách!';
+            feedbackEl.textContent = t('hist_not_found_warning');
             feedbackEl.className = 'round-feedback warning';
         }
         return;
@@ -372,7 +396,7 @@ function submitHistoryGuess() {
 
     if (guessedHistoryIds.includes(matchedFig.id)) {
         if (feedbackEl) {
-            feedbackEl.textContent = 'Bạn đã đoán nhân vật này rồi!';
+            feedbackEl.textContent = t('hist_already_guessed');
             feedbackEl.className = 'round-feedback warning';
         }
         return;
@@ -401,14 +425,18 @@ function renderHistoryVictoryBanner() {
     const box = document.getElementById('history-victory-container');
     if (!box) return;
 
+    const descHtml = t('hist_victory_desc')
+        .replace('{tries}', guessedHistoryIds.length)
+        .replace('{score}', historyEarnedScore.toLocaleString('en-US'));
+
     box.innerHTML = `
         <div class="history-victory-banner">
-            <div class="round-result-title" style="color:var(--cyan-glow);">Chính xác: ${activeHistoryTarget.name}</div>
+            <div class="round-result-title" style="color:var(--cyan-glow);">${t('hist_victory_title')} ${activeHistoryTarget.name}</div>
             <div class="round-result-origin" style="border:none;padding:0;text-align:center;">
-                Bạn đã tìm ra nhân vật sau ${guessedHistoryIds.length} lượt đoán và nhận được <strong>${historyEarnedScore.toLocaleString('en-US')} điểm</strong>!
+                ${descHtml}
             </div>
             <button class="btn-action" onclick="backToMainMenu()" style="margin-top: 6px;">
-                <i class="fa-solid fa-house"></i> Về Menu chính
+                <i class="fa-solid fa-house"></i> ${t('back_menu_btn')}
             </button>
         </div>
     `;

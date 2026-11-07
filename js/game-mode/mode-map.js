@@ -1,11 +1,23 @@
-// Map Mode Mechanics (1 Location Per Day, Full-Bleed View)
+// Map Mode Mechanics
 
 const VIETNAM_BOUNDS = [
     [7.2, 101.2],
     [24.2, 110.8]
 ];
 const VIETNAM_CENTER = [16.1, 106.2];
-const GOOGLE_ROAD_TILES = 'https://mt1.google.com/vt/lyrs=m&hl=vi&x={x}&y={y}&z={z}';
+
+function getGoogleRoadTilesUrl() {
+    const hl = isEn() ? 'en' : 'vi';
+    return `https://mt1.google.com/vt/lyrs=m&hl=${hl}&x={x}&y={y}&z={z}`;
+}
+
+function getLocTitle(loc) {
+    return isEn() && loc.titleEn ? loc.titleEn : loc.title;
+}
+
+function getLocRegionClue(loc) {
+    return isEn() && loc.regionClueEn ? loc.regionClueEn : loc.regionClue;
+}
 
 function pickDailyMapLocation() {
     const idx = getDailySeedHash('map_daily_location') % MAP_DATABASE.length;
@@ -19,7 +31,8 @@ function getYesterdayMapLocation() {
 
 function buildSvEmbedUrl(lat, lng, heading = 0, panoId = '') {
     const panoParam = panoId ? `&panoid=${encodeURIComponent(panoId)}` : '';
-    return `https://maps.google.com/maps?layer=c&cbll=${lat},${lng}${panoParam}&cbp=12,${heading},0,0,0&output=svembed`;
+    const hl = isEn() ? 'en' : 'vi';
+    return `https://maps.google.com/maps?layer=c&cbll=${lat},${lng}${panoParam}&cbp=12,${heading},0,0,0&hl=${hl}&output=svembed`;
 }
 
 function resolveNearestPanorama(lat, lng, callback) {
@@ -185,30 +198,30 @@ function loadMapRoundScreen() {
                 <span>NE</span>
             </div>
 
-            <div style="position:absolute;top:54px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(14,17,23,0.82);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.14);border-radius:50px;padding:5px 16px;font-size:0.8rem;color:var(--text-muted);pointer-events:none;white-space:nowrap;">
-                Đáp án của ngày hôm qua là <strong style="color:var(--cyan-glow);">${yesterdayLoc.title}</strong>
+            <div style="position:absolute;top:54px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(255,255,255,0.92);backdrop-filter:blur(6px);border:1.5px solid var(--border-soft);border-radius:50px;padding:5px 16px;font-size:0.8rem;color:var(--text-muted);pointer-events:none;white-space:nowrap;">
+                ${t('yesterday_single')} <strong style="color:var(--cyan-glow);">${getLocTitle(yesterdayLoc)}</strong>
             </div>
 
             <div class="map-hud-left">
-                <button class="hud-circle-btn" onclick="resetStreetViewToStart()" title="Quay về vị trí xuất phát">
+                <button class="hud-circle-btn" onclick="resetStreetViewToStart()" title="${t('map_reset_start')}">
                     <i class="fa-solid fa-flag"></i>
                 </button>
-                <button class="hud-circle-btn" onclick="toggleMapStageFullscreen()" title="Toàn màn hình">
+                <button class="hud-circle-btn" onclick="toggleMapStageFullscreen()" title="${t('map_fullscreen')}">
                     <i class="fa-solid fa-expand"></i>
                 </button>
             </div>
 
             <button id="mobile-open-map-btn" class="mobile-open-map-btn" onclick="toggleMobileMinimap(true)">
-                <i class="fa-solid fa-map-location-dot"></i> MỞ BẢN ĐỒ ĐOÁN
+                <i class="fa-solid fa-map-location-dot"></i> ${t('map_open_mobile')}
             </button>
 
             <div id="map-minimap-overlay" class="map-minimap-overlay ${isMinimapPinnedLarge ? 'pinned-size' : ''}">
                 <div class="minimap-header-bar">
                     <button class="minimap-tool-btn desktop-only" onclick="toggleMinimapPinSize()">
-                        <i class="fa-solid fa-up-right-and-down-left-from-center"></i> Phóng to / Thu nhỏ
+                        <i class="fa-solid fa-up-right-and-down-left-from-center"></i> ${t('map_toggle_size')}
                     </button>
                     <button class="minimap-tool-btn mobile-only" onclick="toggleMobileMinimap(false)">
-                        <i class="fa-solid fa-xmark"></i> Đóng bản đồ
+                        <i class="fa-solid fa-xmark"></i> ${t('map_close_mobile')}
                     </button>
                 </div>
 
@@ -217,7 +230,7 @@ function loadMapRoundScreen() {
                 </div>
 
                 <button id="btn-map-guess" class="btn-map-guess" onclick="submitMapGuess()" disabled>
-                    CHỌN VỊ TRÍ TRÊN BẢN ĐỒ
+                    ${t('map_pick_prompt')}
                 </button>
             </div>
         </div>
@@ -257,7 +270,7 @@ function initVietnamMinimap() {
         attributionControl: false
     });
 
-    L.tileLayer(GOOGLE_ROAD_TILES, {
+    L.tileLayer(getGoogleRoadTilesUrl(), {
         maxZoom: 20
     }).addTo(miniLeafletMap);
 
@@ -275,7 +288,7 @@ function initVietnamMinimap() {
         const guessBtn = document.getElementById('btn-map-guess');
         if (guessBtn) {
             guessBtn.disabled = false;
-            guessBtn.textContent = 'ĐOÁN VỊ TRÍ NÀY';
+            guessBtn.textContent = t('map_guess_this');
         }
     });
 
@@ -350,7 +363,7 @@ function toggleMobileMinimap(openState) {
 }
 
 
-// Submission & Result Screen (1 Location Per Day)
+// Submission & Result Screen
 
 function submitMapGuess() {
     if (mapRoundFinished || !selectedLatLng) return;
@@ -389,7 +402,7 @@ function renderMapFinalScreen() {
     const container = document.getElementById('map-mode-view');
 
     container.innerHTML = `
-        <h2 class="game-mode-heading">KẾT QUẢ BẢN ĐỒ HÔM NAY</h2>
+        <h2 class="game-mode-heading">${t('map_result_heading')}</h2>
 
         <div class="map-result-stage">
             <div id="map-result-canvas"></div>
@@ -397,24 +410,24 @@ function renderMapFinalScreen() {
 
         <div class="round-result-card">
             <div class="round-result-details">
-                <div class="round-result-title">${data.title}</div>
+                <div class="round-result-title">${getLocTitle(data)}</div>
                 <div class="map-distance-pill">
-                    <i class="fa-solid fa-route"></i> Cách mục tiêu: ${mapEarnedDistance.toLocaleString('en-US')} km
+                    <i class="fa-solid fa-route"></i> ${t('map_distance_label')} ${mapEarnedDistance.toLocaleString('en-US')} km
                 </div>
-                <div class="round-result-origin">${data.regionClue}</div>
+                <div class="round-result-origin">${getLocRegionClue(data)}</div>
             </div>
             <div class="score-badge-box">
-                <div class="score-badge-header">ĐIỂM</div>
+                <div class="score-badge-header">${t('score_header')}</div>
                 <div class="score-badge-value">${mapEarnedScore}</div>
             </div>
         </div>
 
         <button class="btn-action" onclick="backToMainMenu()" style="margin-top: 6px;">
-            <i class="fa-solid fa-house"></i> Về Menu chính
+            <i class="fa-solid fa-house"></i> ${t('back_menu_btn')}
         </button>
 
         <div class="yesterday-answer-line">
-            Đáp án của ngày hôm qua là <strong>${yesterdayLoc.title}</strong>
+            ${t('yesterday_single')} <strong>${getLocTitle(yesterdayLoc)}</strong>
         </div>
     `;
 
@@ -436,30 +449,30 @@ function mountResultMap(targetData, userGuess) {
         attributionControl: false
     });
 
-    L.tileLayer(GOOGLE_ROAD_TILES, {
+    L.tileLayer(getGoogleRoadTilesUrl(), {
         maxZoom: 20
     }).addTo(resultLeafletMap);
 
     const targetLatLng = [targetData.lat, targetData.lng];
     L.circleMarker(targetLatLng, {
         radius: 9,
-        fillColor: '#00f0ff',
-        color: '#0e1117',
+        fillColor: '#5688B4',
+        color: '#FFFFFF',
         weight: 3,
         fillOpacity: 1
     })
         .addTo(resultLeafletMap)
-        .bindPopup(`<b>Đáp án:</b> ${targetData.title}`)
+        .bindPopup(`<b>${t('map_popup_answer')}</b> ${getLocTitle(targetData)}`)
         .openPopup();
 
     if (userGuess) {
         const guessLatLng = [userGuess.lat, userGuess.lng];
         L.marker(guessLatLng)
             .addTo(resultLeafletMap)
-            .bindPopup('Vị trí bạn đoán');
+            .bindPopup(t('map_popup_guess'));
 
         L.polyline([guessLatLng, targetLatLng], {
-            color: '#0070f3',
+            color: '#5688B4',
             weight: 3,
             dashArray: '8, 8'
         }).addTo(resultLeafletMap);

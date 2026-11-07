@@ -1,4 +1,4 @@
-// Sound Mode Mechanics (1 Round Only)
+// Sound Mode Mechanics
 
 function getYtThumb(youtubeId) {
     return `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
@@ -262,11 +262,11 @@ function loadSoundRoundScreen() {
 
     const container = document.getElementById('sound-mode-view');
     container.innerHTML = `
-        <h2 class="game-mode-heading">ĐOÁN ÂM THANH</h2>
+        <h2 class="game-mode-heading">${t('sound_heading')}</h2>
 
         <div class="round-bar">
             <span class="round-title">Round 1 / 1</span>
-            <span id="sound-potential-score" class="badge-score">+${getSoundMaxScore()} điểm</span>
+            <span id="sound-potential-score" class="badge-score">+${getSoundMaxScore()} ${t('points_suffix')}</span>
         </div>
 
         <div class="sound-player-wrapper">
@@ -292,10 +292,10 @@ function loadSoundRoundScreen() {
 
         <div class="sound-clues-bar">
             <button id="btn-audio-only" class="btn-clue ${!isShowingVideoClue ? 'unlocked' : ''}" onclick="selectAudioOnlyTab()">
-                <i class="fa-solid fa-lock"></i> CHỈ ÂM THANH
+                <i class="fa-solid fa-lock"></i> ${t('sound_audio_only')}
             </button>
             <button id="btn-video-clue" class="btn-clue ${isShowingVideoClue ? 'unlocked' : ''}" onclick="unlockSoundVideoClue()">
-                <i class="fa-solid ${videoClueUnlocked ? 'fa-lock-open' : 'fa-lock'}"></i> ${videoClueUnlocked ? 'ĐÃ MỞ GỢI Ý VIDEO' : 'MỞ GỢI Ý VIDEO'}
+                <i class="fa-solid ${videoClueUnlocked ? 'fa-lock-open' : 'fa-lock'}"></i> ${videoClueUnlocked ? t('sound_video_unlocked') : t('sound_unlock_video')}
             </button>
         </div>
 
@@ -306,17 +306,17 @@ function loadSoundRoundScreen() {
                     type="text" 
                     id="sound-guess-input" 
                     class="guess-input" 
-                    placeholder="Nhập tên bài hát tại đây..." 
+                    placeholder="${t('sound_input_placeholder')}" 
                     autocomplete="off"
                 >
             </div>
-            <button id="sound-submit-btn" class="btn-guess" onclick="submitSoundGuess()">ĐOÁN</button>
+            <button id="sound-submit-btn" class="btn-guess" onclick="submitSoundGuess()">${t('guess_btn')}</button>
         </div>
 
         <div id="sound-round-feedback" class="round-feedback"></div>
 
         <div class="yesterday-answer-line">
-            Đáp án của ngày hôm qua là <strong>${yesterdaySong.title}</strong>
+            ${t('yesterday_single')} <strong>${yesterdaySong.title}</strong>
         </div>
     `;
 
@@ -402,11 +402,11 @@ function unlockSoundVideoClue() {
     if (btnAudio) btnAudio.classList.remove('unlocked');
     if (btnVideo) {
         btnVideo.classList.add('unlocked');
-        btnVideo.innerHTML = '<i class="fa-solid fa-lock-open"></i> ĐÃ MỞ GỢI Ý VIDEO';
+        btnVideo.innerHTML = `<i class="fa-solid fa-lock-open"></i> ${t('sound_video_unlocked')}`;
     }
 
     const scoreBadge = document.getElementById('sound-potential-score');
-    if (scoreBadge) scoreBadge.textContent = `+${getSoundMaxScore()} điểm`;
+    if (scoreBadge) scoreBadge.textContent = `+${getSoundMaxScore()} ${t('points_suffix')}`;
 }
 
 
@@ -489,7 +489,7 @@ function submitSoundGuess() {
     const userGuess = normalizeVN(inputEl.value);
     if (!userGuess) {
         if (feedbackEl) {
-            feedbackEl.textContent = 'Vui lòng nhập tên bài hát trước khi đoán!';
+            feedbackEl.textContent = t('sound_empty_warning');
             feedbackEl.className = 'round-feedback warning';
         }
         return;
@@ -523,26 +523,26 @@ function renderSoundFinalScreen(earnedScore) {
     const container = document.getElementById('sound-mode-view');
 
     container.innerHTML = `
-        <h2 class="game-mode-heading">KẾT QUẢ ÂM THANH HÔM NAY</h2>
+        <h2 class="game-mode-heading">${t('sound_result_heading')}</h2>
 
         <div class="round-result-card">
             <img src="${getYtThumb(song.youtubeId)}" class="round-result-img" alt="Song Thumbnail" onerror="handleYtThumbError(this, '${song.youtubeId}')">
             <div class="round-result-details">
                 <div class="round-result-title">${song.title}</div>
-                <div class="round-result-origin">Nghệ sĩ: ${song.artist}</div>
+                <div class="round-result-origin">${t('sound_artist_prefix')} ${song.artist}</div>
                 <div class="score-badge-box">
-                    <div class="score-badge-header">ĐIỂM</div>
+                    <div class="score-badge-header">${t('score_header')}</div>
                     <div class="score-badge-value">${earnedScore}</div>
                 </div>
             </div>
         </div>
 
         <button class="btn-action" onclick="backToMainMenu()" style="margin-top: 10px;">
-            <i class="fa-solid fa-house"></i> Về Menu chính
+            <i class="fa-solid fa-house"></i> ${t('back_menu_btn')}
         </button>
 
         <div class="yesterday-answer-line">
-            Đáp án của ngày hôm qua là <strong>${yesterdaySong.title}</strong>
+            ${t('yesterday_single')} <strong>${yesterdaySong.title}</strong>
         </div>
     `;
 

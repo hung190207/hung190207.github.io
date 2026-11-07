@@ -51,7 +51,7 @@ function triggerClickPulse(startTime, startFreq, endFreq, duration, gainLevel) {
 }
 
 
-// Settings (Language & Brightness)
+// Settings & Localization
 
 const I18N_DICT = {
     vi: {
@@ -78,7 +78,78 @@ const I18N_DICT = {
         nav_map: 'Đoán qua bản đồ',
         settings_title: 'Cài đặt',
         settings_language: 'Ngôn ngữ',
-        settings_brightness: 'Độ sáng'
+        settings_brightness: 'Độ sáng',
+
+        points_suffix: 'điểm',
+        score_header: 'ĐIỂM',
+        guess_btn: 'ĐOÁN',
+        next_round_btn: 'VÒNG TIẾP THEO ➔',
+        view_final_btn: 'XEM KẾT QUẢ TỔNG ➔',
+        back_menu_btn: 'Về Menu chính',
+        today_summary_heading: 'TỔNG KẾT HÔM NAY',
+        three_rounds_sub: 'Điểm tổng kết 3 vòng',
+        diff_easy: 'Dễ',
+        diff_medium: 'Trung bình',
+        diff_hard: 'Khó',
+        yesterday_single: 'Đáp án của ngày hôm qua là',
+        yesterday_multi_prefix: 'Đáp án của ngày hôm qua là',
+
+        img_heading: 'ĐOÁN HÌNH ẢNH',
+        img_clue_1: 'GỢI Ý 1',
+        img_clue_2: 'GỢI Ý 2',
+        img_clue_name: 'GỢI Ý TÊN',
+        img_clue_1_unlocked: 'ĐÃ MỞ GỢI Ý 1',
+        img_clue_2_unlocked: 'ĐÃ MỞ GỢI Ý 2',
+        img_clue_name_unlocked: 'ĐÃ MỞ GỢI Ý TÊN',
+        img_feature_label: 'Đặc điểm:',
+        img_origin_label: 'Nơi xuất xứ:',
+        img_name_label: 'Tên món:',
+        img_input_placeholder: 'Nhập tên món ăn tại đây...',
+        img_empty_warning: 'Vui lòng nhập tên món ăn trước khi đoán!',
+
+        sound_heading: 'ĐOÁN ÂM THANH',
+        sound_result_heading: 'KẾT QUẢ ÂM THANH HÔM NAY',
+        sound_audio_only: 'CHỈ ÂM THANH',
+        sound_unlock_video: 'MỞ GỢI Ý VIDEO',
+        sound_video_unlocked: 'ĐÃ MỞ GỢI Ý VIDEO',
+        sound_input_placeholder: 'Nhập tên bài hát tại đây...',
+        sound_empty_warning: 'Vui lòng nhập tên bài hát trước khi đoán!',
+        sound_artist_prefix: 'Nghệ sĩ:',
+
+        hist_heading: 'ĐOÁN NHÂN VẬT LỊCH SỬ',
+        hist_subtitle: 'Đoán nhân vật lịch sử Việt Nam của ngày hôm nay!',
+        hist_clue_1: 'GỢI Ý 1: CÂU NÓI',
+        hist_clue_1_unlocked: 'ĐÃ MỞ GỢI Ý 1',
+        hist_clue_2: 'GỢI Ý 2: SỰ KIỆN',
+        hist_clue_2_unlocked: 'ĐÃ MỞ GỢI Ý 2',
+        hist_after_guesses: 'SAU {n} LƯỢT',
+        hist_event_label: 'Sự kiện lịch sử:',
+        hist_input_placeholder: 'Nhập tên nhân vật lịch sử...',
+        hist_empty_warning: 'Vui lòng nhập tên nhân vật trước khi đoán!',
+        hist_not_found_warning: 'Không tìm thấy nhân vật này trong danh sách!',
+        hist_already_guessed: 'Bạn đã đoán nhân vật này rồi!',
+        hist_col_char: 'Nhân vật',
+        hist_col_role: 'Vai trò',
+        hist_col_event: 'Sự kiện gắn liền',
+        hist_col_region: 'Vùng',
+        hist_col_era: 'Giai đoạn',
+        hist_legend_correct: 'Chính xác',
+        hist_legend_partial: 'Đúng một phần',
+        hist_legend_wrong: 'Không khớp',
+        hist_victory_title: 'Chính xác:',
+        hist_victory_desc: 'Bạn đã tìm ra nhân vật sau {tries} lượt đoán và nhận được <strong>{score} điểm</strong>!',
+
+        map_result_heading: 'KẾT QUẢ BẢN ĐỒ HÔM NAY',
+        map_reset_start: 'Quay về vị trí xuất phát',
+        map_fullscreen: 'Toàn màn hình',
+        map_open_mobile: 'MỞ BẢN ĐỒ ĐOÁN',
+        map_toggle_size: 'Phóng to / Thu nhỏ',
+        map_close_mobile: 'Đóng bản đồ',
+        map_pick_prompt: 'CHỌN VỊ TRÍ TRÊN BẢN ĐỒ',
+        map_guess_this: 'ĐOÁN VỊ TRÍ NÀY',
+        map_distance_label: 'Cách mục tiêu:',
+        map_popup_answer: 'Đáp án:',
+        map_popup_guess: 'Vị trí bạn đoán'
     },
     en: {
         subtitle: 'GUESS EVERYTHING ABOUT VIETNAM',
@@ -104,7 +175,78 @@ const I18N_DICT = {
         nav_map: 'Guess by Map',
         settings_title: 'Settings',
         settings_language: 'Language',
-        settings_brightness: 'Brightness'
+        settings_brightness: 'Brightness',
+
+        points_suffix: 'pts',
+        score_header: 'SCORE',
+        guess_btn: 'GUESS',
+        next_round_btn: 'NEXT ROUND ➔',
+        view_final_btn: 'VIEW FINAL RESULTS ➔',
+        back_menu_btn: 'Back to Main Menu',
+        today_summary_heading: "TODAY'S SUMMARY",
+        three_rounds_sub: 'Total score across 3 rounds',
+        diff_easy: 'Easy',
+        diff_medium: 'Medium',
+        diff_hard: 'Hard',
+        yesterday_single: "Yesterday's answer was",
+        yesterday_multi_prefix: "Yesterday's answers were",
+
+        img_heading: 'GUESS THE DISH',
+        img_clue_1: 'CLUE 1',
+        img_clue_2: 'CLUE 2',
+        img_clue_name: 'NAME CLUE',
+        img_clue_1_unlocked: 'CLUE 1 UNLOCKED',
+        img_clue_2_unlocked: 'CLUE 2 UNLOCKED',
+        img_clue_name_unlocked: 'NAME CLUE UNLOCKED',
+        img_feature_label: 'Features:',
+        img_origin_label: 'Origin:',
+        img_name_label: 'Dish Name:',
+        img_input_placeholder: 'Type dish name here...',
+        img_empty_warning: 'Please enter a dish name before guessing!',
+
+        sound_heading: 'GUESS THE SONG',
+        sound_result_heading: "TODAY'S SOUND RESULT",
+        sound_audio_only: 'AUDIO ONLY',
+        sound_unlock_video: 'UNLOCK VIDEO CLUE',
+        sound_video_unlocked: 'VIDEO CLUE UNLOCKED',
+        sound_input_placeholder: 'Type song title here...',
+        sound_empty_warning: 'Please enter a song title before guessing!',
+        sound_artist_prefix: 'Artist:',
+
+        hist_heading: 'GUESS THE HISTORICAL FIGURE',
+        hist_subtitle: "Guess today's Vietnamese historical figure!",
+        hist_clue_1: 'CLUE 1: QUOTE',
+        hist_clue_1_unlocked: 'CLUE 1 UNLOCKED',
+        hist_clue_2: 'CLUE 2: EVENT',
+        hist_clue_2_unlocked: 'CLUE 2 UNLOCKED',
+        hist_after_guesses: 'IN {n} TRIES',
+        hist_event_label: 'Historical Event:',
+        hist_input_placeholder: 'Type historical figure name...',
+        hist_empty_warning: 'Please enter a name before guessing!',
+        hist_not_found_warning: 'Figure not found in the database!',
+        hist_already_guessed: 'You already guessed this figure!',
+        hist_col_char: 'Figure',
+        hist_col_role: 'Role',
+        hist_col_event: 'Key Event',
+        hist_col_region: 'Region',
+        hist_col_era: 'Era',
+        hist_legend_correct: 'Correct',
+        hist_legend_partial: 'Partial',
+        hist_legend_wrong: 'Incorrect',
+        hist_victory_title: 'Correct:',
+        hist_victory_desc: 'You found the figure in {tries} tries and earned <strong>{score} pts</strong>!',
+
+        map_result_heading: "TODAY'S MAP RESULT",
+        map_reset_start: 'Return to start location',
+        map_fullscreen: 'Fullscreen',
+        map_open_mobile: 'OPEN GUESS MAP',
+        map_toggle_size: 'Expand / Collapse',
+        map_close_mobile: 'Close Map',
+        map_pick_prompt: 'PLACE YOUR PIN ON THE MAP',
+        map_guess_this: 'GUESS THIS LOCATION',
+        map_distance_label: 'Distance from target:',
+        map_popup_answer: 'Answer:',
+        map_popup_guess: 'Your guess'
     }
 };
 
@@ -112,6 +254,16 @@ let currentSettings = {
     lang: 'vi',
     brightness: 100
 };
+
+function isEn() {
+    return currentSettings.lang === 'en';
+}
+
+function t(key) {
+    const lang = currentSettings.lang || 'vi';
+    const dict = I18N_DICT[lang] || I18N_DICT.vi;
+    return dict[key] !== undefined ? dict[key] : (I18N_DICT.vi[key] || key);
+}
 
 function loadUserSettings() {
     try {
@@ -163,6 +315,12 @@ function applyLanguage(lang) {
     const btnEn = document.getElementById('lang-btn-en');
     if (btnVi) btnVi.classList.toggle('active', lang === 'vi');
     if (btnEn) btnEn.classList.toggle('active', lang === 'en');
+
+    const activeMode = localStorage.getItem(ACTIVE_MODE_KEY);
+    if (activeMode === 'image' && typeof initImageMode === 'function') initImageMode();
+    if (activeMode === 'sound' && typeof initSoundMode === 'function') initSoundMode();
+    if (activeMode === 'history' && typeof initHistoryMode === 'function') initHistoryMode();
+    if (activeMode === 'map' && typeof initMapMode === 'function') initMapMode();
 }
 
 function setGameBrightness(val) {

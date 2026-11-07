@@ -4,6 +4,20 @@ function getDishName(item) {
     return item.name ? item.name : String.fromCharCode(...item.nameCodes);
 }
 
+function getDishFeature(item) {
+    return isEn() && item.featureClueEn ? item.featureClueEn : item.featureClue;
+}
+
+function getDishOrigin(item) {
+    return isEn() && item.originClueEn ? item.originClueEn : item.originClue;
+}
+
+function getDifficultyLabel(diffKey) {
+    if (diffKey === 'easy') return t('diff_easy');
+    if (diffKey === 'medium') return t('diff_medium');
+    return t('diff_hard');
+}
+
 function handleDishImgError(imgEl) {
     const rawSrc = imgEl.getAttribute('data-orig-src') || imgEl.getAttribute('src') || '';
     if (!imgEl.getAttribute('data-orig-src')) {
@@ -58,9 +72,9 @@ function pickDailyRounds() {
     const r3 = DISH_DATABASE.hard[getDailySeedHash('image_hard') % DISH_DATABASE.hard.length];
 
     return [
-        { ...r1, round: 1, difficulty: 'Dễ' },
-        { ...r2, round: 2, difficulty: 'Trung bình' },
-        { ...r3, round: 3, difficulty: 'Khó' }
+        { ...r1, round: 1, diffKey: 'easy' },
+        { ...r2, round: 2, diffKey: 'medium' },
+        { ...r3, round: 3, diffKey: 'hard' }
     ];
 }
 
@@ -68,7 +82,7 @@ function getYesterdayImageAnswersHTML() {
     const yEasy = getDishName(DISH_DATABASE.easy[getYesterdaySeedHash('image_easy') % DISH_DATABASE.easy.length]);
     const yMed = getDishName(DISH_DATABASE.medium[getYesterdaySeedHash('image_medium') % DISH_DATABASE.medium.length]);
     const yHard = getDishName(DISH_DATABASE.hard[getYesterdaySeedHash('image_hard') % DISH_DATABASE.hard.length]);
-    return `<div class="yesterday-answer-line">Đáp án của ngày hôm qua là Dễ: <strong>${yEasy}</strong>, Trung Bình: <strong>${yMed}</strong>, Khó: <strong>${yHard}</strong></div>`;
+    return `<div class="yesterday-answer-line">${t('yesterday_multi_prefix')} ${t('diff_easy')}: <strong>${yEasy}</strong>, ${t('diff_medium')}: <strong>${yMed}</strong>, ${t('diff_hard')}: <strong>${yHard}</strong></div>`;
 }
 
 
@@ -153,12 +167,12 @@ function loadRoundScreen(index, savedClues = 0) {
 
     const container = document.getElementById('image-mode-view');
     container.innerHTML = `
-        <h2 class="game-mode-heading">ĐOÁN HÌNH ẢNH</h2>
+        <h2 class="game-mode-heading">${t('img_heading')}</h2>
 
         <div class="round-bar">
             <span id="img-round-number" class="round-title">Round ${data.round} / 3</span>
-            <span id="img-difficulty-badge" class="badge-difficulty">${data.difficulty}</span>
-            <span id="img-potential-score" class="badge-score">+${getCurrentRoundMaxScore()} điểm</span>
+            <span id="img-difficulty-badge" class="badge-difficulty">${getDifficultyLabel(data.diffKey)}</span>
+            <span id="img-potential-score" class="badge-score">+${getCurrentRoundMaxScore()} ${t('points_suffix')}</span>
         </div>
 
         <div class="image-stage">
@@ -167,13 +181,13 @@ function loadRoundScreen(index, savedClues = 0) {
 
         <div class="clues-bar">
             <button id="btn-clue-1" class="btn-clue" onclick="handleClueButtonClick(1)">
-                <i class="fa-solid fa-unlock"></i> GỢI Ý 1
+                <i class="fa-solid fa-unlock"></i> ${t('img_clue_1')}
             </button>
             <button id="btn-clue-2" class="btn-clue" onclick="handleClueButtonClick(2)" disabled>
-                <i class="fa-solid fa-lock"></i> GỢI Ý 2
+                <i class="fa-solid fa-lock"></i> ${t('img_clue_2')}
             </button>
             <button id="btn-clue-3" class="btn-clue" onclick="handleClueButtonClick(3)" disabled>
-                <i class="fa-solid fa-lock"></i> GỢI Ý TÊN
+                <i class="fa-solid fa-lock"></i> ${t('img_clue_name')}
             </button>
         </div>
 
@@ -190,11 +204,11 @@ function loadRoundScreen(index, savedClues = 0) {
                     type="text" 
                     id="guess-input" 
                     class="guess-input" 
-                    placeholder="Nhập tên món ăn tại đây..." 
+                    placeholder="${t('img_input_placeholder')}" 
                     autocomplete="off"
                 >
             </div>
-            <button id="guess-submit-btn" class="btn-guess" onclick="submitImageGuess()">ĐOÁN</button>
+            <button id="guess-submit-btn" class="btn-guess" onclick="submitImageGuess()">${t('guess_btn')}</button>
         </div>
 
         <div id="round-feedback" class="round-feedback"></div>
@@ -220,24 +234,24 @@ function updateClueButtonsAndLines() {
     btnClue1.disabled = false;
     if (unlockedCluesCount >= 1) {
         btnClue1.classList.add('unlocked');
-        btnClue1.innerHTML = '<i class="fa-solid fa-lock-open"></i> ĐÃ MỞ GỢI Ý 1';
+        btnClue1.innerHTML = `<i class="fa-solid fa-lock-open"></i> ${t('img_clue_1_unlocked')}`;
         line1.style.display = 'block';
-        line1.innerHTML = `<span class="clue-label">Đặc điểm:</span> ${data.featureClue}`;
+        line1.innerHTML = `<span class="clue-label">${t('img_feature_label')}</span> ${getDishFeature(data)}`;
     } else {
         btnClue1.classList.remove('unlocked');
-        btnClue1.innerHTML = '<i class="fa-solid fa-unlock"></i> GỢI Ý 1';
+        btnClue1.innerHTML = `<i class="fa-solid fa-unlock"></i> ${t('img_clue_1')}`;
         line1.style.display = 'none';
     }
 
     btnClue2.disabled = unlockedCluesCount < 1;
     if (unlockedCluesCount >= 2) {
         btnClue2.classList.add('unlocked');
-        btnClue2.innerHTML = '<i class="fa-solid fa-lock-open"></i> ĐÃ MỞ GỢI Ý 2';
+        btnClue2.innerHTML = `<i class="fa-solid fa-lock-open"></i> ${t('img_clue_2_unlocked')}`;
         line2.style.display = 'block';
-        line2.innerHTML = `<span class="clue-label">Nơi xuất xứ:</span> ${data.originClue}`;
+        line2.innerHTML = `<span class="clue-label">${t('img_origin_label')}</span> ${getDishOrigin(data)}`;
     } else {
         btnClue2.classList.remove('unlocked');
-        btnClue2.innerHTML = '<i class="fa-solid fa-lock"></i> GỢI Ý 2';
+        btnClue2.innerHTML = `<i class="fa-solid fa-lock"></i> ${t('img_clue_2')}`;
         line2.style.display = 'none';
     }
 
@@ -247,16 +261,16 @@ function updateClueButtonsAndLines() {
         const maskedTitle = buildMaskedTitleClue(decodedName);
 
         btnClue3.classList.add('unlocked');
-        btnClue3.innerHTML = '<i class="fa-solid fa-lock-open"></i> ĐÃ MỞ GỢI Ý TÊN';
+        btnClue3.innerHTML = `<i class="fa-solid fa-lock-open"></i> ${t('img_clue_name_unlocked')}`;
         line3.style.display = 'block';
-        line3.innerHTML = `<span class="clue-label">Tên món:</span> <span class="title-mask">${maskedTitle}</span>`;
+        line3.innerHTML = `<span class="clue-label">${t('img_name_label')}</span> <span class="title-mask">${maskedTitle}</span>`;
     } else {
         btnClue3.classList.remove('unlocked');
-        btnClue3.innerHTML = '<i class="fa-solid fa-lock"></i> GỢI Ý TÊN';
+        btnClue3.innerHTML = `<i class="fa-solid fa-lock"></i> ${t('img_clue_name')}`;
         line3.style.display = 'none';
     }
 
-    document.getElementById('img-potential-score').textContent = `+${getCurrentRoundMaxScore()} điểm`;
+    document.getElementById('img-potential-score').textContent = `+${getCurrentRoundMaxScore()} ${t('points_suffix')}`;
 }
 
 function handleClueButtonClick(clueLevel) {
@@ -351,7 +365,7 @@ function submitImageGuess() {
     const userGuess = normalizeVN(inputEl.value);
     if (!userGuess) {
         if (feedbackEl) {
-            feedbackEl.textContent = 'Vui lòng nhập tên món ăn trước khi đoán!';
+            feedbackEl.textContent = t('img_empty_warning');
             feedbackEl.className = 'round-feedback warning';
         }
         return;
@@ -380,24 +394,24 @@ let imageResultKeydownHandler = null;
 function renderRoundResultScreen(index, earnedScore) {
     const data = activeDailyRounds[index];
     const dishName = getDishName(data);
-    const nextButtonText = index < activeDailyRounds.length - 1 ? 'VÒNG TIẾP THEO ➔' : 'XEM KẾT QUẢ TỔNG ➔';
+    const nextButtonText = index < activeDailyRounds.length - 1 ? t('next_round_btn') : t('view_final_btn');
 
     const container = document.getElementById('image-mode-view');
     container.innerHTML = `
-        <h2 class="game-mode-heading">ĐOÁN HÌNH ẢNH</h2>
+        <h2 class="game-mode-heading">${t('img_heading')}</h2>
 
         <div class="round-bar">
             <span class="round-title">Round ${data.round}</span>
-            <span class="badge-difficulty">${data.difficulty}</span>
+            <span class="badge-difficulty">${getDifficultyLabel(data.diffKey)}</span>
         </div>
 
         <div class="round-result-card">
             <img src="${data.image}" class="round-result-img" alt="Dish" onerror="handleDishImgError(this)">
             <div class="round-result-details">
                 <div class="round-result-title">${dishName}</div>
-                <div class="round-result-origin">${data.originClue}</div>
+                <div class="round-result-origin">${getDishOrigin(data)}</div>
                 <div class="score-badge-box">
-                    <div class="score-badge-header">ĐIỂM</div>
+                    <div class="score-badge-header">${t('score_header')}</div>
                     <div class="score-badge-value">${earnedScore}</div>
                 </div>
             </div>
@@ -457,14 +471,14 @@ function renderFinalScoreScreen(scoresArray) {
         roundsHtml += `
             <div class="round-recap-card">
                 <div class="recap-header">
-                    <span class="recap-round-title">Round ${round.round} - ${round.difficulty}</span>
+                    <span class="recap-round-title">Round ${round.round} - ${getDifficultyLabel(round.diffKey)}</span>
                     <span class="recap-points">${pts.toLocaleString('en-US')} pts</span>
                 </div>
                 <div class="recap-body">
                     <img src="${round.image}" class="recap-thumb" alt="Dish" onerror="handleDishImgError(this)">
                     <div class="recap-info">
                         <h4>${dishName}</h4>
-                        <p>${round.originClue}</p>
+                        <p>${getDishOrigin(round)}</p>
                     </div>
                 </div>
             </div>
@@ -473,11 +487,11 @@ function renderFinalScoreScreen(scoresArray) {
 
     container.innerHTML = `
         <div class="final-score-container">
-            <h2 class="game-mode-heading">TỔNG KẾT HÔM NAY</h2>
+            <h2 class="game-mode-heading">${t('today_summary_heading')}</h2>
             
             <div class="final-score-banner">
                 <div class="final-score-number">${totalSum.toLocaleString('en-US')}</div>
-                <div class="final-score-sub">Điểm tổng kết 3 vòng</div>
+                <div class="final-score-sub">${t('three_rounds_sub')}</div>
             </div>
 
             <div style="width: 100%; display: flex; flex-direction: column; gap: 14px;">
@@ -485,7 +499,7 @@ function renderFinalScoreScreen(scoresArray) {
             </div>
 
             <button class="btn-action" onclick="backToMainMenu()" style="margin-top: 10px;">
-                <i class="fa-solid fa-house"></i> Về Menu chính
+                <i class="fa-solid fa-house"></i> ${t('back_menu_btn')}
             </button>
 
             ${getYesterdayImageAnswersHTML()}

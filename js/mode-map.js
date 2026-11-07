@@ -12,6 +12,11 @@ function pickDailyMapLocation() {
     return MAP_DATABASE[idx];
 }
 
+function getYesterdayMapLocation() {
+    const idx = getYesterdaySeedHash('map_daily_location') % MAP_DATABASE.length;
+    return MAP_DATABASE[idx];
+}
+
 function buildSvEmbedUrl(lat, lng, heading = 0, panoId = '') {
     const panoParam = panoId ? `&panoid=${encodeURIComponent(panoId)}` : '';
     return `https://maps.google.com/maps?layer=c&cbll=${lat},${lng}${panoParam}&cbp=12,${heading},0,0,0&output=svembed`;
@@ -156,6 +161,7 @@ function initMapMode() {
 
 function loadMapRoundScreen() {
     const loc = activeDailyLocation;
+    const yesterdayLoc = getYesterdayMapLocation();
     mapRoundFinished = false;
     selectedLatLng = null;
 
@@ -177,6 +183,10 @@ function loadMapRoundScreen() {
                 <span class="compass-main">N</span>
                 <span class="compass-ticks">|||||</span>
                 <span>NE</span>
+            </div>
+
+            <div style="position:absolute;top:54px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(14,17,23,0.82);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.14);border-radius:50px;padding:5px 16px;font-size:0.8rem;color:var(--text-muted);pointer-events:none;white-space:nowrap;">
+                Đáp án của ngày hôm qua là <strong style="color:var(--cyan-glow);">${yesterdayLoc.title}</strong>
             </div>
 
             <div class="map-hud-left">
@@ -375,6 +385,7 @@ function submitMapGuess() {
 
 function renderMapFinalScreen() {
     const data = activeDailyLocation;
+    const yesterdayLoc = getYesterdayMapLocation();
     const container = document.getElementById('map-mode-view');
 
     container.innerHTML = `
@@ -401,6 +412,10 @@ function renderMapFinalScreen() {
         <button class="btn-action" onclick="backToMainMenu()" style="margin-top: 6px;">
             <i class="fa-solid fa-house"></i> Về Menu chính
         </button>
+
+        <div class="yesterday-answer-line">
+            Đáp án của ngày hôm qua là <strong>${yesterdayLoc.title}</strong>
+        </div>
     `;
 
     mountResultMap(data, mapUserGuess);

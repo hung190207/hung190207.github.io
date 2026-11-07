@@ -554,6 +554,19 @@ footer.main-footer {
     color: #ffd166;
 }
 
+.yesterday-answer-line {
+    margin-top: 16px;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.5;
+}
+
+.yesterday-answer-line strong {
+    color: var(--cyan-glow);
+    font-weight: 700;
+}
+
 .autocomplete-items {
     display: none;
     position: absolute;

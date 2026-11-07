@@ -20,6 +20,11 @@ function pickDailySoundSong() {
     return SONG_DATABASE[idx];
 }
 
+function getYesterdaySoundSong() {
+    const idx = getYesterdaySeedHash('sound_daily_song') % SONG_DATABASE.length;
+    return SONG_DATABASE[idx];
+}
+
 let activeDailySong = null;
 let soundEarnedScore = 0;
 let videoClueUnlocked = false;
@@ -251,6 +256,7 @@ function initSoundMode() {
 
 function loadSoundRoundScreen() {
     const song = activeDailySong;
+    const yesterdaySong = getYesterdaySoundSong();
     const clipLen = song.clipDuration || 20;
     soundRoundFinished = false;
 
@@ -308,6 +314,10 @@ function loadSoundRoundScreen() {
         </div>
 
         <div id="sound-round-feedback" class="round-feedback"></div>
+
+        <div class="yesterday-answer-line">
+            Đáp án của ngày hôm qua là <strong>${yesterdaySong.title}</strong>
+        </div>
     `;
 
     bindAudioControls();
@@ -509,6 +519,7 @@ let soundFinalKeydownHandler = null;
 function renderSoundFinalScreen(earnedScore) {
     stopSoundPlayer();
     const song = activeDailySong;
+    const yesterdaySong = getYesterdaySoundSong();
     const container = document.getElementById('sound-mode-view');
 
     container.innerHTML = `
@@ -529,13 +540,17 @@ function renderSoundFinalScreen(earnedScore) {
         <button class="btn-action" onclick="backToMainMenu()" style="margin-top: 10px;">
             <i class="fa-solid fa-house"></i> Về Menu chính
         </button>
+
+        <div class="yesterday-answer-line">
+            Đáp án của ngày hôm qua là <strong>${yesterdaySong.title}</strong>
+        </div>
     `;
 
     if (soundFinalKeydownHandler) {
         document.removeEventListener('keydown', soundFinalKeydownHandler);
     }
     soundFinalKeydownHandler = function (e) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && localStorage.getItem('vietnamguesser_active_mode') === 'sound') {
             e.preventDefault();
             document.removeEventListener('keydown', soundFinalKeydownHandler);
             soundFinalKeydownHandler = null;

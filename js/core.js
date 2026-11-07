@@ -68,8 +68,13 @@ function getHanoiDateString() {
     return hanoiTime.toISOString().slice(0, 10);
 }
 
-function getDailySeedHash(saltString) {
-    const str = `${getHanoiDateString()}::vietnamguesser::${saltString}`;
+function getYesterdayHanoiDateString() {
+    const yesterdayHanoi = new Date(Date.now() + HANOI_OFFSET_MS - ONE_DAY_MS);
+    return yesterdayHanoi.toISOString().slice(0, 10);
+}
+
+function hashSeedString(dateStr, saltString) {
+    const str = `${dateStr}::vietnamguesser::${saltString}`;
     let h = 2166136261 >>> 0;
     for (let i = 0; i < str.length; i++) {
         h = Math.imul(h ^ str.charCodeAt(i), 16777619);
@@ -80,6 +85,14 @@ function getDailySeedHash(saltString) {
     h ^= h >>> 17;
     h += h << 5;
     return h >>> 0;
+}
+
+function getDailySeedHash(saltString) {
+    return hashSeedString(getHanoiDateString(), saltString);
+}
+
+function getYesterdaySeedHash(saltString) {
+    return hashSeedString(getYesterdayHanoiDateString(), saltString);
 }
 
 function updateCountdownTimers() {
@@ -206,9 +219,10 @@ function openGameMode(mode, isReload = false) {
 
     const imgView = document.getElementById('image-mode-view');
     const soundView = document.getElementById('sound-mode-view');
+    const historyView = document.getElementById('history-mode-view');
     const mapView = document.getElementById('map-mode-view');
 
-    if (mode === 'image' || mode === 'sound' || mode === 'map') {
+    if (MODES.includes(mode)) {
         document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
         const activeNav = document.getElementById(`nav-mode-${mode}`);
         if (activeNav) activeNav.classList.add('active');
@@ -219,15 +233,13 @@ function openGameMode(mode, isReload = false) {
 
         if (imgView) imgView.style.display = mode === 'image' ? 'flex' : 'none';
         if (soundView) soundView.style.display = mode === 'sound' ? 'flex' : 'none';
+        if (historyView) historyView.style.display = mode === 'history' ? 'flex' : 'none';
         if (mapView) mapView.style.display = mode === 'map' ? 'flex' : 'none';
 
         if (mode === 'image' && typeof initImageMode === 'function') initImageMode();
         if (mode === 'sound' && typeof initSoundMode === 'function') initSoundMode();
+        if (mode === 'history' && typeof initHistoryMode === 'function') initHistoryMode();
         if (mode === 'map' && typeof initMapMode === 'function') initMapMode();
-    } else {
-        setTimeout(() => {
-            alert('Chế độ này sẽ được tích hợp ở bước tiếp theo!');
-        }, 80);
     }
 }
 
@@ -252,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateCountdownTimers, 1000);
 
     const savedMode = localStorage.getItem(ACTIVE_MODE_KEY);
-    if (savedMode === 'image' || savedMode === 'sound' || savedMode === 'map') {
+    if (MODES.includes(savedMode)) {
         openGameMode(savedMode, true);
     }
 });

@@ -64,6 +64,13 @@ function pickDailyRounds() {
     ];
 }
 
+function getYesterdayImageAnswersHTML() {
+    const yEasy = getDishName(DISH_DATABASE.easy[getYesterdaySeedHash('image_easy') % DISH_DATABASE.easy.length]);
+    const yMed = getDishName(DISH_DATABASE.medium[getYesterdaySeedHash('image_medium') % DISH_DATABASE.medium.length]);
+    const yHard = getDishName(DISH_DATABASE.hard[getYesterdaySeedHash('image_hard') % DISH_DATABASE.hard.length]);
+    return `<div class="yesterday-answer-line">Đáp án của ngày hôm qua là Dễ: <strong>${yEasy}</strong>, Trung Bình: <strong>${yMed}</strong>, Khó: <strong>${yHard}</strong></div>`;
+}
+
 
 // State & Progress
 
@@ -191,6 +198,7 @@ function loadRoundScreen(index, savedClues = 0) {
         </div>
 
         <div id="round-feedback" class="round-feedback"></div>
+        ${getYesterdayImageAnswersHTML()}
     `;
 
     updateClueButtonsAndLines();
@@ -396,13 +404,14 @@ function renderRoundResultScreen(index, earnedScore) {
         </div>
 
         <button id="next-round-action-btn" class="btn-guess" onclick="nextImageRound()">${nextButtonText}</button>
+        ${getYesterdayImageAnswersHTML()}
     `;
 
     if (imageResultKeydownHandler) {
         document.removeEventListener('keydown', imageResultKeydownHandler);
     }
     imageResultKeydownHandler = function (e) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && localStorage.getItem('vietnamguesser_active_mode') === 'image') {
             e.preventDefault();
             document.removeEventListener('keydown', imageResultKeydownHandler);
             imageResultKeydownHandler = null;
@@ -478,6 +487,8 @@ function renderFinalScoreScreen(scoresArray) {
             <button class="btn-action" onclick="backToMainMenu()" style="margin-top: 10px;">
                 <i class="fa-solid fa-house"></i> Về Menu chính
             </button>
+
+            ${getYesterdayImageAnswersHTML()}
         </div>
     `;
 
@@ -485,7 +496,7 @@ function renderFinalScoreScreen(scoresArray) {
         document.removeEventListener('keydown', finalScoreKeydownHandler);
     }
     finalScoreKeydownHandler = function (e) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && localStorage.getItem('vietnamguesser_active_mode') === 'image') {
             e.preventDefault();
             document.removeEventListener('keydown', finalScoreKeydownHandler);
             finalScoreKeydownHandler = null;

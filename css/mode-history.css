@@ -1,9 +1,9 @@
-/* History Mode (LoLdle Classic Style) */
+/* History Mode Styles */
 .history-clue-panel {
     width: 100%;
     max-width: 640px;
-    background-color: var(--card-bg);
-    border: 1.5px solid rgba(0, 168, 255, 0.28);
+    background-color: #FFFFFF;
+    border: 1.5px solid var(--border-soft);
     border-radius: 14px;
     padding: 20px;
     display: flex;
@@ -11,7 +11,7 @@
     align-items: center;
     gap: 14px;
     margin-bottom: 18px;
-    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 8px 24px rgba(141, 180, 214, 0.18);
 }
 
 .history-clue-subtitle {
@@ -30,8 +30,8 @@
 
 .history-clue-box {
     width: 100%;
-    background-color: rgba(14, 17, 23, 0.75);
-    border: 1px solid rgba(0, 240, 255, 0.25);
+    background-color: var(--bg-color);
+    border: 1.5px solid var(--primary-blue);
     border-radius: 10px;
     padding: 14px 16px;
     text-align: center;
@@ -77,7 +77,7 @@
     font-weight: 700;
     color: var(--text-color);
     padding: 8px 4px;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 2px solid var(--border-soft);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -94,34 +94,34 @@
     text-align: center;
     font-size: 0.88rem;
     font-weight: 700;
-    color: #fff;
-    border: 1.5px solid rgba(255, 255, 255, 0.22);
-    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.35);
+    color: #FFFFFF;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 12px rgba(141, 180, 214, 0.2);
     line-height: 1.3;
     overflow: hidden;
     animation: tileFlipIn 0.35s ease forwards;
 }
 
 .loldle-tile.tile-character {
-    background: linear-gradient(135deg, #1b2230, #253042);
-    border-color: var(--cyan-dim);
-    color: var(--cyan-glow);
+    background: #FFFFFF;
+    border-color: var(--primary-blue);
+    color: var(--text-color);
     font-size: 0.92rem;
 }
 
 .loldle-tile.tile-correct {
-    background: linear-gradient(135deg, #169c53, #20bf6b);
-    border-color: #55efc4;
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    border-color: #a3e4d7;
 }
 
 .loldle-tile.tile-partial {
-    background: linear-gradient(135deg, #d37815, #f39c12);
-    border-color: #ffeaa7;
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    border-color: #fdebd0;
 }
 
 .loldle-tile.tile-wrong {
-    background: linear-gradient(135deg, #b32424, #eb3b5a);
-    border-color: #ff7675;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border-color: #fadbd8;
 }
 
 .era-tile-content {
@@ -139,7 +139,7 @@
     align-items: center;
     justify-content: center;
     font-size: 3.1rem;
-    color: rgba(0, 0, 0, 0.26);
+    color: rgba(0, 0, 0, 0.18);
     z-index: 1;
     pointer-events: none;
 }
@@ -159,8 +159,8 @@
 /* Color Indicators Legend */
 .loldle-legend-box {
     margin-top: 18px;
-    background-color: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background-color: #FFFFFF;
+    border: 1.5px solid var(--border-soft);
     border-radius: 10px;
     padding: 12px 20px;
     display: flex;
@@ -168,6 +168,7 @@
     justify-content: center;
     gap: 20px;
     flex-wrap: wrap;
+    box-shadow: 0 4px 12px rgba(141, 180, 214, 0.12);
 }
 
 .legend-item {
@@ -183,19 +184,18 @@
     width: 18px;
     height: 18px;
     border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.legend-swatch.correct { background: #20bf6b; }
+.legend-swatch.correct { background: #2ecc71; }
 .legend-swatch.partial { background: #f39c12; }
-.legend-swatch.wrong { background: #eb3b5a; }
+.legend-swatch.wrong { background: #e74c3c; }
 
 .history-victory-banner {
     width: 100%;
     max-width: 640px;
     margin-top: 18px;
-    background-color: var(--card-bg);
-    border: 1.5px solid rgba(0, 240, 255, 0.4);
+    background-color: #FFFFFF;
+    border: 2px solid var(--primary-blue);
     border-radius: 14px;
     padding: 20px;
     display: flex;

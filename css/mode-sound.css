@@ -31,11 +31,11 @@
     width: 100%;
     height: 360px;
     opacity: 1;
-    background-color: var(--card-bg);
-    border: 1.5px solid rgba(0, 168, 255, 0.25);
+    background-color: #FFFFFF;
+    border: 1.5px solid var(--border-soft);
     border-bottom: none;
     border-radius: 12px 12px 0 0;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 8px 24px rgba(141, 180, 214, 0.22);
 }
 
 .sound-video-clue-stage::before {
@@ -63,21 +63,21 @@
 
 .audio-player-bar {
     width: 100%;
-    background-color: var(--card-bg);
-    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    background-color: #FFFFFF;
+    border: 1.5px solid var(--border-soft);
     border-radius: 10px;
     padding: 14px 20px;
     display: flex;
     align-items: center;
     gap: 14px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 6px 20px rgba(141, 180, 214, 0.18);
 }
 
 .sound-video-clue-stage.show + .audio-player-bar {
     border-radius: 0 0 12px 12px;
-    border-color: rgba(0, 168, 255, 0.25);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    background-color: rgba(18, 22, 31, 0.95);
+    border-color: var(--border-soft);
+    border-top: 1px solid var(--border-soft);
+    background-color: #FFFFFF;
 }
 
 .audio-btn {
@@ -99,7 +99,7 @@
 
 .audio-seek-slider {
     flex: 1;
-    accent-color: var(--cyan-glow);
+    accent-color: var(--primary-blue);
     height: 5px;
     border-radius: 4px;
     cursor: pointer;
@@ -107,7 +107,7 @@
 
 .audio-vol-slider {
     width: 95px;
-    accent-color: var(--cyan-glow);
+    accent-color: var(--primary-blue);
     height: 5px;
     border-radius: 4px;
     cursor: pointer;

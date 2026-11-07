@@ -4,6 +4,35 @@ function getDishName(item) {
     return item.name ? item.name : String.fromCharCode(...item.nameCodes);
 }
 
+function handleDishImgError(imgEl) {
+    const rawSrc = imgEl.getAttribute('data-orig-src') || imgEl.getAttribute('src') || '';
+    if (!imgEl.getAttribute('data-orig-src')) {
+        imgEl.setAttribute('data-orig-src', rawSrc);
+    }
+
+    const baseNoExt = rawSrc.replace(/\.(jpg|jpeg|png|webp)$/i, '');
+    const altBase = baseNoExt.includes('_')
+        ? baseNoExt.replace(/_/g, '-')
+        : baseNoExt.replace(/-/g, '_');
+
+    const candidates = [
+        `${baseNoExt}.jpg`,
+        `${baseNoExt}.webp`,
+        `${baseNoExt}.png`,
+        `${baseNoExt}.jpeg`,
+        `${altBase}.jpg`,
+        `${altBase}.webp`,
+        `${altBase}.png`,
+        `${altBase}.jpeg`
+    ];
+
+    const step = Number(imgEl.getAttribute('data-retry-step') || 0);
+    if (step < candidates.length) {
+        imgEl.setAttribute('data-retry-step', String(step + 1));
+        imgEl.src = candidates[step];
+    }
+}
+
 function buildMaskedTitleClue(fullName) {
     const totalLetters = fullName.replace(/\s+/g, '').length;
     const words = fullName.trim().split(/\s+/);
@@ -126,7 +155,7 @@ function loadRoundScreen(index, savedClues = 0) {
         </div>
 
         <div class="image-stage">
-            <img id="dish-image" src="${data.image}" alt="Dish">
+            <img id="dish-image" src="${data.image}" alt="Dish" onerror="handleDishImgError(this)">
         </div>
 
         <div class="clues-bar">
@@ -342,7 +371,6 @@ function renderRoundResultScreen(index, earnedScore) {
     const data = activeDailyRounds[index];
     const dishName = getDishName(data);
     const nextButtonText = index < activeDailyRounds.length - 1 ? 'VÒNG TIẾP THEO ➔' : 'XEM KẾT QUẢ TỔNG ➔';
-    const scoreZeroClass = earnedScore === 0 ? 'zero' : '';
 
     const container = document.getElementById('image-mode-view');
     container.innerHTML = `
@@ -354,13 +382,13 @@ function renderRoundResultScreen(index, earnedScore) {
         </div>
 
         <div class="round-result-card">
-            <img src="${data.image}" class="round-result-img" alt="Dish">
+            <img src="${data.image}" class="round-result-img" alt="Dish" onerror="handleDishImgError(this)">
             <div class="round-result-details">
                 <div class="round-result-title">${dishName}</div>
                 <div class="round-result-origin">${data.originClue}</div>
                 <div class="score-badge-box">
                     <div class="score-badge-header">ĐIỂM</div>
-                    <div class="score-badge-value ${scoreZeroClass}">${earnedScore}</div>
+                    <div class="score-badge-value">${earnedScore}</div>
                 </div>
             </div>
         </div>
@@ -403,7 +431,7 @@ function renderFinalScoreScreen(scoresArray) {
                     <span class="recap-points">${pts.toLocaleString('en-US')} pts</span>
                 </div>
                 <div class="recap-body">
-                    <img src="${round.image}" class="recap-thumb" alt="Dish">
+                    <img src="${round.image}" class="recap-thumb" alt="Dish" onerror="handleDishImgError(this)">
                     <div class="recap-info">
                         <h4>${dishName}</h4>
                         <p>${round.originClue}</p>

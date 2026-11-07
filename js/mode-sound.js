@@ -4,6 +4,13 @@ function getYtThumb(youtubeId) {
     return `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
 }
 
+function handleYtThumbError(imgEl, youtubeId) {
+    const fallbackUrl = `https://img.youtube.com/vi/${youtubeId}/0.jpg`;
+    if (imgEl.src !== fallbackUrl) {
+        imgEl.src = fallbackUrl;
+    }
+}
+
 function getAllDatabaseSongTitles() {
     return Array.from(new Set(SONG_DATABASE.map(s => s.title)));
 }
@@ -49,6 +56,7 @@ function getSoundMaxScore() {
 // YouTube Fixed-Segment Player
 
 let ytPlayer = null;
+let ytPlayerReady = false;
 let ytApiReady = false;
 let pendingSongLoad = null;
 let progressTimer = null;
@@ -90,6 +98,9 @@ function mountYouTubePlayer(song) {
         ytPlayer = null;
     }
 
+    ytPlayerReady = false;
+    isPlayingAudio = false;
+
     const startSec = song.startSeconds || 0;
     const durationSec = song.clipDuration || 20;
 
@@ -106,13 +117,13 @@ function mountYouTubePlayer(song) {
             modestbranding: 1,
             playsinline: 1,
             start: startSec,
-            end: startSec + durationSec
+            end: startSec + durationSec,
+            origin: window.location.origin
         },
         events: {
             onReady: function (e) {
+                ytPlayerReady = true;
                 e.target.setVolume(80);
-                e.target.seekTo(startSec, true);
-                e.target.pauseVideo();
             },
             onStateChange: function (e) {
                 if (e.data === YT.PlayerState.PLAYING) {
@@ -132,7 +143,7 @@ function mountYouTubePlayer(song) {
 }
 
 function resetToClipStart() {
-    if (!ytPlayer || !activeDailySong) return;
+    if (!ytPlayer || !ytPlayerReady || !activeDailySong) return;
     const startSec = activeDailySong.startSeconds || 0;
     stopProgressSync();
     isPlayingAudio = false;
@@ -144,16 +155,19 @@ function resetToClipStart() {
 }
 
 function toggleSoundPlay() {
-    if (!ytPlayer || typeof ytPlayer.getPlayerState !== 'function' || !activeDailySong) return;
+    if (!ytPlayer || !ytPlayerReady || !activeDailySong) return;
     const startSec = activeDailySong.startSeconds || 0;
     const maxSec = startSec + (activeDailySong.clipDuration || 20);
-    const cur = ytPlayer.getCurrentTime ? ytPlayer.getCurrentTime() : startSec;
+    const state = ytPlayer.getPlayerState ? ytPlayer.getPlayerState() : -1;
+    const cur = ytPlayer.getCurrentTime ? ytPlayer.getCurrentTime() : 0;
 
-    if (isPlayingAudio) {
+    if (isPlayingAudio || state === YT.PlayerState.PLAYING) {
         ytPlayer.pauseVideo();
     } else {
-        if (cur < startSec || cur >= maxSec - 0.3) {
-            ytPlayer.seekTo(startSec, true);
+        if (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED) {
+            if (cur < startSec || cur >= maxSec - 0.3) {
+                ytPlayer.seekTo(startSec, true);
+            }
         }
         ytPlayer.playVideo();
     }
@@ -162,7 +176,7 @@ function toggleSoundPlay() {
 function stopSoundPlayer() {
     stopProgressSync();
     isPlayingAudio = false;
-    if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+    if (ytPlayer && ytPlayerReady && typeof ytPlayer.pauseVideo === 'function') {
         try {
             ytPlayer.pauseVideo();
         } catch (e) {}
@@ -180,7 +194,7 @@ function updatePlayButtonIcon() {
 function startProgressSync() {
     stopProgressSync();
     progressTimer = setInterval(() => {
-        if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function' || !activeDailySong) return;
+        if (!ytPlayer || !ytPlayerReady || typeof ytPlayer.getCurrentTime !== 'function' || !activeDailySong) return;
         const startSec = activeDailySong.startSeconds || 0;
         const clipLen = activeDailySong.clipDuration || 20;
         const current = ytPlayer.getCurrentTime() || startSec;
@@ -307,7 +321,7 @@ function bindAudioControls() {
 
     if (seekSlider) {
         seekSlider.addEventListener('input', function () {
-            if (ytPlayer && typeof ytPlayer.seekTo === 'function' && activeDailySong) {
+            if (ytPlayer && ytPlayerReady && typeof ytPlayer.seekTo === 'function' && activeDailySong) {
                 const startSec = activeDailySong.startSeconds || 0;
                 const offset = Number(this.value);
                 ytPlayer.seekTo(startSec + offset, true);
@@ -317,7 +331,7 @@ function bindAudioControls() {
 
     if (volSlider) {
         volSlider.addEventListener('input', function () {
-            if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
+            if (ytPlayer && ytPlayerReady && typeof ytPlayer.setVolume === 'function') {
                 const val = Number(this.value);
                 ytPlayer.setVolume(val);
                 if (val > 0 && isMutedAudio) {
@@ -331,7 +345,7 @@ function bindAudioControls() {
 }
 
 function toggleSoundMute() {
-    if (!ytPlayer || typeof ytPlayer.isMuted !== 'function') return;
+    if (!ytPlayer || !ytPlayerReady || typeof ytPlayer.isMuted !== 'function') return;
     if (isMutedAudio) {
         ytPlayer.unMute();
         isMutedAudio = false;
@@ -493,20 +507,19 @@ function submitSoundGuess() {
 function renderSoundFinalScreen(earnedScore) {
     stopSoundPlayer();
     const song = activeDailySong;
-    const scoreZeroClass = earnedScore === 0 ? 'zero' : '';
     const container = document.getElementById('sound-mode-view');
 
     container.innerHTML = `
         <h2 class="game-mode-heading">KẾT QUẢ ÂM THANH HÔM NAY</h2>
 
         <div class="round-result-card">
-            <img src="${getYtThumb(song.youtubeId)}" class="round-result-img" alt="Song Thumbnail">
+            <img src="${getYtThumb(song.youtubeId)}" class="round-result-img" alt="Song Thumbnail" onerror="handleYtThumbError(this, '${song.youtubeId}')">
             <div class="round-result-details">
                 <div class="round-result-title">${song.title}</div>
                 <div class="round-result-origin">Nghệ sĩ: ${song.artist}</div>
                 <div class="score-badge-box">
                     <div class="score-badge-header">ĐIỂM</div>
-                    <div class="score-badge-value ${scoreZeroClass}">${earnedScore}</div>
+                    <div class="score-badge-value">${earnedScore}</div>
                 </div>
             </div>
         </div>

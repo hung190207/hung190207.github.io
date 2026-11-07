@@ -1,4 +1,4 @@
-// Sound Mode Song Database
+// Sound Mode Song Database (Verified YouTube IDs)
 
 const SONG_DATABASE = [
     {
@@ -21,8 +21,8 @@ const SONG_DATABASE = [
         id: 'hai_phut_hon',
         title: '2 Phút Hơn',
         artist: 'Pháo',
-        youtubeId: 'jTLhQf5KJSc',
-        startSeconds: 10,
+        youtubeId: 'AkM_eIHpSMI',
+        startSeconds: 15,
         clipDuration: 20
     },
     {
@@ -37,8 +37,8 @@ const SONG_DATABASE = [
         id: 'bong_bong_bang_bang',
         title: 'Bống Bống Bang Bang',
         artist: 'Nhóm 365daband',
-        youtubeId: 'BwN3voo83j4',
-        startSeconds: 12,
+        youtubeId: '8VXUnFeEvZU',
+        startSeconds: 15,
         clipDuration: 20
     },
     {
@@ -53,7 +53,7 @@ const SONG_DATABASE = [
         id: 'mang_tien_ve_cho_me',
         title: 'Mang Tiền Về Cho Mẹ',
         artist: 'Đen Vâu ft. Nguyên Thảo',
-        youtubeId: 'UVBV-3X1Gm0',
+        youtubeId: 'UVbv-PJXm14',
         startSeconds: 30,
         clipDuration: 20
     },

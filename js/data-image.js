@@ -1,4 +1,10 @@
-// Section: Dish Database
+// Dish Database & Name Encoder
+
+function encodeDishName(name) {
+    return Array.from(name.normalize('NFC')).map(char => char.charCodeAt(0));
+}
+
+const nameCodes = encodeDishName;
 
 const DISH_DATABASE = {
     easy: [
@@ -36,7 +42,7 @@ const DISH_DATABASE = {
             image: 'img/bun-bo-hue.webp',
             featureClue: 'Món bún nổi tiếng với sợi bún to, nước dùng đậm đà vị sả và mắm ruốc đặc trưng, ăn kèm thịt bò, chả và giò heo.',
             originClue: 'Xuất xứ từ vùng đất cố đô Huế, mang đậm phong cách ẩm thực miền Trung.'
-        },       
+        },
         {
             id: 'goi_cuon',
             nameCodes: [71, 7887, 105, 32, 99, 117, 7889, 110],
@@ -131,21 +137,21 @@ const DISH_DATABASE = {
         {
             id: 'bap_xao',
             nameCodes: [66, 7855, 112, 32, 120, 224, 111],
-            img: 'img/bap_xao.jpg',
+            image: 'img/bap_xao.jpg',
             featureClue: 'Món ăn vặt làm từ hạt ngô tươi xào cùng bơ, hành phi, tép khô và muối ớt, được bán trong ly giấy.',
             originClue: 'Món ăn vặt đường phố nổi tiếng của Sài Gòn, thường được bán ở các vỉa hè và khu vực gần trường học.'
         },
         {
             id: 'banh_trang_tron',
             nameCodes: [66, 225, 110, 104, 32, 116, 114, 225, 110, 103, 32, 116, 114, 7897, 110],
-            img: 'img/banh_trang_tron.jpg',
+            image: 'img/banh_trang_tron.jpg',
             featureClue: 'Món ăn vặt gồm sợi trắng cắt nhỏ trộn cùng khô bò, xoài xanh, trứng cút, rau răm, hành phi và sa tế cay.',
             originClue: 'Nổi lên ở Sài Gòn như món ăn vặt đường phố, sử dụng nguyên liệu đặc sản vùng Tây Ninh.'
         },
         {
             id: 'banh_trang_nuong',
             nameCodes: [66, 225, 110, 104, 32, 116, 114, 225, 110, 103, 32, 110, 432, 7899, 110, 103],
-            img: 'img/banh_trang_nuong.jpg',
+            image: 'img/banh_trang_nuong.jpg',
             featureClue: 'Món ăn vặt giòn nướng trên than hồng, phết trứng, hành lá, xúc xích, phô mai, được người ta ví như "pizza Việt Nam".',
             originClue: 'Phổ biến ở Đà Lạt như món ăn vặt buổi tối trời lạnh, đồng thời cũng là đặc sản của vùng Ninh Thuận.'
         },
@@ -155,9 +161,7 @@ const DISH_DATABASE = {
             image: 'img/bo_ne.jpg',
             featureClue: 'Món ăn sáng được dọn trên chảo gang nóng, gồm trứng ốp la, bò bít tết, pate, xúc xích, ăn kèm bánh mì.',
             originClue: 'Phổ biến tại Sài Gòn, được cho là chịu ảnh hưởng từ món bít tết của ẩm thực Pháp.'
-        },
-
-
+        }
     ],
 
     medium: [

@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vietnamguesser - Đoán Mọi Thứ Về Việt Nam</title>
-    <link rel="icon" type="image/png" href="img/vietnam_favicon.png">
+    <link rel="icon" type="image/png" href="img/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="style.css?v=9">
-    <link rel="stylesheet" href="css/mode-image.css?v=9">
-    <link rel="stylesheet" href="css/mode-sound.css?v=9">
-    <link rel="stylesheet" href="css/mode-history.css?v=9">
-    <link rel="stylesheet" href="css/mode-map.css?v=9">
+    <link rel="stylesheet" href="style.css?v=10">
+    <link rel="stylesheet" href="css/mode-image.css?v=10">
+    <link rel="stylesheet" href="css/mode-sound.css?v=10">
+    <link rel="stylesheet" href="css/mode-history.css?v=10">
+    <link rel="stylesheet" href="css/mode-map.css?v=10">
 </head>
 <body>
 
@@ -20,61 +20,61 @@
     <div id="main-menu-wrapper">
         <header class="main-header" onclick="backToMainMenu()">
             <h1 class="logo">Vietnamguesser</h1>
-            <div class="subtitle">ĐOÁN MỌI THỨ VỀ VIỆT NAM</div>
+            <div class="subtitle" data-i18n="subtitle">ĐOÁN MỌI THỨ VỀ VIỆT NAM</div>
         </header>
 
         <main class="view-container">
-            <h2 class="section-title">Chọn chế độ đoán</h2>
+            <h2 class="section-title" data-i18n="select_mode">Chọn chế độ đoán</h2>
             
             <div class="modes-grid">
                 <div class="mode-card" onclick="openGameMode('image')">
                     <div>
-                        <h3 class="mode-title"><i class="fa-regular fa-image"></i> ... qua hình ảnh</h3>
-                        <p class="mode-desc">Đoán các món ăn đặc sản của Việt Nam qua ảnh chụp thực tế.</p>
+                        <h3 class="mode-title"><i class="fa-regular fa-image"></i> <span data-i18n="mode_image_title">... qua hình ảnh</span></h3>
+                        <p class="mode-desc" data-i18n="mode_image_desc">Đoán các món ăn đặc sản của Việt Nam qua ảnh chụp thực tế.</p>
                     </div>
                     <div class="card-stats">
-                        <div class="score-display">Điểm: <span id="score-image">0</span></div>
+                        <div class="score-display"><span data-i18n="score_label">Điểm:</span> <span id="score-image">0</span></div>
                         <div id="timer-container-image" class="timer-display" style="display: none;">
-                            <i class="fa-regular fa-clock"></i> Reset lúc: <span id="timer-image">00:00:00</span>
+                            <i class="fa-regular fa-clock"></i> <span data-i18n="reset_label">Reset lúc:</span> <span id="timer-image">00:00:00</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="mode-card" onclick="openGameMode('sound')">
                     <div>
-                        <h3 class="mode-title"><i class="fa-solid fa-volume-high"></i> ... qua âm thanh</h3>
-                        <p class="mode-desc">Nghe và đoán bài hát Việt Nam.</p>
+                        <h3 class="mode-title"><i class="fa-solid fa-volume-high"></i> <span data-i18n="mode_sound_title">... qua âm thanh</span></h3>
+                        <p class="mode-desc" data-i18n="mode_sound_desc">Nghe và đoán bài hát Việt Nam.</p>
                     </div>
                     <div class="card-stats">
-                        <div class="score-display">Điểm: <span id="score-sound">0</span></div>
+                        <div class="score-display"><span data-i18n="score_label">Điểm:</span> <span id="score-sound">0</span></div>
                         <div id="timer-container-sound" class="timer-display" style="display: none;">
-                            <i class="fa-regular fa-clock"></i> Reset lúc: <span id="timer-sound">00:00:00</span>
+                            <i class="fa-regular fa-clock"></i> <span data-i18n="reset_label">Reset lúc:</span> <span id="timer-sound">00:00:00</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="mode-card" onclick="openGameMode('history')">
                     <div>
-                        <h3 class="mode-title"><i class="fa-solid fa-landmark"></i> ... qua lịch sử & nhân vật</h3>
-                        <p class="mode-desc">Thử tài hiểu biết về các anh hùng hào kiệt, nhân vật nổi tiếng của dân tộc Việt Nam.</p>
+                        <h3 class="mode-title"><i class="fa-solid fa-landmark"></i> <span data-i18n="mode_history_title">... qua lịch sử & nhân vật</span></h3>
+                        <p class="mode-desc" data-i18n="mode_history_desc">Thử tài hiểu biết về các anh hùng hào kiệt, nhân vật nổi tiếng của dân tộc Việt Nam.</p>
                     </div>
                     <div class="card-stats">
-                        <div class="score-display">Điểm: <span id="score-history">0</span></div>
+                        <div class="score-display"><span data-i18n="score_label">Điểm:</span> <span id="score-history">0</span></div>
                         <div id="timer-container-history" class="timer-display" style="display: none;">
-                            <i class="fa-regular fa-clock"></i> Reset lúc: <span id="timer-history">00:00:00</span>
+                            <i class="fa-regular fa-clock"></i> <span data-i18n="reset_label">Reset lúc:</span> <span id="timer-history">00:00:00</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="mode-card" onclick="openGameMode('map')">
                     <div>
-                        <h3 class="mode-title"><i class="fa-solid fa-earth-asia"></i> ... qua bản đồ</h3>
-                        <p class="mode-desc">Đoán tên tỉnh thành, vị trí, ranh giới địa lý hoặc các địa điểm đặc biệt trên bản đồ chữ S Việt Nam.</p>
+                        <h3 class="mode-title"><i class="fa-solid fa-earth-asia"></i> <span data-i18n="mode_map_title">... qua bản đồ</span></h3>
+                        <p class="mode-desc" data-i18n="mode_map_desc">Đoán tên tỉnh thành, vị trí, ranh giới địa lý hoặc các địa điểm đặc biệt trên bản đồ chữ S Việt Nam.</p>
                     </div>
                     <div class="card-stats">
-                        <div class="score-display">Điểm: <span id="score-map">0</span></div>
+                        <div class="score-display"><span data-i18n="score_label">Điểm:</span> <span id="score-map">0</span></div>
                         <div id="timer-container-map" class="timer-display" style="display: none;">
-                            <i class="fa-regular fa-clock"></i> Reset lúc: <span id="timer-map">00:00:00</span>
+                            <i class="fa-regular fa-clock"></i> <span data-i18n="reset_label">Reset lúc:</span> <span id="timer-map">00:00:00</span>
                         </div>
                     </div>
                 </div>
@@ -82,18 +82,62 @@
 
             <div class="score-banner">
                 <i class="fa-solid fa-trophy"></i>
-                <span>Tổng điểm: <span id="total-score">0</span></span>
+                <span><span data-i18n="total_score_label">Tổng điểm:</span> <span id="total-score">0</span></span>
             </div>
         </main>
 
         <footer class="main-footer">
             <div class="footer-links">
-                <a href="#" onclick="playClickSound()">Về chúng tôi</a>
-                <a href="#" onclick="playClickSound()">Liên hệ</a>
+                <a href="#" onclick="playClickSound()" data-i18n="about_us">Về chúng tôi</a>
+                <a href="#" onclick="playClickSound()" data-i18n="contact">Liên hệ</a>
                 <a href="https://github.com/hung190207" target="_blank" onclick="playClickSound()">GitHub</a>
             </div>
             <div>Vietnamguesser © 2026</div>
         </footer>
+
+        <button class="settings-fab" onclick="openSettingsModal()" aria-label="Settings">
+            <i class="fa-solid fa-gear"></i>
+        </button>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal-overlay" class="settings-modal-overlay" onclick="closeSettingsModal(event)">
+        <div class="settings-modal" onclick="event.stopPropagation()">
+            <div class="settings-modal-header">
+                <h3 data-i18n="settings_title">Cài đặt</h3>
+                <button class="settings-close-btn" onclick="closeSettingsModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="settings-group">
+                <label class="settings-label">
+                    <i class="fa-solid fa-globe"></i>
+                    <span data-i18n="settings_language">Ngôn ngữ</span>
+                </label>
+                <div class="settings-lang-options">
+                    <button id="lang-btn-vi" class="lang-option-btn active" onclick="setGameLanguage('vi')">Tiếng Việt</button>
+                    <button id="lang-btn-en" class="lang-option-btn" onclick="setGameLanguage('en')">English</button>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <label class="settings-label">
+                    <i class="fa-solid fa-sun"></i>
+                    <span data-i18n="settings_brightness">Độ sáng</span>
+                    <span id="brightness-value-label" class="brightness-value">100%</span>
+                </label>
+                <input
+                    type="range"
+                    id="brightness-slider"
+                    class="settings-slider"
+                    min="50"
+                    max="120"
+                    value="100"
+                    oninput="setGameBrightness(this.value)"
+                >
+            </div>
+        </div>
     </div>
 
 
@@ -116,32 +160,32 @@
                 <nav class="sidebar-nav">
                     <div id="nav-mode-image" class="sidebar-item active" onclick="openGameMode('image')">
                         <i class="fa-regular fa-image"></i>
-                        <span>Đoán qua hình ảnh</span>
+                        <span data-i18n="nav_image">Đoán qua hình ảnh</span>
                     </div>
                     <div id="nav-mode-sound" class="sidebar-item" onclick="openGameMode('sound')">
                         <i class="fa-solid fa-volume-high"></i>
-                        <span>Đoán qua âm thanh</span>
+                        <span data-i18n="nav_sound">Đoán qua âm thanh</span>
                     </div>
                     <div id="nav-mode-history" class="sidebar-item" onclick="openGameMode('history')">
                         <i class="fa-solid fa-landmark"></i>
-                        <span>Lịch sử & nhân vật</span>
+                        <span data-i18n="nav_history">Lịch sử & nhân vật</span>
                     </div>
                     <div id="nav-mode-map" class="sidebar-item" onclick="openGameMode('map')">
                         <i class="fa-solid fa-earth-asia"></i>
-                        <span>Đoán qua bản đồ</span>
+                        <span data-i18n="nav_map">Đoán qua bản đồ</span>
                     </div>
                 </nav>
             </div>
 
             <div class="sidebar-bottom">
                 <div class="sidebar-links">
-                    <a href="#" onclick="playClickSound()">Về chúng tôi</a>
-                    <a href="#" onclick="playClickSound()">Liên hệ</a>
+                    <a href="#" onclick="playClickSound()" data-i18n="about_us">Về chúng tôi</a>
+                    <a href="#" onclick="playClickSound()" data-i18n="contact">Liên hệ</a>
                     <a href="https://github.com/hung190207" target="_blank" onclick="playClickSound()">GitHub</a>
-                    <a href="#" onclick="backToMainMenu()">Trang chủ</a>
+                    <a href="#" onclick="backToMainMenu()" data-i18n="home">Trang chủ</a>
                 </div>
                 <div class="sidebar-score-box">
-                    <span class="sidebar-score-label">Điểm hôm nay:</span>
+                    <span class="sidebar-score-label" data-i18n="today_score">Điểm hôm nay:</span>
                     <div class="sidebar-score-values">
                         <span id="sidebar-today-score" class="sidebar-score-current">0</span>
                     </div>
@@ -162,15 +206,15 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="js/security.js?v=9"></script>
-    <script src="js/core.js?v=9"></script>
-    <script src="js/data-image.js?v=9"></script>
-    <script src="js/mode-image.js?v=9"></script>
-    <script src="js/data-sound.js?v=9"></script>
-    <script src="js/mode-sound.js?v=9"></script>
-    <script src="js/data-history.js?v=9"></script>
-    <script src="js/mode-history.js?v=9"></script>
-    <script src="js/data-map.js?v=9"></script>
-    <script src="js/mode-map.js?v=9"></script>
+    <script src="js/security.js?v=10"></script>
+    <script src="js/core.js?v=10"></script>
+    <script src="js/data-image.js?v=10"></script>
+    <script src="js/mode-image.js?v=10"></script>
+    <script src="js/data-sound.js?v=10"></script>
+    <script src="js/mode-sound.js?v=10"></script>
+    <script src="js/data-history.js?v=10"></script>
+    <script src="js/mode-history.js?v=10"></script>
+    <script src="js/data-map.js?v=10"></script>
+    <script src="js/mode-map.js?v=10"></script>
 </body>
 </html>

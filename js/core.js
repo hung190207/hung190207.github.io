@@ -5,6 +5,7 @@ const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const STORAGE_KEY = 'vietnamguesser_daily_data';
 const HISTORY_KEY = 'vietnamguesser_history';
 const ACTIVE_MODE_KEY = 'vietnamguesser_active_mode';
+const SETTINGS_KEY = 'vietnamguesser_settings';
 const MODES = ['image', 'sound', 'history', 'map'];
 
 let audioCtx = null;
@@ -47,6 +48,142 @@ function triggerClickPulse(startTime, startFreq, endFreq, duration, gainLevel) {
     gain.connect(audioCtx.destination);
     osc.start(startTime);
     osc.stop(startTime + duration);
+}
+
+
+// Settings (Language & Brightness)
+
+const I18N_DICT = {
+    vi: {
+        subtitle: 'ĐOÁN MỌI THỨ VỀ VIỆT NAM',
+        select_mode: 'Chọn chế độ đoán',
+        mode_image_title: '... qua hình ảnh',
+        mode_image_desc: 'Đoán các món ăn đặc sản của Việt Nam qua ảnh chụp thực tế.',
+        mode_sound_title: '... qua âm thanh',
+        mode_sound_desc: 'Nghe và đoán bài hát Việt Nam.',
+        mode_history_title: '... qua lịch sử & nhân vật',
+        mode_history_desc: 'Thử tài hiểu biết về các anh hùng hào kiệt, nhân vật nổi tiếng của dân tộc Việt Nam.',
+        mode_map_title: '... qua bản đồ',
+        mode_map_desc: 'Đoán tên tỉnh thành, vị trí, ranh giới địa lý hoặc các địa điểm đặc biệt trên bản đồ chữ S Việt Nam.',
+        score_label: 'Điểm:',
+        reset_label: 'Reset lúc:',
+        total_score_label: 'Tổng điểm:',
+        about_us: 'Về chúng tôi',
+        contact: 'Liên hệ',
+        home: 'Trang chủ',
+        today_score: 'Điểm hôm nay:',
+        nav_image: 'Đoán qua hình ảnh',
+        nav_sound: 'Đoán qua âm thanh',
+        nav_history: 'Lịch sử & nhân vật',
+        nav_map: 'Đoán qua bản đồ',
+        settings_title: 'Cài đặt',
+        settings_language: 'Ngôn ngữ',
+        settings_brightness: 'Độ sáng'
+    },
+    en: {
+        subtitle: 'GUESS EVERYTHING ABOUT VIETNAM',
+        select_mode: 'Select Game Mode',
+        mode_image_title: '... by Image',
+        mode_image_desc: 'Guess Vietnamese specialty dishes from real photos.',
+        mode_sound_title: '... by Sound',
+        mode_sound_desc: 'Listen and guess Vietnamese songs.',
+        mode_history_title: '... by History & Figures',
+        mode_history_desc: 'Test your knowledge of famous Vietnamese heroes and historical figures.',
+        mode_map_title: '... by Map',
+        mode_map_desc: 'Guess provinces, locations, and landmarks across the S-shaped map of Vietnam.',
+        score_label: 'Score:',
+        reset_label: 'Resets in:',
+        total_score_label: 'Total Score:',
+        about_us: 'About Us',
+        contact: 'Contact',
+        home: 'Home',
+        today_score: 'Today score:',
+        nav_image: 'Guess by Image',
+        nav_sound: 'Guess by Sound',
+        nav_history: 'History & Figures',
+        nav_map: 'Guess by Map',
+        settings_title: 'Settings',
+        settings_language: 'Language',
+        settings_brightness: 'Brightness'
+    }
+};
+
+let currentSettings = {
+    lang: 'vi',
+    brightness: 100
+};
+
+function loadUserSettings() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+        if (saved) {
+            currentSettings.lang = saved.lang === 'en' ? 'en' : 'vi';
+            currentSettings.brightness = Number(saved.brightness) || 100;
+        }
+    } catch (e) {}
+    applyLanguage(currentSettings.lang);
+    applyBrightness(currentSettings.brightness);
+}
+
+function saveUserSettings() {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(currentSettings));
+}
+
+function openSettingsModal() {
+    playClickSound();
+    const overlay = document.getElementById('settings-modal-overlay');
+    if (overlay) overlay.classList.add('active');
+}
+
+function closeSettingsModal() {
+    playClickSound();
+    const overlay = document.getElementById('settings-modal-overlay');
+    if (overlay) overlay.classList.remove('active');
+}
+
+function setGameLanguage(lang) {
+    playClickSound();
+    currentSettings.lang = lang === 'en' ? 'en' : 'vi';
+    saveUserSettings();
+    applyLanguage(currentSettings.lang);
+}
+
+function applyLanguage(lang) {
+    const dict = I18N_DICT[lang] || I18N_DICT.vi;
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+            el.textContent = dict[key];
+        }
+    });
+
+    const btnVi = document.getElementById('lang-btn-vi');
+    const btnEn = document.getElementById('lang-btn-en');
+    if (btnVi) btnVi.classList.toggle('active', lang === 'vi');
+    if (btnEn) btnEn.classList.toggle('active', lang === 'en');
+}
+
+function setGameBrightness(val) {
+    currentSettings.brightness = Number(val) || 100;
+    saveUserSettings();
+    applyBrightness(currentSettings.brightness);
+}
+
+function applyBrightness(val) {
+    const num = Math.max(50, Math.min(120, Number(val) || 100));
+    document.documentElement.style.filter = num === 100 ? 'none' : `brightness(${num}%)`;
+
+    const slider = document.getElementById('brightness-slider');
+    if (slider && Number(slider.value) !== num) {
+        slider.value = num;
+    }
+
+    const label = document.getElementById('brightness-value-label');
+    if (label) {
+        label.textContent = `${num}%`;
+    }
 }
 
 
@@ -258,6 +395,7 @@ function backToMainMenu() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    loadUserSettings();
     const initialData = checkAndSyncDailyScores();
     renderScoresToUI(initialData.scores);
     updateCountdownTimers();

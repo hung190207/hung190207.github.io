@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,16 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="style.css?v=12">
-    <link rel="stylesheet" href="css/mode-image.css?v=12">
-    <link rel="stylesheet" href="css/mode-sound.css?v=12">
-    <link rel="stylesheet" href="css/mode-history.css?v=12">
-    <link rel="stylesheet" href="css/mode-map.css?v=12">
+    <link rel="stylesheet" href="style.css?v=13">
+    <link rel="stylesheet" href="css/mode-image.css?v=13">
+    <link rel="stylesheet" href="css/mode-sound.css?v=13">
+    <link rel="stylesheet" href="css/mode-history.css?v=13">
+    <link rel="stylesheet" href="css/mode-map.css?v=13">
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2536348709177522"
-        crossorigin="anonymous"></script>
+    <!-- Google AdSense Auto Ads -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2536348709177522" crossorigin="anonymous"></script>
 </head>
-
 <body>
 
     <!-- Main Menu -->
@@ -31,71 +29,56 @@
 
         <main class="view-container">
             <h2 class="section-title" data-i18n="select_mode">Chọn chế độ đoán</h2>
-
+            
             <div class="modes-grid">
                 <div class="mode-card" onclick="openGameMode('image')">
                     <div>
-                        <h3 class="mode-title"><i class="fa-regular fa-image"></i> <span
-                                data-i18n="mode_image_title">... qua hình ảnh</span></h3>
-                        <p class="mode-desc" data-i18n="mode_image_desc">Đoán các món ăn đặc sản của Việt Nam qua ảnh
-                            chụp thực tế.</p>
+                        <h3 class="mode-title"><i class="fa-regular fa-image"></i> <span data-i18n="mode_image_title">... qua hình ảnh</span></h3>
+                        <p class="mode-desc" data-i18n="mode_image_desc">Đoán các món ăn đặc sản của Việt Nam qua ảnh chụp thực tế.</p>
                     </div>
                     <div class="card-stats">
-                        <div class="score-display"><span data-i18n="score_label">Điểm:</span> <span
-                                id="score-image">0</span></div>
+                        <div class="score-display"><span data-i18n="score_label">Điểm:</span> <span id="score-image">0</span></div>
                         <div id="timer-container-image" class="timer-display" style="display: none;">
-                            <i class="fa-regular fa-clock"></i> <span data-i18n="reset_label">Reset lúc:</span> <span
-                                id="timer-image">00:00:00</span>
+                            <i class="fa-regular fa-clock"></i> <span data-i18n="reset_label">Reset lúc:</span> <span id="timer-image">00:00:00</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="mode-card" onclick="openGameMode('sound')">
                     <div>
-                        <h3 class="mode-title"><i class="fa-solid fa-volume-high"></i> <span
-                                data-i18n="mode_sound_title">... qua âm thanh</span></h3>
+                        <h3 class="mode-title"><i class="fa-solid fa-volume-high"></i> <span data-i18n="mode_sound_title">... qua âm thanh</span></h3>
                         <p class="mode-desc" data-i18n="mode_sound_desc">Nghe và đoán bài hát Việt Nam.</p>
                     </div>
                     <div class="card-stats">
-                        <div class="score-display"><span data-i18n="score_label">Điểm:</span> <span
-                                id="score-sound">0</span></div>
+                        <div class="score-display"><span data-i18n="score_label">Điểm:</span> <span id="score-sound">0</span></div>
                         <div id="timer-container-sound" class="timer-display" style="display: none;">
-                            <i class="fa-regular fa-clock"></i> <span data-i18n="reset_label">Reset lúc:</span> <span
-                                id="timer-sound">00:00:00</span>
+                            <i class="fa-regular fa-clock"></i> <span data-i18n="reset_label">Reset lúc:</span> <span id="timer-sound">00:00:00</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="mode-card" onclick="openGameMode('history')">
                     <div>
-                        <h3 class="mode-title"><i class="fa-solid fa-landmark"></i> <span
-                                data-i18n="mode_history_title">... qua lịch sử & nhân vật</span></h3>
-                        <p class="mode-desc" data-i18n="mode_history_desc">Thử tài hiểu biết về các anh hùng hào kiệt,
-                            nhân vật nổi tiếng của dân tộc Việt Nam.</p>
+                        <h3 class="mode-title"><i class="fa-solid fa-landmark"></i> <span data-i18n="mode_history_title">... qua lịch sử & nhân vật</span></h3>
+                        <p class="mode-desc" data-i18n="mode_history_desc">Thử tài hiểu biết về các anh hùng hào kiệt, nhân vật nổi tiếng của dân tộc Việt Nam.</p>
                     </div>
                     <div class="card-stats">
-                        <div class="score-display"><span data-i18n="score_label">Điểm:</span> <span
-                                id="score-history">0</span></div>
+                        <div class="score-display"><span data-i18n="score_label">Điểm:</span> <span id="score-history">0</span></div>
                         <div id="timer-container-history" class="timer-display" style="display: none;">
-                            <i class="fa-regular fa-clock"></i> <span data-i18n="reset_label">Reset lúc:</span> <span
-                                id="timer-history">00:00:00</span>
+                            <i class="fa-regular fa-clock"></i> <span data-i18n="reset_label">Reset lúc:</span> <span id="timer-history">00:00:00</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="mode-card" onclick="openGameMode('map')">
                     <div>
-                        <h3 class="mode-title"><i class="fa-solid fa-earth-asia"></i> <span
-                                data-i18n="mode_map_title">... qua bản đồ</span></h3>
-                        <p class="mode-desc" data-i18n="mode_map_desc">Đoán tên tỉnh thành, vị trí, ranh giới địa lý
-                            hoặc các địa điểm đặc biệt trên bản đồ chữ S Việt Nam.</p>
+                        <h3 class="mode-title"><i class="fa-solid fa-earth-asia"></i> <span data-i18n="mode_map_title">... qua bản đồ</span></h3>
+                        <p class="mode-desc" data-i18n="mode_map_desc">Đoán tên tỉnh thành, vị trí, ranh giới địa lý hoặc các địa điểm đặc biệt trên bản đồ chữ S Việt Nam.</p>
                     </div>
                     <div class="card-stats">
-                        <div class="score-display"><span data-i18n="score_label">Điểm:</span> <span
-                                id="score-map">0</span></div>
+                        <div class="score-display"><span data-i18n="score_label">Điểm:</span> <span id="score-map">0</span></div>
                         <div id="timer-container-map" class="timer-display" style="display: none;">
-                            <i class="fa-regular fa-clock"></i> <span data-i18n="reset_label">Reset lúc:</span> <span
-                                id="timer-map">00:00:00</span>
+                            <i class="fa-regular fa-clock"></i> <span data-i18n="reset_label">Reset lúc:</span> <span id="timer-map">00:00:00</span>
                         </div>
                     </div>
                 </div>
@@ -137,8 +120,7 @@
                     <span data-i18n="settings_language">Ngôn ngữ</span>
                 </label>
                 <div class="settings-lang-options">
-                    <button id="lang-btn-vi" class="lang-option-btn active" onclick="setGameLanguage('vi')">Tiếng
-                        Việt</button>
+                    <button id="lang-btn-vi" class="lang-option-btn active" onclick="setGameLanguage('vi')">Tiếng Việt</button>
                     <button id="lang-btn-en" class="lang-option-btn" onclick="setGameLanguage('en')">English</button>
                 </div>
             </div>
@@ -149,8 +131,15 @@
                     <span data-i18n="settings_brightness">Độ sáng</span>
                     <span id="brightness-value-label" class="brightness-value">100%</span>
                 </label>
-                <input type="range" id="brightness-slider" class="settings-slider" min="50" max="120" value="100"
-                    oninput="setGameBrightness(this.value)">
+                <input
+                    type="range"
+                    id="brightness-slider"
+                    class="settings-slider"
+                    min="50"
+                    max="120"
+                    value="100"
+                    oninput="setGameBrightness(this.value)"
+                >
             </div>
         </div>
     </div>
@@ -220,35 +209,16 @@
         </div>
     </div>
 
-    <!-- Bottom Sticky Ad Bar -->
-    <div id="bottom-ad-wrapper" class="bottom-ad-wrapper">
-        <button id="ad-toggle-btn" class="ad-toggle-btn" onclick="toggleBottomAd()" aria-label="Toggle Ad">
-            <i id="ad-toggle-icon" class="fa-solid fa-chevron-down"></i>
-        </button>
-        <div class="bottom-ad-container">
-            <div class="ad-slot-box">
-                <span class="ad-placeholder-text"><ins class="adsbygoogle"
-                        style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-2536348709177522"
-                        data-ad-slot="2794483942"></ins>
-                    <script>
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
-                </span>
-            </div>
-        </div>
-    </div>
-
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="js/security.js?v=12"></script>
-    <script src="js/core.js?v=12"></script>
-    <script src="js/game-data/data-image.js?v=12"></script>
-    <script src="js/game-mode/mode-image.js?v=12"></script>
-    <script src="js/game-data/data-sound.js?v=12"></script>
-    <script src="js/game-mode/mode-sound.js?v=12"></script>
-    <script src="js/game-data/data-history.js?v=12"></script>
-    <script src="js/game-mode/mode-history.js?v=12"></script>
-    <script src="js/game-data/data-map.js?v=12"></script>
-    <script src="js/game-mode/mode-map.js?v=12"></script>
+    <script src="js/security.js?v=13"></script>
+    <script src="js/core.js?v=13"></script>
+    <script src="js/game-data/data-image.js?v=13"></script>
+    <script src="js/game-mode/mode-image.js?v=13"></script>
+    <script src="js/game-data/data-sound.js?v=13"></script>
+    <script src="js/game-mode/mode-sound.js?v=13"></script>
+    <script src="js/game-data/data-history.js?v=13"></script>
+    <script src="js/game-mode/mode-history.js?v=13"></script>
+    <script src="js/game-data/data-map.js?v=13"></script>
+    <script src="js/game-mode/mode-map.js?v=13"></script>
 </body>
-
 </html>

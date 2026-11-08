@@ -51,19 +51,6 @@ function triggerClickPulse(startTime, startFreq, endFreq, duration, gainLevel) {
 }
 
 
-// Bottom Ad Toggle
-
-function toggleBottomAd() {
-    playClickSound();
-    const adWrapper = document.getElementById('bottom-ad-wrapper');
-    const icon = document.getElementById('ad-toggle-icon');
-    if (!adWrapper || !icon) return;
-
-    const isCollapsed = adWrapper.classList.toggle('collapsed');
-    icon.className = isCollapsed ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down';
-}
-
-
 // Settings & Localization
 
 const I18N_DICT = {

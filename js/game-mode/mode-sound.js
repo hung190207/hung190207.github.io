@@ -58,7 +58,7 @@ function getSoundMaxScore() {
 }
 
 
-// YouTube Fixed-Segment Player
+// YouTube Fixed-Segment Player (30s Default)
 
 let ytPlayer = null;
 let ytPlayerReady = false;
@@ -106,8 +106,8 @@ function mountYouTubePlayer(song) {
     ytPlayerReady = false;
     isPlayingAudio = false;
 
-    const startSec = song.startSeconds || 0;
-    const durationSec = song.clipDuration || 20;
+    const startSec = song.startSeconds || 60;
+    const durationSec = song.clipDuration || 30;
 
     ytPlayer = new YT.Player('yt-audio-player', {
         height: '100%',
@@ -149,7 +149,7 @@ function mountYouTubePlayer(song) {
 
 function resetToClipStart() {
     if (!ytPlayer || !ytPlayerReady || !activeDailySong) return;
-    const startSec = activeDailySong.startSeconds || 0;
+    const startSec = activeDailySong.startSeconds || 60;
     stopProgressSync();
     isPlayingAudio = false;
     updatePlayButtonIcon();
@@ -161,8 +161,8 @@ function resetToClipStart() {
 
 function toggleSoundPlay() {
     if (!ytPlayer || !ytPlayerReady || !activeDailySong) return;
-    const startSec = activeDailySong.startSeconds || 0;
-    const maxSec = startSec + (activeDailySong.clipDuration || 20);
+    const startSec = activeDailySong.startSeconds || 60;
+    const maxSec = startSec + (activeDailySong.clipDuration || 30);
     const state = ytPlayer.getPlayerState ? ytPlayer.getPlayerState() : -1;
     const cur = ytPlayer.getCurrentTime ? ytPlayer.getCurrentTime() : 0;
 
@@ -200,8 +200,8 @@ function startProgressSync() {
     stopProgressSync();
     progressTimer = setInterval(() => {
         if (!ytPlayer || !ytPlayerReady || typeof ytPlayer.getCurrentTime !== 'function' || !activeDailySong) return;
-        const startSec = activeDailySong.startSeconds || 0;
-        const clipLen = activeDailySong.clipDuration || 20;
+        const startSec = activeDailySong.startSeconds || 60;
+        const clipLen = activeDailySong.clipDuration || 30;
         const current = ytPlayer.getCurrentTime() || startSec;
         const elapsed = Math.max(0, current - startSec);
 
@@ -257,7 +257,7 @@ function initSoundMode() {
 function loadSoundRoundScreen() {
     const song = activeDailySong;
     const yesterdaySong = getYesterdaySoundSong();
-    const clipLen = song.clipDuration || 20;
+    const clipLen = song.clipDuration || 30;
     soundRoundFinished = false;
 
     const container = document.getElementById('sound-mode-view');
@@ -332,7 +332,7 @@ function bindAudioControls() {
     if (seekSlider) {
         seekSlider.addEventListener('input', function () {
             if (ytPlayer && ytPlayerReady && typeof ytPlayer.seekTo === 'function' && activeDailySong) {
-                const startSec = activeDailySong.startSeconds || 0;
+                const startSec = activeDailySong.startSeconds || 60;
                 const offset = Number(this.value);
                 ytPlayer.seekTo(startSec + offset, true);
             }

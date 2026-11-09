@@ -31,11 +31,11 @@
     width: 100%;
     height: 360px;
     opacity: 1;
-    background-color: #FFFFFF;
+    background-color: var(--card-bg);
     border: 1.5px solid var(--border-soft);
     border-bottom: none;
     border-radius: 12px 12px 0 0;
-    box-shadow: 0 8px 24px rgba(141, 180, 214, 0.22);
+    box-shadow: var(--glow-shadow);
 }
 
 .sound-video-clue-stage::before {
@@ -63,21 +63,21 @@
 
 .audio-player-bar {
     width: 100%;
-    background-color: #FFFFFF;
+    background-color: var(--card-bg);
     border: 1.5px solid var(--border-soft);
     border-radius: 10px;
     padding: 14px 20px;
     display: flex;
     align-items: center;
     gap: 14px;
-    box-shadow: 0 6px 20px rgba(141, 180, 214, 0.18);
+    box-shadow: var(--glow-shadow);
 }
 
 .sound-video-clue-stage.show + .audio-player-bar {
     border-radius: 0 0 12px 12px;
     border-color: var(--border-soft);
     border-top: 1px solid var(--border-soft);
-    background-color: #FFFFFF;
+    background-color: var(--card-bg);
 }
 
 .audio-btn {

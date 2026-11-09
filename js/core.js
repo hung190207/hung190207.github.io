@@ -78,7 +78,9 @@ const I18N_DICT = {
         nav_map: 'Đoán qua bản đồ',
         settings_title: 'Cài đặt',
         settings_language: 'Ngôn ngữ',
-        settings_brightness: 'Độ sáng',
+        settings_mode: 'Mode',
+        theme_light: 'Light',
+        theme_dark: 'Dark',
 
         points_suffix: 'điểm',
         score_header: 'ĐIỂM',
@@ -175,7 +177,9 @@ const I18N_DICT = {
         nav_map: 'Guess by Map',
         settings_title: 'Settings',
         settings_language: 'Language',
-        settings_brightness: 'Brightness',
+        settings_mode: 'Mode',
+        theme_light: 'Light',
+        theme_dark: 'Dark',
 
         points_suffix: 'pts',
         score_header: 'SCORE',
@@ -252,7 +256,7 @@ const I18N_DICT = {
 
 let currentSettings = {
     lang: 'vi',
-    brightness: 100
+    theme: 'light'
 };
 
 function isEn() {
@@ -270,11 +274,12 @@ function loadUserSettings() {
         const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY));
         if (saved) {
             currentSettings.lang = saved.lang === 'en' ? 'en' : 'vi';
-            currentSettings.brightness = Number(saved.brightness) || 100;
+            currentSettings.theme = saved.theme === 'dark' ? 'dark' : 'light';
         }
     } catch (e) {}
+    document.documentElement.style.filter = 'none';
+    applyTheme(currentSettings.theme);
     applyLanguage(currentSettings.lang);
-    applyBrightness(currentSettings.brightness);
 }
 
 function saveUserSettings() {
@@ -323,25 +328,21 @@ function applyLanguage(lang) {
     if (activeMode === 'map' && typeof initMapMode === 'function') initMapMode();
 }
 
-function setGameBrightness(val) {
-    currentSettings.brightness = Number(val) || 100;
+function setGameTheme(theme) {
+    playClickSound();
+    currentSettings.theme = theme === 'dark' ? 'dark' : 'light';
     saveUserSettings();
-    applyBrightness(currentSettings.brightness);
+    applyTheme(currentSettings.theme);
 }
 
-function applyBrightness(val) {
-    const num = Math.max(50, Math.min(120, Number(val) || 100));
-    document.documentElement.style.filter = num === 100 ? 'none' : `brightness(${num}%)`;
+function applyTheme(theme) {
+    const activeTheme = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', activeTheme);
 
-    const slider = document.getElementById('brightness-slider');
-    if (slider && Number(slider.value) !== num) {
-        slider.value = num;
-    }
-
-    const label = document.getElementById('brightness-value-label');
-    if (label) {
-        label.textContent = `${num}%`;
-    }
+    const btnLight = document.getElementById('theme-btn-light');
+    const btnDark = document.getElementById('theme-btn-dark');
+    if (btnLight) btnLight.classList.toggle('active', activeTheme === 'light');
+    if (btnDark) btnDark.classList.toggle('active', activeTheme === 'dark');
 }
 
 

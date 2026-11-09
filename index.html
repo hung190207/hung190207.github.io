@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,11 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="style.css?v=13">
-    <link rel="stylesheet" href="css/mode-image.css?v=13">
-    <link rel="stylesheet" href="css/mode-sound.css?v=13">
-    <link rel="stylesheet" href="css/mode-history.css?v=13">
-    <link rel="stylesheet" href="css/mode-map.css?v=13">
+    <link rel="stylesheet" href="style.css?v=14">
+    <link rel="stylesheet" href="css/mode-image.css?v=14">
+    <link rel="stylesheet" href="css/mode-sound.css?v=14">
+    <link rel="stylesheet" href="css/mode-history.css?v=14">
+    <link rel="stylesheet" href="css/mode-map.css?v=14">
 
     <!-- Google AdSense Auto Ads -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2536348709177522" crossorigin="anonymous"></script>
@@ -127,19 +127,17 @@
 
             <div class="settings-group">
                 <label class="settings-label">
-                    <i class="fa-solid fa-sun"></i>
-                    <span data-i18n="settings_brightness">Độ sáng</span>
-                    <span id="brightness-value-label" class="brightness-value">100%</span>
+                    <i class="fa-solid fa-circle-half-stroke"></i>
+                    <span data-i18n="settings_mode">Mode</span>
                 </label>
-                <input
-                    type="range"
-                    id="brightness-slider"
-                    class="settings-slider"
-                    min="50"
-                    max="120"
-                    value="100"
-                    oninput="setGameBrightness(this.value)"
-                >
+                <div class="settings-lang-options">
+                    <button id="theme-btn-light" class="lang-option-btn active" onclick="setGameTheme('light')">
+                        <i class="fa-solid fa-sun"></i> <span data-i18n="theme_light">Light</span>
+                    </button>
+                    <button id="theme-btn-dark" class="lang-option-btn" onclick="setGameTheme('dark')">
+                        <i class="fa-solid fa-moon"></i> <span data-i18n="theme_dark">Dark</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -210,15 +208,15 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="js/security.js?v=13"></script>
-    <script src="js/core.js?v=13"></script>
-    <script src="js/game-data/data-image.js?v=13"></script>
-    <script src="js/game-mode/mode-image.js?v=13"></script>
-    <script src="js/game-data/data-sound.js?v=13"></script>
-    <script src="js/game-mode/mode-sound.js?v=13"></script>
-    <script src="js/game-data/data-history.js?v=13"></script>
-    <script src="js/game-mode/mode-history.js?v=13"></script>
-    <script src="js/game-data/data-map.js?v=13"></script>
-    <script src="js/game-mode/mode-map.js?v=13"></script>
+    <script src="js/security.js?v=14"></script>
+    <script src="js/core.js?v=14"></script>
+    <script src="js/game-data/data-image.js?v=14"></script>
+    <script src="js/game-mode/mode-image.js?v=14"></script>
+    <script src="js/game-data/data-sound.js?v=14"></script>
+    <script src="js/game-mode/mode-sound.js?v=14"></script>
+    <script src="js/game-data/data-history.js?v=14"></script>
+    <script src="js/game-mode/mode-history.js?v=14"></script>
+    <script src="js/game-data/data-map.js?v=14"></script>
+    <script src="js/game-mode/mode-map.js?v=14"></script>
 </body>
 </html>

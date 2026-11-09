@@ -63,7 +63,7 @@
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--hud-surface);
     backdrop-filter: blur(6px);
     border: 1.5px solid var(--border-soft);
     border-radius: 50px;
@@ -75,7 +75,7 @@
     font-weight: 700;
     letter-spacing: 1.5px;
     color: var(--text-color);
-    box-shadow: 0 4px 14px rgba(141, 180, 214, 0.25);
+    box-shadow: var(--glow-shadow);
     pointer-events: none;
 }
 
@@ -89,10 +89,10 @@
 }
 
 .map-game-stage > div[style*="top:54px"] {
-    background: rgba(255, 255, 255, 0.92) !important;
+    background: var(--hud-surface) !important;
     border: 1.5px solid var(--border-soft) !important;
     color: var(--text-muted) !important;
-    box-shadow: 0 4px 14px rgba(141, 180, 214, 0.22);
+    box-shadow: var(--glow-shadow);
 }
 
 
@@ -111,7 +111,7 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--hud-surface);
     backdrop-filter: blur(6px);
     border: 1.5px solid var(--border-soft);
     color: var(--text-color);
@@ -121,11 +121,11 @@
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 14px rgba(36, 52, 71, 0.18);
+    box-shadow: 0 4px 14px rgba(15, 30, 58, 0.25);
 }
 
 .hud-circle-btn:hover {
-    background: #FFFFFF;
+    background: var(--card-hover);
     border-color: var(--primary-blue);
     color: var(--cyan-glow);
     transform: scale(1.06);
@@ -157,7 +157,7 @@
 }
 
 .minimap-tool-btn {
-    background: rgba(255, 255, 255, 0.94);
+    background: var(--hud-surface);
     border: 1.5px solid var(--border-soft);
     color: var(--text-color);
     border-radius: 6px;
@@ -170,7 +170,7 @@
     align-items: center;
     gap: 5px;
     transition: all 0.18s;
-    box-shadow: 0 2px 8px rgba(36, 52, 71, 0.12);
+    box-shadow: 0 2px 8px rgba(15, 30, 58, 0.2);
 }
 
 .minimap-tool-btn:hover {
@@ -187,11 +187,11 @@
     height: 215px;
     border-radius: 10px;
     overflow: hidden;
-    border: 2.5px solid #FFFFFF;
-    box-shadow: 0 8px 25px rgba(36, 52, 71, 0.25);
+    border: 2.5px solid var(--card-bg);
+    box-shadow: 0 8px 25px rgba(15, 30, 58, 0.35);
     opacity: 0.94;
     transition: height 0.25s ease, opacity 0.2s ease, border-color 0.2s ease;
-    background: var(--border-soft);
+    background: var(--card-bg);
 }
 
 .map-minimap-overlay:hover .minimap-canvas-box,
@@ -211,29 +211,28 @@
     width: 100%;
     padding: 13px 18px;
     border-radius: 50px;
-    border: none;
+    border: 1.5px solid var(--primary-blue);
     font-family: inherit;
     font-size: 0.95rem;
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
     cursor: pointer;
-    background: linear-gradient(135deg, #8DB4D6, #6E9EC7);
+    background: var(--accent-gradient);
     color: #FFFFFF;
-    box-shadow: 0 4px 15px rgba(141, 180, 214, 0.5);
+    box-shadow: var(--glow-shadow);
     transition: all 0.2s ease;
 }
 
 .btn-map-guess:hover:not(:disabled) {
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(141, 180, 214, 0.7);
 }
 
 .btn-map-guess:disabled {
-    background: rgba(255, 255, 255, 0.94);
+    background: var(--hud-surface);
     border: 1.5px solid var(--border-soft);
     color: var(--text-muted);
-    box-shadow: 0 4px 12px rgba(36, 52, 71, 0.12);
+    box-shadow: 0 4px 12px rgba(15, 30, 58, 0.18);
     cursor: not-allowed;
 }
 
@@ -243,9 +242,9 @@
     bottom: 20px;
     right: 20px;
     z-index: 15;
-    background: linear-gradient(135deg, #8DB4D6, #6E9EC7);
+    background: var(--accent-gradient);
     color: #FFFFFF;
-    border: none;
+    border: 1.5px solid var(--primary-blue);
     border-radius: 50px;
     padding: 12px 20px;
     font-family: inherit;
@@ -254,7 +253,7 @@
     cursor: pointer;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 6px 20px rgba(141, 180, 214, 0.5);
+    box-shadow: var(--glow-shadow);
 }
 
 
@@ -267,7 +266,7 @@
     overflow: hidden;
     border: 2px solid var(--border-soft);
     margin-bottom: 18px;
-    box-shadow: 0 10px 28px rgba(141, 180, 214, 0.22);
+    box-shadow: var(--glow-shadow);
 }
 
 #map-result-canvas {

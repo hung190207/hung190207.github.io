@@ -1,5 +1,8 @@
 // Image Mode Mechanics
 
+const IMAGE_EPOCH_DAY = 20454; // 2026-01-01
+const MIN_NON_REPEAT_DAYS = 4;
+
 function getDishName(item) {
     return item.name ? item.name : String.fromCharCode(...item.nameCodes);
 }
@@ -66,10 +69,49 @@ function getAllDatabaseDishNames() {
     return Array.from(new Set(allItems.map(item => getDishName(item))));
 }
 
+
+// Non-Repeating Daily Dish Selector (No repeat within 4 days per difficulty)
+
+function getCurrentHanoiDayNumber() {
+    return Math.floor((Date.now() + HANOI_OFFSET_MS) / ONE_DAY_MS);
+}
+
+function pickNonRepeatingDish(dishList, salt, targetDayNum) {
+    if (!dishList || dishList.length === 0) return null;
+    if (dishList.length === 1) return dishList[0];
+
+    const cooldown = Math.min(MIN_NON_REPEAT_DAYS, dishList.length - 1);
+    const startDay = Math.min(IMAGE_EPOCH_DAY, targetDayNum - cooldown);
+    const recentIndices = [];
+    let chosenIdx = 0;
+
+    for (let d = startDay; d <= targetDayNum; d++) {
+        const dateStr = new Date(d * ONE_DAY_MS).toISOString().slice(0, 10);
+        const hash = hashSeedString(dateStr, salt);
+
+        const availableIndices = [];
+        for (let i = 0; i < dishList.length; i++) {
+            if (!recentIndices.includes(i)) {
+                availableIndices.push(i);
+            }
+        }
+
+        chosenIdx = availableIndices[hash % availableIndices.length];
+
+        recentIndices.push(chosenIdx);
+        if (recentIndices.length > cooldown) {
+            recentIndices.shift();
+        }
+    }
+
+    return dishList[chosenIdx];
+}
+
 function pickDailyRounds() {
-    const r1 = DISH_DATABASE.easy[getDailySeedHash('image_easy') % DISH_DATABASE.easy.length];
-    const r2 = DISH_DATABASE.medium[getDailySeedHash('image_medium') % DISH_DATABASE.medium.length];
-    const r3 = DISH_DATABASE.hard[getDailySeedHash('image_hard') % DISH_DATABASE.hard.length];
+    const todayNum = getCurrentHanoiDayNumber();
+    const r1 = pickNonRepeatingDish(DISH_DATABASE.easy, 'image_easy', todayNum);
+    const r2 = pickNonRepeatingDish(DISH_DATABASE.medium, 'image_medium', todayNum);
+    const r3 = pickNonRepeatingDish(DISH_DATABASE.hard, 'image_hard', todayNum);
 
     return [
         { ...r1, round: 1, diffKey: 'easy' },
@@ -79,9 +121,10 @@ function pickDailyRounds() {
 }
 
 function getYesterdayImageAnswersHTML() {
-    const yEasy = getDishName(DISH_DATABASE.easy[getYesterdaySeedHash('image_easy') % DISH_DATABASE.easy.length]);
-    const yMed = getDishName(DISH_DATABASE.medium[getYesterdaySeedHash('image_medium') % DISH_DATABASE.medium.length]);
-    const yHard = getDishName(DISH_DATABASE.hard[getYesterdaySeedHash('image_hard') % DISH_DATABASE.hard.length]);
+    const yesterdayNum = getCurrentHanoiDayNumber() - 1;
+    const yEasy = getDishName(pickNonRepeatingDish(DISH_DATABASE.easy, 'image_easy', yesterdayNum));
+    const yMed = getDishName(pickNonRepeatingDish(DISH_DATABASE.medium, 'image_medium', yesterdayNum));
+    const yHard = getDishName(pickNonRepeatingDish(DISH_DATABASE.hard, 'image_hard', yesterdayNum));
     return `<div class="yesterday-answer-line">${t('yesterday_multi_prefix')} ${t('diff_easy')}: <strong>${yEasy}</strong>, ${t('diff_medium')}: <strong>${yMed}</strong>, ${t('diff_hard')}: <strong>${yHard}</strong></div>`;
 }
 

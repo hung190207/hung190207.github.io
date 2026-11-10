@@ -1,10 +1,4 @@
-// Dish Database & Name Encoder
-
-function encodeDishName(name) {
-    return Array.from(name.normalize('NFC')).map(char => char.charCodeAt(0));
-}
-
-const nameCodes = encodeDishName;
+// Dishes Database
 
 const DISH_DATABASE = {
     easy: [
@@ -262,6 +256,87 @@ const DISH_DATABASE = {
             featureClueEn: 'Small fresh rolls wrapped in soft wheat-rice paper with julienned jicama, Chinese sausage, shredded egg, dried shrimp, and herbs, dipped in sweet bean sauce.',
             originClue: 'Món ăn vặt đường phố du nhập từ ẩm thực Triều Châu, rất phổ biến tại miền Nam.',
             originClueEn: 'A street snack adapted from Teochew cuisine, widely popular in Southern Vietnam.'
+        },
+        {
+            id: 'lau_mam',
+            name: 'Lẩu mắm',
+            image: 'img/lau_mam.jpg',
+            featureClue: 'Món nước nấu từ mắm cá linh hoặc cá sặc đậm đà hương sả ớt, ăn kèm thịt quay, cá, tôm, mực và hàng chục loại rau đồng nội như bông điên điển, bông súng, rau đắng.',
+            featureClueEn: 'Rich hotpot broth made from fermented freshwater fish and lemongrass, served with roasted pork, seafood, and dozens of river greens like water lily stems and sesbania flowers.',
+            originClue: 'Món ăn biểu tượng của vùng sông nước miền Tây Nam Bộ, đặc biệt nổi tiếng tại Cần Thơ và Châu Đốc (An Giang).',
+            originClueEn: 'An iconic culinary specialty of the Mekong Delta in Southern Vietnam, especially famous in Can Tho and Chau Doc (An Giang).'
+        },
+        {
+            id: 'lau_thai',
+            name: 'Lẩu thái',
+            image: 'img/lau_thai.jpg',
+            featureClue: 'Nước dùng có vị chua cay nồng đặc trưng từ sả, riềng, lá chanh và ớt, nhúng kèm tôm, mực, nghêu, thịt bò và các loại nấm.',
+            featureClueEn: 'Hot and sour broth infused with lemongrass, galangal, kaffir lime leaves, and chili, served with shrimp, squid, clams, sliced beef, and mushrooms.',
+            originClue: 'Biến tấu từ món canh Tom Yum của Thái Lan, du nhập và trở thành một trong những món lẩu được ưa chuộng khắp Việt Nam.',
+            originClueEn: 'Adapted from Thailand’s Tom Yum soup, widely popularized across Vietnam as a favorite gathering hotpot.'
+        },
+        {
+            id: 'bun_mang_vit',
+            name: 'Bún măng vịt',
+            image: 'img/bun_mang_vit.jpg',
+            featureClue: 'Bát bún có nước dùng thanh ngọt ninh từ xương và măng khô hoặc măng tươi giòn sần sật, ăn kèm thịt vịt luộc chặt miếng và chén nước mắm gừng cay nồng.',
+            featureClueEn: 'Rice vermicelli soup with sweet broth simmered with bamboo shoots, served with tender boiled duck meat and a spicy ginger fish sauce dip.',
+            originClue: 'Món ăn dân dã quen thuộc trên khắp cả nước, đặc biệt nổi tiếng ở Hà Nội và các con hẻm ẩm thực tại Sài Gòn.',
+            originClueEn: 'A familiar rustic noodle soup across Vietnam, especially popular in Hanoi and Saigon alleyways.'
+        },
+        {
+            id: 'sup_cua',
+            name: 'Súp cua',
+            image: 'img/sup_cua.jpg',
+            featureClue: 'Món ăn nóng sánh đặc nấu từ bột năng, thịt cua xé, sợi gà, nấm tuyết, hạt bắp và trứng đánh vân, thêm trứng cút hoặc óc heo, rắc ngò rí và tiêu.',
+            featureClueEn: 'Thick, warm savory soup made with shredded crab meat, chicken, snow fungus, sweet corn, and egg ribbons, topped with quail eggs, cilantro, and pepper.',
+            originClue: 'Món ăn xế và khai vị đường phố vô cùng phổ biến tại Sài Gòn cùng các tỉnh miền Nam.',
+            originClueEn: 'A popular afternoon street snack and starter in Saigon and Southern Vietnam.'
+        },
+        {
+            id: 'sinh_to_bo',
+            name: 'Sinh tố bơ',
+            image: 'img/sinh_to_bo.jpg',
+            featureClue: 'Thức uống xay nhuyễn sánh mịn có màu xanh lục nhạt đẹp mắt, vị béo ngậy tự nhiên hòa quyện cùng sữa đặc, sữa tươi và đá bào.',
+            featureClueEn: 'Creamy, velvety green smoothie blended from ripe avocado flesh, sweetened condensed milk, fresh milk, and crushed ice.',
+            originClue: 'Thức uống giải nhiệt nổi tiếng khắp Việt Nam, với nguồn nguyên liệu ngon nhất đến từ vùng cao nguyên Đắk Lắk và Lâm Đồng (Đà Lạt).',
+            originClueEn: 'A famous refreshing drink across Vietnam, using prime avocados grown in the Central Highlands of Dak Lak and Da Lat.'
+        },
+        {
+            id: 'xiu_mai',
+            name: 'Xíu mại',
+            image: 'img/xiu_mai.jpg',
+            featureClue: 'Thịt heo xay nhuyễn trộn củ sắn viên tròn, nấu chín mềm trong sốt cà chua đỏ sánh đậm đà ăn kèm bánh mì hoặc hấp trong lớp vỏ bột mì mỏng vàng.',
+            featureClueEn: 'Seasoned minced pork and jicama meatballs simmered in a rich tomato sauce (often eaten with baguette) or steamed in thin yellow dumpling wrappers.',
+            originClue: 'Có nguồn gốc từ ẩm thực người Hoa, sau khi vào Việt Nam được biến tấu thành món chấm bánh mì trứ danh ở Đà Lạt và Sài Gòn.',
+            originClueEn: 'Rooted in Chinese dim sum cuisine and adapted in Vietnam into a beloved tomato-sauce meatball dish famous in Da Lat and Saigon.'
+        },
+        {
+            id: 'ha_cao',
+            name: 'Há cảo',
+            image: 'img/ha_cao.jpg',
+            featureClue: 'Những viên bánh nhỏ có lớp vỏ bột trong mờ, dai mềm xếp nếp khéo léo, bên trong bọc nhân tôm tươi và thịt băm, hấp chín ăn kèm nước tương pha giấm ớt và hành phi.',
+            featureClueEn: 'Bite-sized steamed dumplings with translucent, chewy pleated wrappers filled with juicy shrimp and minced pork, served with soy sauce, chili, and fried shallots.',
+            originClue: 'Món điểm tâm có nguồn gốc từ Quảng Đông (Trung Hoa), gắn liền với khu phố người Hoa Chợ Lớn tại Sài Gòn.',
+            originClueEn: 'A Cantonese dim sum classic closely associated with the Chinatown district of Cho Lon in Saigon.'
+        },
+        {
+            id: 'sua_chua_nep_cam',
+            name: 'Sữa chua nếp cẩm',
+            image: 'img/sua_chua_nep_cam.jpg',
+            featureClue: 'Món tráng miệng kết hợp vị chua thanh mát lạnh của sữa lên men cùng lớp nếp tím than nấu chín dẻo thơm, bùi ngọt và nước cốt dừa.',
+            featureClueEn: 'Dessert pairing tangy chilled yogurt with chewy purple-black glutinous rice cooked with coconut milk.',
+            originClue: 'Món ăn vặt khởi nguồn từ miền Bắc (đặc biệt là Hà Nội và vùng Tây Bắc) rồi nhanh chóng được yêu thích trên toàn quốc.',
+            originClueEn: 'A popular dessert snack originating in Northern Vietnam that quickly became a nationwide favorite.'
+        },
+        {
+            id: 'bun_dau_mam_tom',
+            name: 'Bún đậu mắm tôm',
+            image: 'img/bun_dau_mam_tom.jpg',
+            featureClue: 'Món ăn bày trên mẹt tre lót lá chuối gồm bún lá cắt miếng, đậu hũ chiên giòn, chả cốm, thịt chân giò luộc, dồi sụn, rau kinh giới và chén mắm đánh sủi bọt với tắc, ớt.',
+            featureClueEn: 'Served on a banana-leaf-lined bamboo tray featuring pressed rice vermicelli, crispy fried tofu, green rice pork patties, boiled pork, herbs, and frothy fermented shrimp paste.',
+            originClue: 'Món ăn dân dã đặc trưng của thủ đô Hà Nội và vùng đồng bằng Bắc Bộ.',
+            originClueEn: 'A signature rustic street food of Hanoi and the Red River Delta in Northern Vietnam.'
         }
     ],
 
@@ -310,6 +385,87 @@ const DISH_DATABASE = {
             featureClueEn: 'Rice noodle soup in clear pork bone broth topped with spare ribs, pork meatballs, sliced pork shank, and crisp elephant ear stems.',
             originClue: 'Món bún thanh tao quen thuộc của ẩm thực Hà Nội.',
             originClueEn: 'A refined and familiar noodle soup of Hanoi cuisine.'
+        },
+        {
+            id: 'goi_sau_dau',
+            name: 'Gỏi sầu đâu',
+            image: 'img/goi_sau_dau.jpg',
+            featureClue: 'Món trộn có vị đắng hậu ngọt đặc trưng từ lá và hoa chần sơ, kết hợp cùng khô cá sặc hoặc cá lóc nướng, thịt ba chỉ, xoài xanh và nước mắm me chua ngọt.',
+            featureClueEn: 'A distinctive bitter-yet-sweet salad made from blanched neem leaves and blossoms, tossed with grilled dried fish, pork belly, green mango, and tamarind fish sauce.',
+            originClue: 'Đặc sản dân dã nổi tiếng của vùng Bảy Núi (Châu Đốc, Tri Tôn) thuộc tỉnh An Giang, miền Tây Nam Bộ.',
+            originClueEn: 'A famous rustic specialty of the Seven Mountains region (Chau Doc, Tri Ton) in An Giang Province, Mekong Delta.'
+        },
+        {
+            id: 'banh_goi',
+            name: 'Bánh gối',
+            image: 'img/banh_goi.jpg',
+            featureClue: 'Bánh có vỏ bột mì cán mỏng gấp mép xếp nếp hình bán nguyệt chiên vàng giòn, nhân miến, mộc nhĩ, thịt băm, lạp xưởng và trứng cút, ăn kèm rau sống và nước chấm đu đủ xanh.',
+            featureClueEn: 'Crescent-shaped pastry with a pleated wheat crust deep-fried until golden crispy, stuffed with glass noodles, wood ear mushrooms, minced pork, Chinese sausage, and quail egg.',
+            originClue: 'Món quà vặt quen thuộc mỗi dịp thu đông của ẩm thực đường phố Hà Nội.',
+            originClueEn: 'A beloved autumn-winter street food snack of Hanoi.'
+        },
+        {
+            id: 'banh_da_lon',
+            name: 'Bánh da lợn',
+            image: 'img/banh_da_lon.jpg',
+            featureClue: 'Bánh ngọt hấp chín có nhiều lớp mỏng dẻo dai xếp chồng xen kẽ giữa màu xanh thơm hương lá dứa và màu vàng bùi béo của đậu xanh nghiền cùng nước cốt dừa.',
+            featureClueEn: 'Steamed chewy layered cake alternating translucent green pandan tapioca layers with creamy yellow mashed mung bean and coconut milk layers.',
+            originClue: 'Món bánh dân gian truyền thống lâu đời của vùng Nam Bộ.',
+            originClueEn: 'A traditional folk dessert native to Southern Vietnam.'
+        },
+        {
+            id: 'banh_da_cua',
+            name: 'Bánh đa cua',
+            image: 'img/banh_da_cua.jpg',
+            featureClue: 'Món nước nổi bật với sợi bánh dẹt màu nâu đỏ dai mềm, nước dùng riêu cua đồng béo ngậy, ăn kèm chả lá lốt, tôm, sườn và rau muống hoặc rau nhút.',
+            featureClueEn: 'Noodle soup featuring chewy reddish-brown flat rice noodles in a rich freshwater crab broth, topped with betel-leaf pork rolls, shrimp, and water spinach.',
+            originClue: 'Món ăn biểu tượng trứ danh của thành phố cảng Hải Phòng.',
+            originClueEn: 'The signature culinary icon of the port city of Hai Phong.'
+        },
+        {
+            id: 'banh_tam_bi',
+            name: 'Bánh tằm bì',
+            image: 'img/banh_tam_bi.jpg',
+            featureClue: 'Sợi bột gạo tròn trắng mập, trộn cùng bì heo thính, xíu mại, rau sống, chan đồng thời cả nước cốt dừa béo ngậy lẫn nước mắm chua ngọt.',
+            featureClueEn: 'Thick round white rice noodles topped with shredded pork skin, meatballs, and fresh herbs, uniquely dressed with both savory coconut cream and sweet-and-sour fish sauce.',
+            originClue: 'Đặc sản nức tiếng của vùng miền Tây Nam Bộ, đặc biệt là Bạc Liêu, Sóc Trăng và Cà Mau.',
+            originClueEn: 'A renowned specialty of the Mekong Delta, especially famous in Bac Lieu, Soc Trang, and Ca Mau.'
+        },
+        {
+            id: 'banh_beo_chen',
+            name: 'Bánh bèo chén',
+            image: 'img/banh_beo_chen.jpg',
+            featureClue: 'Bột gạo hấp chín trong từng chén sứ nhỏ có xoáy lõm ở giữa, rắc tôm chấy đỏ cam, tóp mỡ hoặc da heo chiên giòn, mỡ hành và chan nước mắm ngọt dịu.',
+            featureClueEn: 'Steamed rice flour cakes served in small individual porcelain bowls with a dimpled center, topped with toasted shrimp floss, crispy pork cracklings, and scallion oil.',
+            originClue: 'Món bánh thanh tao đặc trưng của ẩm thực cố đô Huế và các tỉnh miền Trung.',
+            originClueEn: 'A delicate signature dish of the ancient capital of Hue and Central Vietnam.'
+        },
+        {
+            id: 'banh_phu_the',
+            name: 'Bánh phu thê',
+            image: 'img/banh_phu_the.jpg',
+            featureClue: 'Bánh cổ truyền có lớp vỏ bột lọc trong veo giòn dẻo lẫn sợi đu đủ nạo và hạt sen, nhân đậu xanh sên đường dừa, gói vuông vức trong hai chiếc khuôn lá úp vào nhau.',
+            featureClueEn: 'Traditional cake with a translucent chewy tapioca crust mixed with shredded papaya and lotus seeds, filled with sweet mung bean paste and wrapped in square leaf boxes.',
+            originClue: 'Đặc sản làng Đình Bảng (Bắc Ninh) và miền Trung, biểu tượng cho sự gắn kết thủy chung trong các lễ cưới hỏi cổ truyền.',
+            originClueEn: 'A specialty of Dinh Bang village (Bac Ninh) and Central Vietnam, symbolizing marital harmony in traditional weddings.'
+        },
+        {
+            id: 'mi_quang_ech',
+            name: 'Mì Quảng ếch',
+            image: 'img/mi_quang_ech.jpg',
+            featureClue: 'Sợi mì gạo bản to màu vàng nghệ ăn cùng thịt ếch đồng um sả nghệ đậm đà sệt nước, dọn kèm rau sống chín vị, đậu phộng rang và bánh tráng mè nướng giòn.',
+            featureClueEn: 'Turmeric-yellow wide rice noodles served with rich lemongrass-turmeric braised field frog, fresh herbs, roasted peanuts, and crispy sesame rice crackers.',
+            originClue: 'Biến tấu ẩm thực nổi tiếng và rất được ưa chuộng tại Đà Nẵng và Quảng Nam.',
+            originClueEn: 'A famous and widely loved regional dish originating in Da Nang and Quang Nam.'
+        },
+        {
+            id: 'banh_troi_tau',
+            name: 'Bánh trôi tàu',
+            image: 'img/banh_troi_tau.jpg',
+            featureClue: 'Món quà ngọt ăn nóng gồm những viên bột nếp dẻo to tròn nhân đậu xanh hoặc vừng đen, chan nước đường mật nấu gừng già cay ấm, rắc lạc rang và dừa nạo.',
+            featureClueEn: 'Warm winter dessert featuring large glutinous rice balls filled with mung bean or black sesame paste, served in hot ginger-infused dark sugar syrup with peanuts and coconut.',
+            originClue: 'Món ăn vặt mùa đông có nguồn gốc từ người Hoa, gắn liền với khu phố cổ Hà Nội.',
+            originClueEn: 'A Chinese-origin winter street dessert deeply associated with Hanoi’s Old Quarter.'
         }
     ]
 };

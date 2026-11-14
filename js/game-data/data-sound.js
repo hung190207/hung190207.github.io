@@ -522,4 +522,179 @@ const SONG_DATABASE = [
         startSeconds: 52,
         clipDuration: 30
     }
+    ,
+    {
+        id: 'lan_cuoi',
+        title: 'Lần Cuối',
+        artist: 'Ngọt',
+        youtubeId: 'kSjj0LlsqnI',
+        startSeconds: 65,
+        clipDuration: 30
+    },
+    {
+        id: 'em_dao_nay',
+        title: 'Em Dạo Này',
+        artist: 'Ngọt',
+        youtubeId: '1Ju5C32c1tI',
+        startSeconds: 52,
+        clipDuration: 30
+    },
+    {
+        id: 'cho_toi_di_theo',
+        title: 'Cho Tôi Đi Theo',
+        artist: 'Ngọt',
+        youtubeId: '2v5B8-ebG6A',
+        startSeconds: 60,
+        clipDuration: 30
+    },
+
+    {
+        id: 'vung_ky_uc',
+        title: 'Vùng Ký Ức',
+        artist: 'Chillies',
+        youtubeId: 'B55wB66t9lI',
+        startSeconds: 70,
+        clipDuration: 30
+    },
+    {
+        id: 'co_em_doi_bong_vui',
+        title: 'Có Em Đời Bỗng Vui',
+        artist: 'Chillies',
+        youtubeId: 'I9cTsZKn8bY',
+        startSeconds: 62,
+        clipDuration: 30
+    },
+    {
+        id: 'mascara',
+        title: 'Mascara',
+        artist: 'Chillies x BLAZE',
+        youtubeId: '8x2NjwwHUbQ',
+        startSeconds: 75,
+        clipDuration: 30
+    },
+
+    {
+        id: 'thanh_xuan',
+        title: 'Thanh Xuân',
+        artist: 'Da LAB',
+        youtubeId: 'GgQFO8dL5XQ',
+        startSeconds: 64,
+        clipDuration: 30
+    },
+    {
+        id: 'gac_lai_au_lo',
+        title: 'Gác Lại Âu Lo',
+        artist: 'Da LAB ft. Miu Lê',
+        youtubeId: 'ECxVfrwwTp0',
+        startSeconds: 68,
+        clipDuration: 30
+    },
+    {
+        id: 'mot_nha',
+        title: 'Một Nhà',
+        artist: 'Da LAB',
+        youtubeId: '1n6x8MmJ6S0',
+        startSeconds: 55,
+        clipDuration: 30
+    },
+
+    {
+        id: 'mot_buoc_yeu_van_dam_dau',
+        title: 'Một Bước Yêu Vạn Dặm Đau',
+        artist: 'Mr. Siro',
+        youtubeId: 'GwCUbhE0TY0',
+        startSeconds: 78,
+        clipDuration: 30
+    },
+    {
+        id: 'lang_nghe_nuoc_mat',
+        title: 'Lắng Nghe Nước Mắt',
+        artist: 'Mr. Siro',
+        youtubeId: '9v7A9llA_2U',
+        startSeconds: 65,
+        clipDuration: 30
+    },
+    {
+        id: 'tu_lau_nuoc_mat',
+        title: 'Tự Lau Nước Mắt',
+        artist: 'Mr. Siro',
+        youtubeId: 'tce5d97M1uI',
+        startSeconds: 72,
+        clipDuration: 30
+    },
+
+    {
+        id: 'anh_oi_o_lai',
+        title: 'Anh Ơi Ở Lại',
+        artist: 'Chi Pu',
+        youtubeId: 'Q5H4C2tv3u0',
+        startSeconds: 75,
+        clipDuration: 30
+    },
+    {
+        id: 'doa_hoa_hong',
+        title: 'Đóa Hoa Hồng',
+        artist: 'Chi Pu',
+        youtubeId: 'Z8y2M3kR5vQ',
+        startSeconds: 58,
+        clipDuration: 30
+    },
+    {
+        id: 'tu_hom_nay',
+        title: 'Từ Hôm Nay (Feel Like Ooh)',
+        artist: 'Chi Pu',
+        youtubeId: 'O7gP9kR2m1A',
+        startSeconds: 60,
+        clipDuration: 30
+    },
+
+    {
+        id: 'tang_thuong_102',
+        title: 'Tầng Thượng 102',
+        artist: 'Cá Hồi Hoang',
+        youtubeId: '5G8p9xW2q1M',
+        startSeconds: 55,
+        clipDuration: 30
+    },
+    {
+        id: '5am',
+        title: '5am',
+        artist: 'Cá Hồi Hoang',
+        youtubeId: '7K3n2mX9p0L',
+        startSeconds: 60,
+        clipDuration: 30
+    },
+    {
+        id: 'co_the',
+        title: 'Có Thể',
+        artist: 'Cá Hồi Hoang',
+        youtubeId: '3M9v8kL1p2Q',
+        startSeconds: 64,
+        clipDuration: 30
+    },
+
+    {
+        id: 'nang_lope_dope',
+        title: 'Nàng',
+        artist: 'Lope Dope',
+        youtubeId: '8X3m1kP9v2L',
+        startSeconds: 52,
+        clipDuration: 30
+    },
+    {
+        id: 'doi_lope_dope',
+        title: 'Đợi',
+        artist: 'Lope Dope',
+        youtubeId: '2L9p8xM3k1V',
+        startSeconds: 58,
+        clipDuration: 30
+    },
+    {
+        id: 'chim_dam',
+        title: 'Chìm Đắm',
+        artist: 'Lope Dope',
+        youtubeId: '6V1k8pM2x9L',
+        startSeconds: 60,
+        clipDuration: 30
+    }   
 ];

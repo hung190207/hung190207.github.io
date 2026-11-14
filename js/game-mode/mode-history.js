@@ -1,4 +1,7 @@
-// History Mode Mechanics (3000 pts without clues, -1000 pts per clue unlocked)
+// History Mode Mechanics
+
+const HISTORY_INITIAL_DB_SIZE = 16;
+const HISTORY_ANSWER_LOG_KEY = 'vietnamguesser_history_answer_log';
 
 let activeHistoryFigure = null;
 let historyGuesses = [];
@@ -15,8 +18,14 @@ function getFigRole(fig) {
 
 function getFigEvent(fig) {
     if (!fig) return '';
-    if (isEn()) return fig.keyEventEn || fig.eventEn || fig.eventClueEn || fig.keyEvent || fig.event || fig.eventClue || '';
-    return fig.keyEvent || fig.event || fig.eventClue || '';
+    if (isEn()) return fig.eventEn || fig.keyEventEn || fig.event || fig.keyEvent || '';
+    return fig.event || fig.keyEvent || '';
+}
+
+function getFigEventClue(fig) {
+    if (!fig) return '';
+    if (isEn()) return fig.eventClueEn || fig.eventEn || fig.eventClue || fig.event || '';
+    return fig.eventClue || fig.keyEvent || fig.event || '';
 }
 
 function getFigRegion(fig) {
@@ -43,35 +52,40 @@ function getFigEraOrder(fig) {
     return 0;
 }
 
-function getHistoryDailyStatus() {
-    const today = getHanoiDateString();
+function recordDailyHistoryAnswer(dateStr, figId) {
     try {
-        const data = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY));
-        if (data && data.date === today) return data;
+        const log = JSON.parse(localStorage.getItem(HISTORY_ANSWER_LOG_KEY) || '{}');
+        if (log[dateStr] !== figId) {
+            log[dateStr] = figId;
+            localStorage.setItem(HISTORY_ANSWER_LOG_KEY, JSON.stringify(log));
+        }
     } catch (e) {}
-    return null;
-}
-
-function saveHistoryDailyStatus(completed, guesses, isOver, quoteUnlocked, eventUnlocked) {
-    const today = getHanoiDateString();
-    const data = {
-        date: today,
-        completed: completed,
-        guesses: guesses,
-        historyGameOver: isOver,
-        historyQuoteUnlocked: quoteUnlocked,
-        historyEventUnlocked: eventUnlocked
-    };
-    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(data));
 }
 
 function pickDailyHistoryFigure() {
+    const todayStr = getHanoiDateString();
     const idx = getDailySeedHash('history_daily_figure') % HISTORY_DATABASE.length;
-    return HISTORY_DATABASE[idx];
+    const fig = HISTORY_DATABASE[idx];
+    if (fig) {
+        recordDailyHistoryAnswer(todayStr, fig.id);
+    }
+    return fig;
 }
 
 function getYesterdayHistoryFigure() {
-    const idx = getYesterdaySeedHash('history_daily_figure') % HISTORY_DATABASE.length;
+    const yesterdayStr = getYesterdayHanoiDateString();
+    try {
+        const log = JSON.parse(localStorage.getItem(HISTORY_ANSWER_LOG_KEY) || '{}');
+        if (log[yesterdayStr]) {
+            const matched = HISTORY_DATABASE.find(item => item.id === log[yesterdayStr]);
+            if (matched) return matched;
+        }
+    } catch (e) {}
+
+    const poolSize = yesterdayStr <= '2026-11-14'
+        ? Math.min(HISTORY_INITIAL_DB_SIZE, HISTORY_DATABASE.length)
+        : HISTORY_DATABASE.length;
+    const idx = getYesterdaySeedHash('history_daily_figure') % poolSize;
     return HISTORY_DATABASE[idx];
 }
 
@@ -87,12 +101,40 @@ function findFigureByGuessEntry(entry) {
     ) || null;
 }
 
+function getHistoryDailyStatus(expectedFigId) {
+    const today = getHanoiDateString();
+    try {
+        const data = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY));
+        if (data && data.date === today && data.targetId === expectedFigId) {
+            return data;
+        }
+    } catch (e) {}
+    return null;
+}
+
+function saveHistoryDailyStatus(completed, guesses, isOver, quoteUnlocked, eventUnlocked) {
+    const today = getHanoiDateString();
+    const data = {
+        date: today,
+        targetId: activeHistoryFigure ? activeHistoryFigure.id : '',
+        completed: completed,
+        guesses: guesses,
+        historyGameOver: isOver,
+        historyQuoteUnlocked: quoteUnlocked,
+        historyEventUnlocked: eventUnlocked
+    };
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(data));
+}
+
 function initHistoryMode() {
     activeHistoryFigure = pickDailyHistoryFigure();
-    const dailyStatus = getHistoryDailyStatus();
+    const dailyStatus = getHistoryDailyStatus(activeHistoryFigure ? activeHistoryFigure.id : '');
 
     if (dailyStatus) {
-        const rawGuesses = Array.isArray(dailyStatus.guesses) ? dailyStatus.guesses : [];
+        const rawGuesses = Array.isArray(dailyStatus.guesses)
+            ? dailyStatus.guesses
+            : (Array.isArray(dailyStatus.guessedIds) ? dailyStatus.guessedIds : []);
+
         historyGuesses = rawGuesses
             .map(entry => {
                 const fig = findFigureByGuessEntry(entry);
@@ -100,15 +142,27 @@ function initHistoryMode() {
             })
             .filter(Boolean);
 
-        historyGameOver = Boolean(dailyStatus.historyGameOver || dailyStatus.completed);
+        const hasGuessedTarget = historyGuesses.some(
+            name => normalizeVN(name) === normalizeVN(activeHistoryFigure.name)
+        );
+        historyGameOver = Boolean((dailyStatus.historyGameOver || dailyStatus.completed) && hasGuessedTarget);
         historyQuoteUnlocked = Boolean(dailyStatus.historyQuoteUnlocked || dailyStatus.quoteUnlocked);
         historyEventUnlocked = Boolean(dailyStatus.historyEventUnlocked || dailyStatus.eventUnlocked);
+
+        if (!historyGameOver && (dailyStatus.historyGameOver || dailyStatus.completed)) {
+            saveModeScore('history', 0);
+            saveHistoryDailyStatus(false, historyGuesses, false, historyQuoteUnlocked, historyEventUnlocked);
+        }
     } else {
         historyGuesses = [];
         historyGameOver = false;
         historyQuoteUnlocked = false;
         historyEventUnlocked = false;
+        saveModeScore('history', 0);
         saveHistoryDailyStatus(false, [], false, false, false);
+        if (typeof updateCountdownTimers === 'function') {
+            updateCountdownTimers();
+        }
     }
 
     renderHistoryScreen();
@@ -132,13 +186,23 @@ function unlockHistoryClue(clueNumber) {
     renderHistoryScreen();
 }
 
+function compareMultiTokenText(rawGuess, rawTarget) {
+    const gNorm = normalizeVN(rawGuess || '');
+    const tNorm = normalizeVN(rawTarget || '');
+    if (gNorm === tNorm) return 'correct';
+
+    const gParts = gNorm.split(',').map(s => s.trim()).filter(Boolean);
+    const tParts = tNorm.split(',').map(s => s.trim()).filter(Boolean);
+    const hasOverlap = gParts.some(p => tParts.includes(p));
+    return hasOverlap ? 'partial' : 'wrong';
+}
+
 function compareHistoryAttributes(guessItem, targetItem) {
-    const matchRole = normalizeVN(guessItem.role || '') === normalizeVN(targetItem.role || '') ? 'correct' : 'wrong';
-
-    const gEvent = guessItem.keyEvent || guessItem.event || '';
-    const tEvent = targetItem.keyEvent || targetItem.keyEvent || targetItem.event || '';
-    const matchKeyEvent = normalizeVN(gEvent) === normalizeVN(tEvent) ? 'correct' : 'wrong';
-
+    const matchRole = compareMultiTokenText(guessItem.role, targetItem.role);
+    const matchKeyEvent = compareMultiTokenText(
+        guessItem.event || guessItem.keyEvent,
+        targetItem.event || targetItem.keyEvent
+    );
     const matchRegion = normalizeVN(guessItem.region || '') === normalizeVN(targetItem.region || '') ? 'correct' : 'wrong';
 
     const gEraOrder = getFigEraOrder(guessItem);
@@ -240,16 +304,16 @@ function renderHistoryScreen() {
             <div class="history-clue-buttons">
                 <button class="btn-clue ${historyQuoteUnlocked ? 'unlocked' : ''}" onclick="unlockHistoryClue(1)">
                     <i class="fa-solid ${historyQuoteUnlocked ? 'fa-lock-open' : 'fa-lock'}"></i> 
-                    ${historyQuoteUnlocked ? t('hist_clue_1_unlocked') : t('hist_clue_1')} (-1000 pts)
+                    ${historyQuoteUnlocked ? t('hist_clue_1_unlocked') : t('hist_clue_1')}
                 </button>
                 <button class="btn-clue ${historyEventUnlocked ? 'unlocked' : ''}" onclick="unlockHistoryClue(2)">
                     <i class="fa-solid ${historyEventUnlocked ? 'fa-lock-open' : 'fa-lock'}"></i> 
-                    ${historyEventUnlocked ? t('hist_clue_2_unlocked') : t('hist_clue_2')} (-1000 pts)
+                    ${historyEventUnlocked ? t('hist_clue_2_unlocked') : t('hist_clue_2')}
                 </button>
             </div>
 
-            ${historyQuoteUnlocked ? `<div class="history-clue-box"><span class="clue-quote">"${getFigQuote(activeHistoryFigure)}"</span></div>` : ''}
-            ${historyEventUnlocked ? `<div class="history-clue-box"><span><strong>${t('hist_event_label')}</strong> ${getFigEvent(activeHistoryFigure)}</span></div>` : ''}
+            ${historyQuoteUnlocked ? `<div class="history-clue-box"><span class="clue-quote">${getFigQuote(activeHistoryFigure)}</span></div>` : ''}
+            ${historyEventUnlocked ? `<div class="history-clue-box"><span><strong>${t('hist_event_label')}</strong> ${getFigEventClue(activeHistoryFigure)}</span></div>` : ''}
         </div>
 
         <div class="loldle-board-scroll">

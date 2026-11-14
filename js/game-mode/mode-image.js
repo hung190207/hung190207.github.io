@@ -1,9 +1,15 @@
 // Image Mode Mechanics
 
-const IMAGE_EPOCH_DAY = 20750; // Mốc cố định để tính chuỗi không lặp 4 ngày
+const IMAGE_EPOCH_DAY = 20750;
 const MIN_NON_REPEAT_DAYS = 4;
 
-// Cloud Name trên Cloudinary của bạn
+const IMAGE_INITIAL_SIZES = {
+    easy: 22,
+    medium: 6,
+    hard: 5
+};
+
+const IMAGE_ANSWER_LOG_KEY = 'vietnamguesser_image_answer_log';
 const CLOUDINARY_CLOUD_NAME = 'ncb2tthl';
 
 function getDishName(item) {
@@ -39,8 +45,15 @@ function buildDishImageCandidates(item) {
 
     const rawId = (item.id || '').trim();
     let fileFromPath = rawId;
+    let extFromPath = 'jpg';
+
     if (item.image) {
-        fileFromPath = item.image.split('/').pop().replace(/\.(jpg|jpeg|png|webp)$/i, '');
+        const fileName = item.image.split('/').pop();
+        const extMatch = fileName.match(/\.(jpg|jpeg|png|webp)$/i);
+        if (extMatch) {
+            extFromPath = extMatch[1].toLowerCase();
+        }
+        fileFromPath = fileName.replace(/\.(jpg|jpeg|png|webp)$/i, '');
     }
 
     const underscoreId = (rawId || fileFromPath).replace(/-/g, '_');
@@ -49,15 +62,20 @@ function buildDishImageCandidates(item) {
 
     const urls = [];
 
-    // 1. Thử tải từ Cloudinary (cả ngoài thư mục gốc lẫn trong thư mục dishes/)
-    if (CLOUDINARY_CLOUD_NAME && CLOUDINARY_CLOUD_NAME !== 'TEN_CLOUD_CUA_BAN') {
+    if (CLOUDINARY_CLOUD_NAME) {
         nameVariants.forEach(name => {
-            urls.push(`https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_900/${name}`);
-            urls.push(`https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_900/dishes/${name}`);
+            urls.push(
+                `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/${name}`,
+                `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${name}.${extFromPath}`,
+                `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${name}.jpg`,
+                `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${name}.webp`,
+                `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${name}.png`,
+                `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${name}.jpeg`,
+                `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/dishes/${name}`
+            );
         });
     }
 
-    // 2. Dự phòng về thư mục img/ cục bộ trong project
     if (item.image) {
         urls.push(item.image);
     }
@@ -98,16 +116,17 @@ function handleDishImgError(imgEl) {
         const baseName = rawSrc.split('/').pop().replace(/\.(jpg|jpeg|png|webp)$/i, '');
         const altName = baseName.includes('_') ? baseName.replace(/_/g, '-') : baseName.replace(/-/g, '_');
         candidates = [
-            `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_900/${baseName}`,
-            `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_900/dishes/${baseName}`,
-            `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_900/${altName}`,
-            `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_900/dishes/${altName}`,
+            `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/${baseName}`,
+            `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${baseName}.jpg`,
+            `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${baseName}.webp`,
+            `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${baseName}.png`,
+            `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${baseName}.jpeg`,
+            `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/${altName}`,
+            `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${altName}.jpg`,
             `img/${baseName}.jpg`,
             `img/${baseName}.webp`,
             `img/${baseName}.png`,
-            `img/${baseName}.jpeg`,
-            `img/${altName}.jpg`,
-            `img/${altName}.webp`
+            `img/${baseName}.jpeg`
         ];
     }
 
@@ -116,7 +135,6 @@ function handleDishImgError(imgEl) {
         imgEl.setAttribute('data-retry-step', String(nextStep + 1));
         imgEl.src = candidates[nextStep];
     } else {
-        // Ngắt sự kiện onerror khi đã thử hết tất cả đường dẫn để tránh lặp vô tận
         imgEl.onerror = null;
     }
 }
@@ -141,36 +159,58 @@ function getAllDatabaseDishNames() {
 }
 
 
-// Non-Repeating Daily Dish Selector (No repeat within 4 days per difficulty)
+// Non-Repeating Daily Dish Selector
 
 function getCurrentHanoiDayNumber() {
     return Math.floor((Date.now() + HANOI_OFFSET_MS) / ONE_DAY_MS);
 }
 
-function pickNonRepeatingDish(dishList, salt, targetDayNum) {
+function recordDailyImageAnswers(dateStr, easyId, medId, hardId) {
+    try {
+        const log = JSON.parse(localStorage.getItem(IMAGE_ANSWER_LOG_KEY) || '{}');
+        const nextEntry = { easy: easyId, medium: medId, hard: hardId };
+        if (
+            !log[dateStr] ||
+            log[dateStr].easy !== easyId ||
+            log[dateStr].medium !== medId ||
+            log[dateStr].hard !== hardId
+        ) {
+            log[dateStr] = nextEntry;
+            localStorage.setItem(IMAGE_ANSWER_LOG_KEY, JSON.stringify(log));
+        }
+    } catch (e) {}
+}
+
+function pickNonRepeatingDish(dishList, diffKey, salt, targetDayNum) {
     if (!dishList || dishList.length === 0) return null;
     if (dishList.length === 1) return dishList[0];
 
-    const cooldown = Math.min(MIN_NON_REPEAT_DAYS, dishList.length - 1);
-    const startDay = Math.min(IMAGE_EPOCH_DAY, targetDayNum - cooldown);
+    const startDay = Math.min(IMAGE_EPOCH_DAY, targetDayNum - MIN_NON_REPEAT_DAYS);
     const recentIndices = [];
     let chosenIdx = 0;
 
     for (let d = startDay; d <= targetDayNum; d++) {
         const dateStr = new Date(d * ONE_DAY_MS).toISOString().slice(0, 10);
+        const initialCount = IMAGE_INITIAL_SIZES[diffKey] || dishList.length;
+        const activePoolSize = dateStr <= '2026-11-14'
+            ? Math.min(initialCount, dishList.length)
+            : dishList.length;
+
+        const cooldown = Math.min(MIN_NON_REPEAT_DAYS, Math.max(0, activePoolSize - 1));
         const hash = hashSeedString(dateStr, salt);
 
         const availableIndices = [];
-        for (let i = 0; i < dishList.length; i++) {
+        for (let i = 0; i < activePoolSize; i++) {
             if (!recentIndices.includes(i)) {
                 availableIndices.push(i);
             }
         }
 
-        chosenIdx = availableIndices[hash % availableIndices.length];
+        const poolToUse = availableIndices.length > 0 ? availableIndices : [0];
+        chosenIdx = poolToUse[hash % poolToUse.length];
 
         recentIndices.push(chosenIdx);
-        if (recentIndices.length > cooldown) {
+        while (recentIndices.length > cooldown) {
             recentIndices.shift();
         }
     }
@@ -180,9 +220,15 @@ function pickNonRepeatingDish(dishList, salt, targetDayNum) {
 
 function pickDailyRounds() {
     const todayNum = getCurrentHanoiDayNumber();
-    const r1 = pickNonRepeatingDish(DISH_DATABASE.easy, 'image_easy', todayNum);
-    const r2 = pickNonRepeatingDish(DISH_DATABASE.medium, 'image_medium', todayNum);
-    const r3 = pickNonRepeatingDish(DISH_DATABASE.hard, 'image_hard', todayNum);
+    const todayStr = getHanoiDateString();
+
+    const r1 = pickNonRepeatingDish(DISH_DATABASE.easy, 'easy', 'image_easy', todayNum);
+    const r2 = pickNonRepeatingDish(DISH_DATABASE.medium, 'medium', 'image_medium', todayNum);
+    const r3 = pickNonRepeatingDish(DISH_DATABASE.hard, 'hard', 'image_hard', todayNum);
+
+    if (r1 && r2 && r3) {
+        recordDailyImageAnswers(todayStr, r1.id, r2.id, r3.id);
+    }
 
     return [
         { ...r1, round: 1, diffKey: 'easy' },
@@ -193,9 +239,36 @@ function pickDailyRounds() {
 
 function getYesterdayImageAnswersHTML() {
     const yesterdayNum = getCurrentHanoiDayNumber() - 1;
-    const yEasy = getDishName(pickNonRepeatingDish(DISH_DATABASE.easy, 'image_easy', yesterdayNum));
-    const yMed = getDishName(pickNonRepeatingDish(DISH_DATABASE.medium, 'image_medium', yesterdayNum));
-    const yHard = getDishName(pickNonRepeatingDish(DISH_DATABASE.hard, 'image_hard', yesterdayNum));
+    const yesterdayStr = getYesterdayHanoiDateString();
+
+    let yEasyItem = null;
+    let yMedItem = null;
+    let yHardItem = null;
+
+    try {
+        const log = JSON.parse(localStorage.getItem(IMAGE_ANSWER_LOG_KEY) || '{}');
+        const saved = log[yesterdayStr];
+        if (saved) {
+            yEasyItem = DISH_DATABASE.easy.find(d => d.id === saved.easy) || null;
+            yMedItem = DISH_DATABASE.medium.find(d => d.id === saved.medium) || null;
+            yHardItem = DISH_DATABASE.hard.find(d => d.id === saved.hard) || null;
+        }
+    } catch (e) {}
+
+    if (!yEasyItem) {
+        yEasyItem = pickNonRepeatingDish(DISH_DATABASE.easy, 'easy', 'image_easy', yesterdayNum);
+    }
+    if (!yMedItem) {
+        yMedItem = pickNonRepeatingDish(DISH_DATABASE.medium, 'medium', 'image_medium', yesterdayNum);
+    }
+    if (!yHardItem) {
+        yHardItem = pickNonRepeatingDish(DISH_DATABASE.hard, 'hard', 'image_hard', yesterdayNum);
+    }
+
+    const yEasy = getDishName(yEasyItem);
+    const yMed = getDishName(yMedItem);
+    const yHard = getDishName(yHardItem);
+
     return `<div class="yesterday-answer-line">${t('yesterday_multi_prefix')} ${t('diff_easy')}: <strong>${yEasy}</strong>, ${t('diff_medium')}: <strong>${yMed}</strong>, ${t('diff_hard')}: <strong>${yHard}</strong></div>`;
 }
 
@@ -210,11 +283,17 @@ let roundFinished = false;
 
 const IMAGE_STORAGE_KEY = 'vietnamguesser_image_daily_status';
 
-function getImageDailyStatus() {
+function getExpectedRoundIds() {
+    return activeDailyRounds.map(r => r.id).join('|');
+}
+
+function getImageDailyStatus(expectedIdsKey) {
     const today = getHanoiDateString();
     try {
         const data = JSON.parse(localStorage.getItem(IMAGE_STORAGE_KEY));
-        if (data && data.date === today) return data;
+        if (data && data.date === today && data.targetIds === expectedIdsKey) {
+            return data;
+        }
     } catch (e) {}
     return null;
 }
@@ -223,6 +302,7 @@ function saveImageDailyStatus(completed, scoresArray, roundIdx, cluesCount, isRo
     const today = getHanoiDateString();
     const data = {
         date: today,
+        targetIds: getExpectedRoundIds(),
         completed: completed,
         scores: scoresArray,
         currentRoundIndex: roundIdx,
@@ -234,7 +314,8 @@ function saveImageDailyStatus(completed, scoresArray, roundIdx, cluesCount, isRo
 
 function initImageMode() {
     activeDailyRounds = pickDailyRounds();
-    const dailyStatus = getImageDailyStatus();
+    const expectedIdsKey = getExpectedRoundIds();
+    const dailyStatus = getImageDailyStatus(expectedIdsKey);
 
     if (dailyStatus) {
         roundScores = Array.isArray(dailyStatus.scores) && dailyStatus.scores.length === 3
@@ -262,7 +343,11 @@ function initImageMode() {
     roundScores = [0, 0, 0];
     unlockedCluesCount = 0;
     roundFinished = false;
+    saveModeScore('image', 0);
     saveImageDailyStatus(false, roundScores, currentRoundIndex, unlockedCluesCount, false);
+    if (typeof updateCountdownTimers === 'function') {
+        updateCountdownTimers();
+    }
     loadRoundScreen(currentRoundIndex, unlockedCluesCount);
 }
 

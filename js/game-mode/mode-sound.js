@@ -1,5 +1,8 @@
 // Sound Mode Mechanics
 
+const SOUND_INITIAL_DB_SIZE = 22; // Số bài hát trước khi mở rộng ngày 2026-11-15
+const SOUND_ANSWER_LOG_KEY = 'vietnamguesser_sound_answer_log';
+
 function getYtThumb(youtubeId) {
     return `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
 }
@@ -15,13 +18,41 @@ function getAllDatabaseSongTitles() {
     return Array.from(new Set(SONG_DATABASE.map(s => s.title)));
 }
 
+function recordDailySoundAnswer(dateStr, songId) {
+    try {
+        const log = JSON.parse(localStorage.getItem(SOUND_ANSWER_LOG_KEY) || '{}');
+        if (log[dateStr] !== songId) {
+            log[dateStr] = songId;
+            localStorage.setItem(SOUND_ANSWER_LOG_KEY, JSON.stringify(log));
+        }
+    } catch (e) {}
+}
+
 function pickDailySoundSong() {
+    const todayStr = getHanoiDateString();
     const idx = getDailySeedHash('sound_daily_song') % SONG_DATABASE.length;
-    return SONG_DATABASE[idx];
+    const song = SONG_DATABASE[idx];
+    if (song) {
+        recordDailySoundAnswer(todayStr, song.id);
+    }
+    return song;
 }
 
 function getYesterdaySoundSong() {
-    const idx = getYesterdaySeedHash('sound_daily_song') % SONG_DATABASE.length;
+    const yesterdayStr = getYesterdayHanoiDateString();
+    try {
+        const log = JSON.parse(localStorage.getItem(SOUND_ANSWER_LOG_KEY) || '{}');
+        if (log[yesterdayStr]) {
+            const matched = SONG_DATABASE.find(s => s.id === log[yesterdayStr]);
+            if (matched) return matched;
+        }
+    } catch (e) {}
+
+    // Nếu ngày hôm qua là từ 2026-11-14 trở về trước (lúc DB có 22 bài), chia theo đúng 22 bài để khớp "The Playah"
+    const poolSize = yesterdayStr <= '2026-11-14'
+        ? Math.min(SOUND_INITIAL_DB_SIZE, SONG_DATABASE.length)
+        : SONG_DATABASE.length;
+    const idx = getYesterdaySeedHash('sound_daily_song') % poolSize;
     return SONG_DATABASE[idx];
 }
 
@@ -33,11 +64,13 @@ let soundRoundFinished = false;
 
 const SOUND_STORAGE_KEY = 'vietnamguesser_sound_daily_status';
 
-function getSoundDailyStatus() {
+function getSoundDailyStatus(expectedSongId) {
     const today = getHanoiDateString();
     try {
         const data = JSON.parse(localStorage.getItem(SOUND_STORAGE_KEY));
-        if (data && data.date === today) return data;
+        if (data && data.date === today && data.targetId === expectedSongId) {
+            return data;
+        }
     } catch (e) {}
     return null;
 }
@@ -46,6 +79,7 @@ function saveSoundDailyStatus(completed, score, isVideoUnlocked) {
     const today = getHanoiDateString();
     const data = {
         date: today,
+        targetId: activeDailySong ? activeDailySong.id : '',
         completed: completed,
         score: score,
         videoClueUnlocked: isVideoUnlocked
@@ -231,7 +265,7 @@ function stopProgressSync() {
 function initSoundMode() {
     ensureYouTubeApi();
     activeDailySong = pickDailySoundSong();
-    const dailyStatus = getSoundDailyStatus();
+    const dailyStatus = getSoundDailyStatus(activeDailySong ? activeDailySong.id : '');
 
     if (dailyStatus) {
         videoClueUnlocked = Boolean(dailyStatus.videoClueUnlocked);
@@ -248,7 +282,11 @@ function initSoundMode() {
         isShowingVideoClue = false;
         soundEarnedScore = 0;
         soundRoundFinished = false;
+        saveModeScore('sound', 0);
         saveSoundDailyStatus(false, 0, false);
+        if (typeof updateCountdownTimers === 'function') {
+            updateCountdownTimers();
+        }
     }
 
     loadSoundRoundScreen();

@@ -1,38 +1,65 @@
-// Map Mode Mechanics
+// Map Mode Mechanics (1 Location Per Day, Full-Bleed View)
+
+const MAP_INITIAL_DB_SIZE = 12; // Số địa danh trước khi mở rộng ngày 2026-11-15
+const MAP_ANSWER_LOG_KEY = 'vietnamguesser_map_answer_log';
 
 const VIETNAM_BOUNDS = [
     [7.2, 101.2],
     [24.2, 110.8]
 ];
 const VIETNAM_CENTER = [16.1, 106.2];
+const GOOGLE_ROAD_TILES = 'https://mt1.google.com/vt/lyrs=m&hl=vi&x={x}&y={y}&z={z}';
 
-function getGoogleRoadTilesUrl() {
-    const hl = isEn() ? 'en' : 'vi';
-    return `https://mt1.google.com/vt/lyrs=m&hl=${hl}&x={x}&y={y}&z={z}`;
+function getMapTitle(loc) {
+    if (!loc) return '';
+    return isEn() && loc.titleEn ? loc.titleEn : (loc.title || '');
 }
 
-function getLocTitle(loc) {
-    return isEn() && loc.titleEn ? loc.titleEn : loc.title;
+function getMapRegionClue(loc) {
+    if (!loc) return '';
+    return isEn() && loc.regionClueEn ? loc.regionClueEn : (loc.regionClue || '');
 }
 
-function getLocRegionClue(loc) {
-    return isEn() && loc.regionClueEn ? loc.regionClueEn : loc.regionClue;
+function recordDailyMapAnswer(dateStr, locId) {
+    try {
+        const log = JSON.parse(localStorage.getItem(MAP_ANSWER_LOG_KEY) || '{}');
+        if (log[dateStr] !== locId) {
+            log[dateStr] = locId;
+            localStorage.setItem(MAP_ANSWER_LOG_KEY, JSON.stringify(log));
+        }
+    } catch (e) {}
 }
 
 function pickDailyMapLocation() {
+    const todayStr = getHanoiDateString();
     const idx = getDailySeedHash('map_daily_location') % MAP_DATABASE.length;
-    return MAP_DATABASE[idx];
+    const loc = MAP_DATABASE[idx];
+    if (loc) {
+        recordDailyMapAnswer(todayStr, loc.id);
+    }
+    return { ...loc };
 }
 
 function getYesterdayMapLocation() {
-    const idx = getYesterdaySeedHash('map_daily_location') % MAP_DATABASE.length;
+    const yesterdayStr = getYesterdayHanoiDateString();
+    try {
+        const log = JSON.parse(localStorage.getItem(MAP_ANSWER_LOG_KEY) || '{}');
+        if (log[yesterdayStr]) {
+            const matched = MAP_DATABASE.find(item => item.id === log[yesterdayStr]);
+            if (matched) return matched;
+        }
+    } catch (e) {}
+
+    const poolSize = yesterdayStr <= '2026-11-14'
+        ? Math.min(MAP_INITIAL_DB_SIZE, MAP_DATABASE.length)
+        : MAP_DATABASE.length;
+    const idx = getYesterdaySeedHash('map_daily_location') % poolSize;
     return MAP_DATABASE[idx];
 }
 
 function buildSvEmbedUrl(lat, lng, heading = 0, panoId = '') {
     const panoParam = panoId ? `&panoid=${encodeURIComponent(panoId)}` : '';
-    const hl = isEn() ? 'en' : 'vi';
-    return `https://maps.google.com/maps?layer=c&cbll=${lat},${lng}${panoParam}&cbp=12,${heading},0,0,0&hl=${hl}&output=svembed`;
+    return `https://maps.google.com/maps?layer=c&cbll=${lat},${lng}${panoParam}&cbp=12,${heading},0,0,0&output=svembed`;
 }
 
 function resolveNearestPanorama(lat, lng, callback) {
@@ -126,11 +153,13 @@ let mapKeydownHandler = null;
 
 const MAP_STORAGE_KEY = 'vietnamguesser_map_daily_status';
 
-function getMapDailyStatus() {
+function getMapDailyStatus(expectedLocId) {
     const today = getHanoiDateString();
     try {
         const data = JSON.parse(localStorage.getItem(MAP_STORAGE_KEY));
-        if (data && data.date === today) return data;
+        if (data && data.date === today && data.targetId === expectedLocId) {
+            return data;
+        }
     } catch (e) {}
     return null;
 }
@@ -139,6 +168,7 @@ function saveMapDailyStatus(completed, score, distance, guessCoords) {
     const today = getHanoiDateString();
     const data = {
         date: today,
+        targetId: activeDailyLocation ? activeDailyLocation.id : '',
         completed: completed,
         score: score,
         distance: distance,
@@ -150,9 +180,9 @@ function saveMapDailyStatus(completed, score, distance, guessCoords) {
 function initMapMode() {
     activeDailyLocation = pickDailyMapLocation();
     snappedPanoState = null;
-    const dailyStatus = getMapDailyStatus();
+    const dailyStatus = getMapDailyStatus(activeDailyLocation ? activeDailyLocation.id : '');
 
-    if (dailyStatus && dailyStatus.completed) {
+    if (dailyStatus && dailyStatus.completed && dailyStatus.guess) {
         mapRoundFinished = true;
         mapEarnedScore = dailyStatus.score || 0;
         mapEarnedDistance = dailyStatus.distance || 0;
@@ -165,7 +195,11 @@ function initMapMode() {
     mapEarnedScore = 0;
     mapEarnedDistance = 0;
     mapUserGuess = null;
+    saveModeScore('map', 0);
     saveMapDailyStatus(false, 0, 0, null);
+    if (typeof updateCountdownTimers === 'function') {
+        updateCountdownTimers();
+    }
     loadMapRoundScreen();
 }
 
@@ -174,7 +208,6 @@ function initMapMode() {
 
 function loadMapRoundScreen() {
     const loc = activeDailyLocation;
-    const yesterdayLoc = getYesterdayMapLocation();
     mapRoundFinished = false;
     selectedLatLng = null;
 
@@ -198,30 +231,26 @@ function loadMapRoundScreen() {
                 <span>NE</span>
             </div>
 
-            <div style="position:absolute;top:54px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(255,255,255,0.92);backdrop-filter:blur(6px);border:1.5px solid var(--border-soft);border-radius:50px;padding:5px 16px;font-size:0.8rem;color:var(--text-muted);pointer-events:none;white-space:nowrap;">
-                ${t('yesterday_single')} <strong style="color:var(--cyan-glow);">${getLocTitle(yesterdayLoc)}</strong>
-            </div>
-
             <div class="map-hud-left">
-                <button class="hud-circle-btn" onclick="resetStreetViewToStart()" title="${t('map_reset_start')}">
+                <button class="hud-circle-btn" onclick="resetStreetViewToStart()" title="Reset">
                     <i class="fa-solid fa-flag"></i>
                 </button>
-                <button class="hud-circle-btn" onclick="toggleMapStageFullscreen()" title="${t('map_fullscreen')}">
+                <button class="hud-circle-btn" onclick="toggleMapStageFullscreen()" title="Fullscreen">
                     <i class="fa-solid fa-expand"></i>
                 </button>
             </div>
 
             <button id="mobile-open-map-btn" class="mobile-open-map-btn" onclick="toggleMobileMinimap(true)">
-                <i class="fa-solid fa-map-location-dot"></i> ${t('map_open_mobile')}
+                <i class="fa-solid fa-map-location-dot"></i> ${typeof t === 'function' ? t('map_open_mobile') : 'MỞ BẢN ĐỒ ĐOÁN'}
             </button>
 
             <div id="map-minimap-overlay" class="map-minimap-overlay ${isMinimapPinnedLarge ? 'pinned-size' : ''}">
                 <div class="minimap-header-bar">
                     <button class="minimap-tool-btn desktop-only" onclick="toggleMinimapPinSize()">
-                        <i class="fa-solid fa-up-right-and-down-left-from-center"></i> ${t('map_toggle_size')}
+                        <i class="fa-solid fa-up-right-and-down-left-from-center"></i> ${typeof t === 'function' ? t('map_toggle_size') : 'Phóng to / Thu nhỏ'}
                     </button>
                     <button class="minimap-tool-btn mobile-only" onclick="toggleMobileMinimap(false)">
-                        <i class="fa-solid fa-xmark"></i> ${t('map_close_mobile')}
+                        <i class="fa-solid fa-xmark"></i> ${typeof t === 'function' ? t('map_close_mobile') : 'Đóng bản đồ'}
                     </button>
                 </div>
 
@@ -230,7 +259,7 @@ function loadMapRoundScreen() {
                 </div>
 
                 <button id="btn-map-guess" class="btn-map-guess" onclick="submitMapGuess()" disabled>
-                    ${t('map_pick_prompt')}
+                    ${typeof t === 'function' ? t('map_select_prompt') : 'CHỌN VỊ TRÍ TRÊN BẢN ĐỒ'}
                 </button>
             </div>
         </div>
@@ -270,7 +299,7 @@ function initVietnamMinimap() {
         attributionControl: false
     });
 
-    L.tileLayer(getGoogleRoadTilesUrl(), {
+    L.tileLayer(GOOGLE_ROAD_TILES, {
         maxZoom: 20
     }).addTo(miniLeafletMap);
 
@@ -288,7 +317,7 @@ function initVietnamMinimap() {
         const guessBtn = document.getElementById('btn-map-guess');
         if (guessBtn) {
             guessBtn.disabled = false;
-            guessBtn.textContent = t('map_guess_this');
+            guessBtn.textContent = typeof t === 'function' ? t('map_confirm_guess') : 'ĐOÁN VỊ TRÍ NÀY';
         }
     });
 
@@ -363,7 +392,7 @@ function toggleMobileMinimap(openState) {
 }
 
 
-// Submission & Result Screen
+// Submission & Result Screen (1 Location Per Day)
 
 function submitMapGuess() {
     if (mapRoundFinished || !selectedLatLng) return;
@@ -402,7 +431,7 @@ function renderMapFinalScreen() {
     const container = document.getElementById('map-mode-view');
 
     container.innerHTML = `
-        <h2 class="game-mode-heading">${t('map_result_heading')}</h2>
+        <h2 class="game-mode-heading">${typeof t === 'function' ? t('map_result_heading') : 'KẾT QUẢ BẢN ĐỒ HÔM NAY'}</h2>
 
         <div class="map-result-stage">
             <div id="map-result-canvas"></div>
@@ -410,24 +439,24 @@ function renderMapFinalScreen() {
 
         <div class="round-result-card">
             <div class="round-result-details">
-                <div class="round-result-title">${getLocTitle(data)}</div>
+                <div class="round-result-title">${getMapTitle(data)}</div>
                 <div class="map-distance-pill">
-                    <i class="fa-solid fa-route"></i> ${t('map_distance_label')} ${mapEarnedDistance.toLocaleString('en-US')} km
+                    <i class="fa-solid fa-route"></i> ${typeof t === 'function' ? t('map_dist_prefix') : 'Cách mục tiêu:'} ${mapEarnedDistance.toLocaleString('en-US')} km
                 </div>
-                <div class="round-result-origin">${getLocRegionClue(data)}</div>
+                <div class="round-result-origin">${getMapRegionClue(data)}</div>
             </div>
             <div class="score-badge-box">
-                <div class="score-badge-header">${t('score_header')}</div>
+                <div class="score-badge-header">${typeof t === 'function' ? t('score_header') : 'ĐIỂM'}</div>
                 <div class="score-badge-value">${mapEarnedScore}</div>
             </div>
         </div>
 
         <button class="btn-action" onclick="backToMainMenu()" style="margin-top: 6px;">
-            <i class="fa-solid fa-house"></i> ${t('back_menu_btn')}
+            <i class="fa-solid fa-house"></i> ${typeof t === 'function' ? t('back_menu_btn') : 'Về Menu chính'}
         </button>
 
         <div class="yesterday-answer-line">
-            ${t('yesterday_single')} <strong>${getLocTitle(yesterdayLoc)}</strong>
+            ${typeof t === 'function' ? t('yesterday_single') : 'Đáp án của ngày hôm qua là'} <strong>${getMapTitle(yesterdayLoc)}</strong>
         </div>
     `;
 
@@ -449,30 +478,30 @@ function mountResultMap(targetData, userGuess) {
         attributionControl: false
     });
 
-    L.tileLayer(getGoogleRoadTilesUrl(), {
+    L.tileLayer(GOOGLE_ROAD_TILES, {
         maxZoom: 20
     }).addTo(resultLeafletMap);
 
     const targetLatLng = [targetData.lat, targetData.lng];
     L.circleMarker(targetLatLng, {
         radius: 9,
-        fillColor: '#5688B4',
-        color: '#FFFFFF',
+        fillColor: '#00f0ff',
+        color: '#0e1117',
         weight: 3,
         fillOpacity: 1
     })
         .addTo(resultLeafletMap)
-        .bindPopup(`<b>${t('map_popup_answer')}</b> ${getLocTitle(targetData)}`)
+        .bindPopup(`<b>${getMapTitle(targetData)}</b>`)
         .openPopup();
 
     if (userGuess) {
         const guessLatLng = [userGuess.lat, userGuess.lng];
         L.marker(guessLatLng)
             .addTo(resultLeafletMap)
-            .bindPopup(t('map_popup_guess'));
+            .bindPopup(typeof t === 'function' ? t('map_your_guess') : 'Vị trí bạn đoán');
 
         L.polyline([guessLatLng, targetLatLng], {
-            color: '#5688B4',
+            color: '#0070f3',
             weight: 3,
             dashArray: '8, 8'
         }).addTo(resultLeafletMap);

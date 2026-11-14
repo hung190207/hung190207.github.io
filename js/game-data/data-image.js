@@ -1,10 +1,10 @@
-// Dishes Database
+// Dish Database (Cloudinary & Local Fallback Ready)
 
 const DISH_DATABASE = {
     easy: [
         {
             id: 'pho',
-            nameCodes: [80, 104, 7903],
+            name: 'Phở',
             image: 'img/pho.jpeg',
             featureClue: 'Món ăn có nước dùng trong và ngọt thanh ninh từ xương, thơm mùi quế, hồi, thảo quả, ăn cùng sợi bánh trắng mềm.',
             featureClueEn: 'A dish with clear, savory bone broth infused with cinnamon, star anise, and cardamom, served with soft white rice noodles.',
@@ -13,7 +13,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'com_tam',
-            nameCodes: [67, 417, 109, 32, 116, 7845, 109],
+            name: 'Cơm tấm',
             image: 'img/com_tam.webp',
             featureClue: 'Nấu từ những hạt gạo bị vỡ khi xay xát, thường ăn kèm sườn nướng, bì, chả trứng, mỡ hành và nước mắm chua ngọt.',
             featureClueEn: 'Cooked from fractured rice grains, typically served with grilled pork ribs, shredded pork skin, steamed egg meatloaf, scallion oil, and sweet-and-sour fish sauce.',
@@ -22,7 +22,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'banh_mi',
-            nameCodes: [66, 225, 110, 104, 32, 109, 236],
+            name: 'Bánh mì',
             image: 'img/banh_mi.jpg',
             featureClue: 'Vỏ nướng giòn rụm bên ngoài, ruột mềm xốp bên trong, phết pate, bơ, kẹp thịt, chả lụa, đồ chua và ngò rí.',
             featureClueEn: 'Crispy baked crust outside and airy inside, spread with pâté and butter, stuffed with meats, Vietnamese sausage, pickled vegetables, and cilantro.',
@@ -31,7 +31,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'bun_thit_nuong',
-            nameCodes: [66, 250, 110, 32, 116, 104, 7883, 116, 32, 110, 432, 7899, 110, 103],
+            name: 'Bún thịt nướng',
             image: 'img/bun_thit_nuong.png',
             featureClue: 'Món bún trộn khô không chan nước lèo nóng, gồm thịt heo ướp sả nướng vàng thơm, đồ chua, đậu phộng rang và mỡ hành.',
             featureClueEn: 'A dry noodle bowl without hot broth, topped with lemongrass-marinated grilled pork, pickled vegetables, roasted peanuts, and scallion oil.',
@@ -40,7 +40,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'bun_bo_hue',
-            nameCodes: [66, 250, 110, 32, 98, 242, 32, 72, 117, 7871],
+            name: 'Bún bò Huế',
             image: 'img/bun-bo-hue.webp',
             featureClue: 'Món bún nổi tiếng với sợi bún to, nước dùng đậm đà vị sả và mắm ruốc đặc trưng, ăn kèm thịt bò, chả và giò heo.',
             featureClueEn: 'Famous for thick round rice noodles, rich broth flavored with lemongrass and fermented shrimp paste, served with beef, pork roll, and pork knuckle.',
@@ -49,7 +49,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'goi_cuon',
-            nameCodes: [71, 7887, 105, 32, 99, 117, 7889, 110],
+            name: 'Gỏi cuốn',
             image: 'img/goi_cuon.jpg',
             featureClue: 'Món cuốn tươi gồm tôm, thịt luộc, bún và rau thơm gói trong lớp bánh tráng mỏng trong suốt, chấm tương đậu phộng.',
             featureClueEn: 'Fresh rolls filled with shrimp, boiled pork, rice vermicelli, and herbs wrapped in translucent rice paper, served with peanut dipping sauce.',
@@ -58,7 +58,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'banh_xeo',
-            nameCodes: [66, 225, 110, 104, 32, 120, 232, 111],
+            name: 'Bánh xèo',
             image: 'img/banh_xeo.jpg',
             featureClue: 'Chiếc bánh vàng giòn làm từ bột gạo pha nghệ, nhân tôm, thịt, giá đỗ, ăn cuốn rau sống và chấm nước mắm chua ngọt.',
             featureClueEn: 'Crispy golden crepe made from rice flour and turmeric, stuffed with shrimp, pork, and bean sprouts, wrapped in fresh greens and dipped in sweet-and-sour fish sauce.',
@@ -67,7 +67,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'chao_long',
-            nameCodes: [67, 104, 225, 111, 32, 108, 242, 110, 103],
+            name: 'Cháo lòng',
             image: 'img/chao_long.webp',
             featureClue: 'Món ăn nóng gồm gạo nấu nhừ sánh mịn, ăn cùng tim, gan, bầu dục, dồi heo, thêm hành, tiêu và quẩy.',
             featureClueEn: 'Hot savory rice porridge cooked until smooth, served with pork heart, liver, kidney, blood sausage, scallions, pepper, and fried dough sticks.',
@@ -76,7 +76,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'banh_chung',
-            nameCodes: [66, 225, 110, 104, 32, 99, 104, 432, 110, 103],
+            name: 'Bánh chưng',
             image: 'img/banh_chung.jpg',
             featureClue: 'Món bánh hình vuông gói lá dong, nhân đậu xanh và thịt mỡ bọc trong lớp gạo nếp, luộc nhiều giờ liền.',
             featureClueEn: 'Square sticky rice cake wrapped in dong leaves, filled with mung beans and fatty pork, boiled for many hours.',
@@ -85,7 +85,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'banh_tet',
-            nameCodes: [66, 225, 110, 104, 32, 116, 233, 116],
+            name: 'Bánh tét',
             image: 'img/banh_tet.jpg',
             featureClue: 'Món bánh hình trụ dài gói lá chuối, nhân đậu xanh và thịt heo bọc trong lớp gạo nếp, thường cắt thành khoanh bằng sợi dây.',
             featureClueEn: 'Cylindrical glutinous rice cake wrapped in banana leaves, filled with mung bean and pork, typically sliced into rounds using a string.',
@@ -94,7 +94,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'che_ba_mau',
-            nameCodes: [67, 104, 232, 32, 98, 97, 32, 109, 224, 117],
+            name: 'Chè ba màu',
             image: 'img/che_ba_mau.jpg',
             featureClue: 'Món tráng miệng giải nhiệt nhiều lớp màu từ đậu đỏ, đậu xanh nghiền và thạch, rưới nước cốt dừa, ăn cùng đá bào.',
             featureClueEn: 'Refreshing layered dessert made with red beans, mashed mung beans, and pandan jelly, topped with coconut milk and shaved ice.',
@@ -103,7 +103,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'bo_luc_lac',
-            nameCodes: [66, 242, 32, 108, 250, 99, 32, 108, 7855, 99],
+            name: 'Bò lúc lắc',
             image: 'img/bo_luc_lac.jpg',
             featureClue: 'Món xào gồm thịt bò cắt hạt lựu, áp chảo lửa lớn cùng hành tây, ớt chuông, ăn kèm rau xà lách, cà chua và cơm.',
             featureClueEn: 'Wok-seared cubed beef cooked over high heat with onions and bell peppers, served with lettuce, tomatoes, and rice.',
@@ -112,7 +112,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'ca_phe_sua_da',
-            nameCodes: [67, 224, 32, 112, 104, 234, 32, 115, 7919, 97, 32, 273, 225],
+            name: 'Cà phê sữa đá',
             image: 'img/ca_phe_sua_da.jpg',
             featureClue: 'Thức uống có vị đắng đậm của hạt rang, pha cùng sữa đặc béo ngọt, rót qua đá lạnh, thường được ủ chậm qua phin nhỏ.',
             featureClueEn: 'Strong dark roast coffee slow-dripped through a metal phin filter, mixed with sweet condensed milk and poured over ice.',
@@ -121,7 +121,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'trung_vit_lon',
-            nameCodes: [84, 114, 7913, 110, 103, 32, 118, 7883, 116, 32, 108, 7897, 110],
+            name: 'Trứng vịt lộn',
             image: 'img/trung_vit_lon.jpg',
             featureClue: 'Món ăn từ trứng ấp dở có phôi thai bên trong, luộc nóng, ăn cùng rau răm, muối tiêu chanh và gừng.',
             featureClueEn: 'Fertilized duck egg boiled hot and eaten with Vietnamese coriander, lime-pepper salt, and shredded ginger.',
@@ -130,7 +130,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'canh_chua',
-            nameCodes: [67, 97, 110, 104, 32, 99, 104, 117, 97],
+            name: 'Canh chua',
             image: 'img/canh_chua.jpg',
             featureClue: 'Món canh có vị chua thanh từ me, thơm, cà chua, thêm đậu bắp, bạc hà, giá đỗ và cá, thơm mùi ngò ôm.',
             featureClueEn: 'Tangy soup flavored with tamarind, pineapple, and tomatoes, cooked with fish, okra, elephant ear stems, bean sprouts, and rice paddy herb.',
@@ -139,7 +139,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'thit_kho_trung',
-            nameCodes: [84, 104, 7883, 116, 32, 107, 104, 111, 32, 116, 114, 7913, 110, 103],
+            name: 'Thịt kho trứng',
             image: 'img/thit_kho_trung.jpg',
             featureClue: 'Món ăn mặn gồm thịt ba chỉ và trứng nấu nhừ trong nước dừa tươi, có màu cánh gián và ăn kèm dưa chua.',
             featureClueEn: 'Savory braised pork belly and boiled eggs simmered until tender in fresh coconut water, served with pickled mustard greens.',
@@ -148,7 +148,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'banh_bao',
-            nameCodes: [66, 225, 110, 104, 32, 98, 97, 111],
+            name: 'Bánh bao',
             image: 'img/banh_bao.jpg',
             featureClue: 'Món bánh hấp trắng xốp mềm, tròn như chiếc nón, bên trong có nhân thịt heo băm, trứng cút và lạp xưởng.',
             featureClueEn: 'Soft, fluffy white steamed bun filled with minced pork, wood ear mushrooms, quail eggs, and Chinese sausage.',
@@ -157,7 +157,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'banh_flan',
-            nameCodes: [66, 225, 110, 104, 32, 102, 108, 97, 110],
+            name: 'Bánh flan',
             image: 'img/banh_flan.jpg',
             featureClue: 'Món tráng miệng làm từ trứng và sữa, mềm mịn, rưới lớp caramel đắng nhẹ, thường ăn lạnh hoặc với cà phê và đá.',
             featureClueEn: 'Silky custard dessert made from eggs and milk, topped with caramel sauce and often served chilled with black coffee and crushed ice.',
@@ -166,7 +166,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'bap_xao',
-            nameCodes: [66, 7855, 112, 32, 120, 224, 111],
+            name: 'Bắp xào',
             image: 'img/bap_xao.jpg',
             featureClue: 'Món ăn vặt làm từ hạt ngô tươi xào cùng bơ, hành phi, tép khô và muối ớt, được bán trong ly giấy.',
             featureClueEn: 'Street snack of sweet corn kernels stir-fried with butter, scallions, dried baby shrimp, and chili salt.',
@@ -175,7 +175,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'banh_trang_tron',
-            nameCodes: [66, 225, 110, 104, 32, 116, 114, 225, 110, 103, 32, 116, 114, 7897, 110],
+            name: 'Bánh tráng trộn',
             image: 'img/banh_trang_tron.jpg',
             featureClue: 'Món ăn vặt gồm sợi trắng cắt nhỏ trộn cùng khô bò, xoài xanh, trứng cút, rau răm, hành phi và sa tế cay.',
             featureClueEn: 'Popular snack of julienned rice paper tossed with beef jerky, green mango, quail eggs, Vietnamese coriander, fried shallots, and spicy satay.',
@@ -184,7 +184,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'banh_trang_nuong',
-            nameCodes: [66, 225, 110, 104, 32, 116, 114, 225, 110, 103, 32, 110, 432, 7899, 110, 103],
+            name: 'Bánh tráng nướng',
             image: 'img/banh_trang_nuong.jpg',
             featureClue: 'Món ăn vặt giòn nướng trên than hồng, phết trứng, hành lá, xúc xích, phô mai, được người ta ví như "pizza Việt Nam".',
             featureClueEn: 'Crispy rice paper grilled over charcoal with beaten egg, scallions, sausage, and cheese, often nicknamed "Vietnamese pizza".',
@@ -193,7 +193,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'bo_ne',
-            nameCodes: [66, 242, 32, 110, 233],
+            name: 'Bò né',
             image: 'img/bo_ne.jpg',
             featureClue: 'Món ăn sáng được dọn trên chảo gang nóng, gồm trứng ốp la, bò bít tết, pate, xúc xích, ăn kèm bánh mì.',
             featureClueEn: 'Breakfast dish served sizzling on a cast-iron platter with steak, sunny-side-up egg, pâté, and sausage alongside baguette.',
@@ -205,7 +205,7 @@ const DISH_DATABASE = {
     medium: [
         {
             id: 'banh_khot',
-            nameCodes: [66, 225, 110, 104, 32, 107, 104, 7885, 116],
+            name: 'Bánh khọt',
             image: 'img/banh_khot.webp',
             featureClue: 'Bánh tròn nhỏ đổ trong khuôn sâu lòng, vỏ giòn rụm, nhân tôm tươi, rắc mỡ hành và tôm cháy, ăn kèm rau sống và nước mắm.',
             featureClueEn: 'Small round crispy savory pancakes cooked in a molded pan, topped with fresh shrimp, scallion oil, and dried shrimp floss, eaten with herbs and fish sauce.',
@@ -214,7 +214,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'banh_gai',
-            nameCodes: [66, 225, 110, 104, 32, 103, 97, 105],
+            name: 'Bánh gai',
             image: 'img/banh_gai.jpg',
             featureClue: 'Bánh có lớp vỏ màu đen đặc trưng làm từ lá gai giã nhuyễn trộn bột nếp, nhân đậu xanh dừa thơm ngọt bùi, gói lá chuối khô.',
             featureClueEn: 'Sweet cake with a distinctive black glutinous wrapper made from ramie leaves, filled with mung bean and coconut paste, wrapped in dried banana leaves.',
@@ -223,7 +223,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'mi_vit_tiem',
-            nameCodes: [77, 236, 32, 118, 7883, 116, 32, 116, 105, 7873, 109],
+            name: 'Mì vịt tiềm',
             image: 'img/mi_vit_tiem.jpg',
             featureClue: 'Mì trứng sợi dai ăn cùng đùi vịt chiên vàng rồi tiềm mềm trong nồi nước dùng thảo mộc thuốc bắc thơm dịu.',
             featureClueEn: 'Chewy egg noodles served with a golden-fried duck leg braised until tender in an aromatic Chinese herbal broth.',
@@ -232,7 +232,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'che_khuc_bach',
-            nameCodes: [67, 104, 232, 32, 107, 104, 250, 99, 32, 98, 7841, 99, 104],
+            name: 'Chè khúc bạch',
             image: 'img/che_khuc_bach.jpg',
             featureClue: 'Món chè giải nhiệt gồm những viên thạch kem sữa phô mai béo ngậy cắt miếng, ăn kèm vải hoặc nhãn lồng và hạnh nhân lát.',
             featureClueEn: 'Chilled dessert soup featuring creamy milk-and-cheese panna cotta cubes, served with lychees or longans and toasted sliced almonds.',
@@ -241,7 +241,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'che_buoi',
-            nameCodes: [67, 104, 232, 32, 98, 432, 7903, 105],
+            name: 'Chè bưởi',
             image: 'img/che_buoi.jpg',
             featureClue: 'Được nấu từ phần cùi trắng giòn sần sật đã khử sạch vị đắng, kết hợp cùng đậu xanh bùi và nước cốt dừa sánh đặc.',
             featureClueEn: 'Cooked from crunchy pomelo pith debittered and coated in tapioca starch, combined with steamed mung beans and rich coconut cream.',
@@ -250,7 +250,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'bo_pia',
-            nameCodes: [66, 242, 32, 112, 237, 97],
+            name: 'Bò pía',
             image: 'img/bo_pia.jpg',
             featureClue: 'Món cuốn nhỏ gọn gồm bánh tráng mỏng cuốn củ sắn, lạp xưởng, trứng tráng, tép khô, rau thơm và chấm tương ngọt đậu phộng.',
             featureClueEn: 'Small fresh rolls wrapped in soft wheat-rice paper with julienned jicama, Chinese sausage, shredded egg, dried shrimp, and herbs, dipped in sweet bean sauce.',
@@ -343,7 +343,7 @@ const DISH_DATABASE = {
     hard: [
         {
             id: 'thang_co',
-            nameCodes: [84, 104, 7855, 110, 103, 32, 99, 7889],
+            name: 'Thắng cố',
             image: 'img/thang_co.webp',
             featureClue: 'Món canh truyền thống ninh nhừ từ thịt, xương và nội tạng cùng thảo quả, hạt dổi và nhiều loại gia vị núi rừng đặc trưng.',
             featureClueEn: 'Traditional highland stew simmered from horse or beef meat, bones, and offal seasoned with cardamom, doi seeds, and mountain herbs.',
@@ -352,16 +352,16 @@ const DISH_DATABASE = {
         },
         {
             id: 'che_suong_sa_hat_luu',
-            nameCodes: [67, 104, 232, 32, 115, 432, 417, 110, 103, 32, 115, 97, 32, 104, 7841, 116, 32, 108, 7921, 117],
+            name: 'Chè sương sa hạt lựu',
             image: 'img/che-suong-sa-hat-luu.jpg',
             featureClue: 'Món chè nhiều màu sắc gồm thạch rong biển giòn mát, củ năng áo bột năng luộc trong veo, đậu xanh đánh và nước cốt dừa.',
-            featureClueEn: 'Colorful sweet dessert withagar jelly, ruby-red water chestnut pearls coated in tapioca, mashed mung beans, and coconut milk.',
+            featureClueEn: 'Colorful sweet dessert with agar jelly, ruby-red water chestnut pearls coated in tapioca, mashed mung beans, and coconut milk.',
             originClue: 'Món chè giải nhiệt lâu đời và phổ biến rộng rãi tại Sài Gòn cùng các tỉnh miền Nam.',
             originClueEn: 'A long-standing refreshing dessert widely loved in Saigon and Southern Vietnam.'
         },
         {
             id: 'luon_xao_lan',
-            nameCodes: [76, 432, 417, 110, 32, 120, 224, 111, 32, 108, 259, 110],
+            name: 'Lươn xào lăn',
             image: 'img/luon_xao_lan.jpg',
             featureClue: 'Thịt đồng xào săn thơm lừng với sả ớt, cà ri, bún tàu, nấm mèo và nước cốt dừa béo ngậy, rắc đậu phộng rang.',
             featureClueEn: 'Freshwater eel stir-fried with lemongrass, chili, curry powder, glass noodles, wood ear mushrooms, and rich coconut milk, topped with roasted peanuts.',
@@ -370,7 +370,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'banh_to',
-            nameCodes: [66, 225, 110, 104, 32, 116, 7893],
+            name: 'Bánh tổ',
             image: 'img/banh_to.jpg',
             featureClue: 'Bánh làm từ gạo nếp và đường đen đặc sản đem hấp chín trong rọ tre lót lá chuối, dẻo quánh, ăn trực tiếp hoặc chiên giòn.',
             featureClueEn: 'Sticky cake made from glutinous rice flour and dark cane sugar steamed in banana-leaf-lined bamboo baskets, eaten fresh or pan-fried.',
@@ -379,7 +379,7 @@ const DISH_DATABASE = {
         },
         {
             id: 'bun_doc_mung',
-            nameCodes: [66, 250, 110, 32, 100, 7885, 99, 32, 109, 249, 110, 103],
+            name: 'Bún dọc mùng',
             image: 'img/bun_doc_mung.jpg',
             featureClue: 'Bát bún nước dùng xương heo trong ngọt, ăn kèm sườn non, mọc viên, thịt chân giò thái lát và phần cuống lá giòn sần sật.',
             featureClueEn: 'Rice noodle soup in clear pork bone broth topped with spare ribs, pork meatballs, sliced pork shank, and crisp elephant ear stems.',

@@ -321,4 +321,205 @@ const SONG_DATABASE = [
         startSeconds: 54,
         clipDuration: 30
     }
+    ,
+    {
+        id: 'thang_tu_la_loi_noi_doi_cua_em',
+        title: 'Tháng Tư Là Lời Nói Dối Của Em',
+        artist: 'Hà Anh Tuấn',
+        youtubeId: 'UCXao7aTDQM',
+        startSeconds: 78,
+        clipDuration: 30
+    },
+    {
+        id: 'cham_day_noi_dau',
+        title: 'Chạm Đáy Nỗi Đau',
+        artist: 'ERIK',
+        youtubeId: '8BAdhoeabUM',
+        startSeconds: 72,
+        clipDuration: 30
+    },
+    {
+        id: 'em_khong_sai_chung_ta_sai',
+        title: 'Em Không Sai, Chúng Ta Sai',
+        artist: 'ERIK',
+        youtubeId: 'iwGuiSnr2Qc',
+        startSeconds: 76,
+        clipDuration: 30
+    },
+    {
+        id: 'co_tat_ca_nhung_thieu_anh',
+        title: 'Có Tất Cả Nhưng Thiếu Anh',
+        artist: 'ERIK',
+        youtubeId: 'irp8Cn_966k',
+        startSeconds: 74,
+        clipDuration: 30
+    },
+    {
+        id: 'sau_tat_ca',
+        title: 'Sau Tất Cả',
+        artist: 'ERIK',
+        youtubeId: 'wHF3Jv6Gk2o',
+        startSeconds: 62,
+        clipDuration: 30
+    },
+    {
+        id: 'vo_nguoi_ta',
+        title: 'Vợ Người Ta',
+        artist: 'Phan Mạnh Quỳnh',
+        youtubeId: '6t-MjBazs3o',
+        startSeconds: 60,
+        clipDuration: 30
+    },
+    {
+        id: 'tu_do',
+        title: 'Từ Đó',
+        artist: 'Phan Mạnh Quỳnh',
+        youtubeId: '06-XXOTP3Gc',
+        startSeconds: 58,
+        clipDuration: 30
+    },
+    {
+        id: 'sau_loi_tu_khuoc',
+        title: 'Sau Lời Từ Khước',
+        artist: 'Phan Mạnh Quỳnh',
+        youtubeId: 'aO8I9w3T7mQ',
+        startSeconds: 70,
+        clipDuration: 30
+    },
+    {
+        id: 'anh_nang_cua_anh',
+        title: 'Ánh Nắng Của Anh',
+        artist: 'Đức Phúc',
+        youtubeId: 'cUmpJ2zwfVU',
+        startSeconds: 65,
+        clipDuration: 30
+    },
+    {
+        id: 'het_thuong_can_nho',
+        title: 'Hết Thương Cạn Nhớ',
+        artist: 'Đức Phúc',
+        youtubeId: 'W4P8gl4dnrg',
+        startSeconds: 75,
+        clipDuration: 30
+    },
+    {
+        id: 'em_dong_y',
+        title: 'Em Đồng Ý (I Do)',
+        artist: 'Đức Phúc x 911',
+        youtubeId: 'IOe0tNoUGv8',
+        startSeconds: 64,
+        clipDuration: 30
+    },
+    {
+        id: 'ben_tren_tang_lau',
+        title: 'Bên Trên Tầng Lầu',
+        artist: 'Tăng Duy Tân',
+        youtubeId: '9p2wMpVVtXg',
+        startSeconds: 48,
+        clipDuration: 30
+    },
+    {
+        id: 'cat_doi_noi_sau',
+        title: 'Cắt Đôi Nỗi Sầu',
+        artist: 'Tăng Duy Tân',
+        youtubeId: 'n6Pnzi6r9NU',
+        startSeconds: 52,
+        clipDuration: 30
+    },
+    {
+        id: 'bai_nay_chill_phet',
+        title: 'Bài Này Chill Phết',
+        artist: 'Đen ft. MIN',
+        youtubeId: 'ddaEtFOsFeM',
+        startSeconds: 66,
+        clipDuration: 30
+    },
+    {
+        id: 'di_ve_nha',
+        title: 'Đi Về Nhà',
+        artist: 'Đen x JustaTee',
+        youtubeId: 'vTJdVE_gjI0',
+        startSeconds: 55,
+        clipDuration: 30
+    },
+    {
+        id: 'tron_tim',
+        title: 'Trốn Tìm',
+        artist: 'Đen ft. MTV Band',
+        youtubeId: 'Ws-QlpSltr8',
+        startSeconds: 68,
+        clipDuration: 30
+    },
+    {
+        id: 'hai_trieu_nam',
+        title: 'Hai Triệu Năm',
+        artist: 'Đen ft. Biên',
+        youtubeId: 'LSMDNL4n0kM',
+        startSeconds: 50,
+        clipDuration: 30
+    },
+    {
+        id: 'con_trai_cung',
+        title: 'Con Trai Cưng',
+        artist: 'B Ray x K-ICM',
+        youtubeId: 'O8ETV573vBM',
+        startSeconds: 45,
+        clipDuration: 30
+    },
+    {
+        id: 'anh_nha_o_dau_the',
+        title: 'Anh Nhà Ở Đâu Thế',
+        artist: 'AMEE x B Ray',
+        youtubeId: '2RtI5ZbLL6I',
+        startSeconds: 56,
+        clipDuration: 30
+    },
+    {
+        id: 'sao_anh_chua_ve_nha',
+        title: 'Sao Anh Chưa Về Nhà',
+        artist: 'AMEE ft. Ricky Star',
+        youtubeId: 'RlB65_X5n0I',
+        startSeconds: 62,
+        clipDuration: 30
+    },
+    {
+        id: 'nguoi_la_oi',
+        title: 'Người Lạ Ơi',
+        artist: 'Karik x Orange x Superbrothers',
+        youtubeId: 'g20t_K9dlhU',
+        startSeconds: 45,
+        clipDuration: 30
+    },
+    {
+        id: 'khi_em_lon',
+        title: 'Khi Em Lớn',
+        artist: 'Orange x Hoàng Dũng',
+        youtubeId: '1I2nZ7lY8z0',
+        startSeconds: 68,
+        clipDuration: 30
+    },
+    {
+        id: 'neu_luc_do',
+        title: 'Nếu Lúc Đó',
+        artist: 'tlinh',
+        youtubeId: 'fyMgBQioTLo',
+        startSeconds: 65,
+        clipDuration: 30
+    },
+    {
+        id: 'mat_troi_cua_em',
+        title: 'Mặt Trời Của Em',
+        artist: 'Phương Ly ft. JustaTee',
+        youtubeId: '3f9-9Q0A9rA',
+        startSeconds: 60,
+        clipDuration: 30
+    },
+    {
+        id: 'anh_la_ngoai_le_cua_em',
+        title: 'Anh Là Ngoại Lệ Của Em',
+        artist: 'Phương Ly',
+        youtubeId: '7kO_ALcwNAw',
+        startSeconds: 52,
+        clipDuration: 30
+    }
 ];

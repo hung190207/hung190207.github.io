@@ -1,7 +1,69 @@
-// History Mode Mechanics
+// History Mode Mechanics (3000 pts without clues, -1000 pts per clue unlocked)
 
-const CLUE_1_REQUIRED_GUESSES = 5;
-const CLUE_2_REQUIRED_GUESSES = 10;
+let activeHistoryFigure = null;
+let historyGuesses = [];
+let historyGameOver = false;
+let historyQuoteUnlocked = false;
+let historyEventUnlocked = false;
+
+const HISTORY_STORAGE_KEY = 'vietnamguesser_history_daily_status';
+
+function getFigRole(fig) {
+    if (!fig) return '';
+    return isEn() && fig.roleEn ? fig.roleEn : (fig.role || '');
+}
+
+function getFigEvent(fig) {
+    if (!fig) return '';
+    if (isEn()) return fig.keyEventEn || fig.eventEn || fig.eventClueEn || fig.keyEvent || fig.event || fig.eventClue || '';
+    return fig.keyEvent || fig.event || fig.eventClue || '';
+}
+
+function getFigRegion(fig) {
+    if (!fig) return '';
+    return isEn() && fig.regionEn ? fig.regionEn : (fig.region || '');
+}
+
+function getFigEra(fig) {
+    if (!fig) return '';
+    return isEn() && fig.eraEn ? fig.eraEn : (fig.era || '');
+}
+
+function getFigQuote(fig) {
+    if (!fig) return '';
+    if (isEn()) return fig.quoteEn || fig.quoteClueEn || fig.quote || fig.quoteClue || '';
+    return fig.quote || fig.quoteClue || '';
+}
+
+function getFigEraOrder(fig) {
+    if (!fig) return 0;
+    if (fig.eraIndex !== undefined) return Number(fig.eraIndex);
+    if (fig.eraOrder !== undefined) return Number(fig.eraOrder);
+    if (fig.year !== undefined) return Number(fig.year);
+    return 0;
+}
+
+function getHistoryDailyStatus() {
+    const today = getHanoiDateString();
+    try {
+        const data = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY));
+        if (data && data.date === today) return data;
+    } catch (e) {}
+    return null;
+}
+
+function saveHistoryDailyStatus(completed, guesses, isOver, quoteUnlocked, eventUnlocked) {
+    const today = getHanoiDateString();
+    const data = {
+        date: today,
+        completed: completed,
+        guesses: guesses,
+        historyGameOver: isOver,
+        historyQuoteUnlocked: quoteUnlocked,
+        historyEventUnlocked: eventUnlocked
+    };
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(data));
+}
 
 function pickDailyHistoryFigure() {
     const idx = getDailySeedHash('history_daily_figure') % HISTORY_DATABASE.length;
@@ -13,195 +75,184 @@ function getYesterdayHistoryFigure() {
     return HISTORY_DATABASE[idx];
 }
 
-function getFigRole(fig) {
-    return isEn() && fig.roleEn ? fig.roleEn : fig.role;
+function getAllDatabaseFigureNames() {
+    return Array.from(new Set(HISTORY_DATABASE.map(item => item.name)));
 }
 
-function getFigEvent(fig) {
-    return isEn() && fig.eventEn ? fig.eventEn : fig.event;
+function findFigureByGuessEntry(entry) {
+    if (!entry) return null;
+    const targetName = typeof entry === 'string' ? entry : (entry.name || entry.id || '');
+    return HISTORY_DATABASE.find(
+        item => item.id === targetName || normalizeVN(item.name) === normalizeVN(targetName)
+    ) || null;
 }
-
-function getFigRegion(fig) {
-    return isEn() && fig.regionEn ? fig.regionEn : fig.region;
-}
-
-function getFigEra(fig) {
-    return isEn() && fig.eraEn ? fig.eraEn : fig.era;
-}
-
-function getFigQuoteClue(fig) {
-    return isEn() && fig.quoteClueEn ? fig.quoteClueEn : fig.quoteClue;
-}
-
-function getFigEventClue(fig) {
-    return isEn() && fig.eventClueEn ? fig.eventClueEn : fig.eventClue;
-}
-
-function splitTokens(val) {
-    return val
-        .split(/[,–-]/)
-        .map(s => normalizeVN(s))
-        .filter(Boolean);
-}
-
-function compareAttribute(guessVal, targetVal) {
-    if (normalizeVN(guessVal) === normalizeVN(targetVal)) {
-        return 'tile-correct';
-    }
-    const gTokens = splitTokens(guessVal);
-    const tTokens = splitTokens(targetVal);
-    const hasOverlap = gTokens.some(gt => tTokens.some(tt => gt === tt || gt.includes(tt) || tt.includes(gt)));
-    return hasOverlap ? 'tile-partial' : 'tile-wrong';
-}
-
-
-// State & Persistence
-
-let activeHistoryTarget = null;
-let guessedHistoryIds = [];
-let unlockedQuoteClue = false;
-let unlockedEventClue = false;
-let historyCompleted = false;
-let historyEarnedScore = 0;
-let historyKeydownHandler = null;
-
-const HISTORY_STORAGE_KEY = 'vietnamguesser_history_daily_status';
-
-function getHistoryDailyStatus() {
-    const today = getHanoiDateString();
-    try {
-        const data = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY));
-        if (data && data.date === today) return data;
-    } catch (e) {}
-    return null;
-}
-
-function saveHistoryDailyStatus() {
-    const today = getHanoiDateString();
-    const data = {
-        date: today,
-        completed: historyCompleted,
-        score: historyEarnedScore,
-        guessedIds: guessedHistoryIds,
-        unlockedQuoteClue: unlockedQuoteClue,
-        unlockedEventClue: unlockedEventClue
-    };
-    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(data));
-}
-
-function getHistoryPotentialScore() {
-    let base = 3000;
-    if (unlockedQuoteClue) base -= 750;
-    if (unlockedEventClue) base -= 750;
-    const wrongGuesses = guessedHistoryIds.filter(id => id !== activeHistoryTarget.id).length;
-    base -= wrongGuesses * 150;
-    return Math.max(500, base);
-}
-
-
-// UI Rendering
 
 function initHistoryMode() {
-    activeHistoryTarget = pickDailyHistoryFigure();
+    activeHistoryFigure = pickDailyHistoryFigure();
     const dailyStatus = getHistoryDailyStatus();
 
     if (dailyStatus) {
-        guessedHistoryIds = dailyStatus.guessedIds || [];
-        unlockedQuoteClue = Boolean(dailyStatus.unlockedQuoteClue);
-        unlockedEventClue = Boolean(dailyStatus.unlockedEventClue);
-        historyCompleted = Boolean(dailyStatus.completed);
-        historyEarnedScore = dailyStatus.score || 0;
+        const rawGuesses = Array.isArray(dailyStatus.guesses) ? dailyStatus.guesses : [];
+        historyGuesses = rawGuesses
+            .map(entry => {
+                const fig = findFigureByGuessEntry(entry);
+                return fig ? fig.name : null;
+            })
+            .filter(Boolean);
+
+        historyGameOver = Boolean(dailyStatus.historyGameOver || dailyStatus.completed);
+        historyQuoteUnlocked = Boolean(dailyStatus.historyQuoteUnlocked || dailyStatus.quoteUnlocked);
+        historyEventUnlocked = Boolean(dailyStatus.historyEventUnlocked || dailyStatus.eventUnlocked);
     } else {
-        guessedHistoryIds = [];
-        unlockedQuoteClue = false;
-        unlockedEventClue = false;
-        historyCompleted = false;
-        historyEarnedScore = 0;
-        saveHistoryDailyStatus();
+        historyGuesses = [];
+        historyGameOver = false;
+        historyQuoteUnlocked = false;
+        historyEventUnlocked = false;
+        saveHistoryDailyStatus(false, [], false, false, false);
     }
 
     renderHistoryScreen();
 }
 
+function calculateHistoryScore() {
+    let baseScore = 3000;
+    if (historyQuoteUnlocked) baseScore -= 1000;
+    if (historyEventUnlocked) baseScore -= 1000;
+    return Math.max(500, baseScore);
+}
+
+function unlockHistoryClue(clueNumber) {
+    if (historyGameOver) return;
+    playClickSound();
+
+    if (clueNumber === 1) historyQuoteUnlocked = true;
+    if (clueNumber === 2) historyEventUnlocked = true;
+
+    saveHistoryDailyStatus(historyGameOver, historyGuesses, historyGameOver, historyQuoteUnlocked, historyEventUnlocked);
+    renderHistoryScreen();
+}
+
+function compareHistoryAttributes(guessItem, targetItem) {
+    const matchRole = normalizeVN(guessItem.role || '') === normalizeVN(targetItem.role || '') ? 'correct' : 'wrong';
+
+    const gEvent = guessItem.keyEvent || guessItem.event || '';
+    const tEvent = targetItem.keyEvent || targetItem.keyEvent || targetItem.event || '';
+    const matchKeyEvent = normalizeVN(gEvent) === normalizeVN(tEvent) ? 'correct' : 'wrong';
+
+    const matchRegion = normalizeVN(guessItem.region || '') === normalizeVN(targetItem.region || '') ? 'correct' : 'wrong';
+
+    const gEraOrder = getFigEraOrder(guessItem);
+    const tEraOrder = getFigEraOrder(targetItem);
+
+    let eraStatus = 'wrong';
+    let eraArrow = '';
+    if (gEraOrder === tEraOrder && normalizeVN(guessItem.era || '') === normalizeVN(targetItem.era || '')) {
+        eraStatus = 'correct';
+    } else if (Math.abs(gEraOrder - tEraOrder) === 1) {
+        eraStatus = 'partial';
+        eraArrow = gEraOrder < tEraOrder ? '↑' : '↓';
+    } else if (gEraOrder !== tEraOrder) {
+        eraArrow = gEraOrder < tEraOrder ? '↑' : '↓';
+    }
+
+    return {
+        role: { text: getFigRole(guessItem), status: matchRole },
+        keyEvent: { text: getFigEvent(guessItem), status: matchKeyEvent },
+        region: { text: getFigRegion(guessItem), status: matchRegion },
+        era: { text: getFigEra(guessItem), status: eraStatus, arrow: eraArrow }
+    };
+}
+
 function renderHistoryScreen() {
-    const yesterdayFig = getYesterdayHistoryFigure();
-    const guessCount = guessedHistoryIds.length;
-    const hasGuessedOnce = guessCount > 0;
-
-    const canUnlockClue1 = guessCount >= CLUE_1_REQUIRED_GUESSES;
-    const canUnlockClue2 = guessCount >= CLUE_2_REQUIRED_GUESSES;
-    const remClue1 = Math.max(0, CLUE_1_REQUIRED_GUESSES - guessCount);
-    const remClue2 = Math.max(0, CLUE_2_REQUIRED_GUESSES - guessCount);
-
-    let clue1Label = t('hist_clue_1');
-    if (unlockedQuoteClue) {
-        clue1Label = t('hist_clue_1_unlocked');
-    } else if (!canUnlockClue1) {
-        clue1Label = `${t('hist_clue_1')} - ${t('hist_after_guesses').replace('{n}', remClue1)}`;
-    }
-
-    let clue2Label = t('hist_clue_2');
-    if (unlockedEventClue) {
-        clue2Label = t('hist_clue_2_unlocked');
-    } else if (!canUnlockClue2) {
-        clue2Label = `${t('hist_clue_2')} - ${t('hist_after_guesses').replace('{n}', remClue2)}`;
-    }
-
     const container = document.getElementById('history-mode-view');
+    if (!container || !activeHistoryFigure) return;
+
+    const yesterdayFig = getYesterdayHistoryFigure();
+    const figureNames = getAllDatabaseFigureNames();
+
+    let gridHtml = '';
+    historyGuesses.forEach(guessedName => {
+        const fig = findFigureByGuessEntry(guessedName);
+        if (!fig) return;
+        const comp = compareHistoryAttributes(fig, activeHistoryFigure);
+        gridHtml += `
+            <div class="loldle-guess-row">
+                <div class="loldle-tile tile-character">
+                    <span class="era-tile-content">${fig.name}</span>
+                </div>
+                <div class="loldle-tile tile-${comp.role.status}">
+                    <span class="era-tile-content">${comp.role.text}</span>
+                </div>
+                <div class="loldle-tile tile-${comp.keyEvent.status}">
+                    <span class="era-tile-content">${comp.keyEvent.text}</span>
+                </div>
+                <div class="loldle-tile tile-${comp.region.status}">
+                    <span class="era-tile-content">${comp.region.text}</span>
+                </div>
+                <div class="loldle-tile tile-${comp.era.status}">
+                    ${comp.era.arrow ? `<span class="era-bg-arrow">${comp.era.arrow}</span>` : ''}
+                    <span class="era-tile-content">${comp.era.text}</span>
+                </div>
+            </div>
+        `;
+    });
+
+    let inputAreaHtml = '';
+    if (!historyGameOver) {
+        inputAreaHtml = `
+            <div class="guess-controls" style="margin-top: 20px; margin-bottom: 10px;">
+                <div class="guess-input-wrapper">
+                    <div id="history-autocomplete-list" class="autocomplete-items"></div>
+                    <input 
+                        type="text" 
+                        id="history-guess-input" 
+                        class="guess-input" 
+                        placeholder="${t('hist_input_placeholder')}" 
+                        autocomplete="off"
+                    >
+                </div>
+                <button id="history-submit-btn" class="btn-guess" onclick="submitHistoryGuess()">${t('guess_btn')}</button>
+            </div>
+            <div id="history-round-feedback" class="round-feedback"></div>
+        `;
+    } else {
+        const finalScore = calculateHistoryScore();
+        inputAreaHtml = `
+            <div class="history-victory-banner">
+                <h3>🎉 ${t('hist_victory_title')} ${activeHistoryFigure.name}</h3>
+                <p>${t('hist_victory_desc').replace('{tries}', historyGuesses.length).replace('{score}', finalScore.toLocaleString('en-US'))}</p>
+                <button class="btn-action" onclick="backToMainMenu()" style="margin-top: 10px;">
+                    <i class="fa-solid fa-house"></i> ${t('back_menu_btn')}
+                </button>
+            </div>
+        `;
+    }
+
     container.innerHTML = `
         <h2 class="game-mode-heading">${t('hist_heading')}</h2>
 
         <div class="round-bar">
-            <span id="history-potential-score" class="badge-score">+${historyCompleted ? historyEarnedScore : getHistoryPotentialScore()} ${t('points_suffix')}</span>
+            <span class="badge-score">+${calculateHistoryScore()} ${t('points_suffix')}</span>
         </div>
 
         <div class="history-clue-panel">
             <div class="history-clue-subtitle">${t('hist_subtitle')}</div>
             <div class="history-clue-buttons">
-                <button 
-                    id="btn-hist-clue-quote" 
-                    class="btn-clue ${unlockedQuoteClue ? 'unlocked' : ''}" 
-                    onclick="unlockHistoryClue('quote')"
-                    ${!canUnlockClue1 && !unlockedQuoteClue ? 'disabled' : ''}
-                >
-                    <i class="fa-solid ${unlockedQuoteClue ? 'fa-lock-open' : 'fa-quote-left'}"></i>
-                    ${clue1Label}
+                <button class="btn-clue ${historyQuoteUnlocked ? 'unlocked' : ''}" onclick="unlockHistoryClue(1)">
+                    <i class="fa-solid ${historyQuoteUnlocked ? 'fa-lock-open' : 'fa-lock'}"></i> 
+                    ${historyQuoteUnlocked ? t('hist_clue_1_unlocked') : t('hist_clue_1')} (-1000 pts)
                 </button>
-                <button 
-                    id="btn-hist-clue-event" 
-                    class="btn-clue ${unlockedEventClue ? 'unlocked' : ''}" 
-                    onclick="unlockHistoryClue('event')"
-                    ${!canUnlockClue2 && !unlockedEventClue ? 'disabled' : ''}
-                >
-                    <i class="fa-solid ${unlockedEventClue ? 'fa-lock-open' : 'fa-scroll'}"></i>
-                    ${clue2Label}
+                <button class="btn-clue ${historyEventUnlocked ? 'unlocked' : ''}" onclick="unlockHistoryClue(2)">
+                    <i class="fa-solid ${historyEventUnlocked ? 'fa-lock-open' : 'fa-lock'}"></i> 
+                    ${historyEventUnlocked ? t('hist_clue_2_unlocked') : t('hist_clue_2')} (-1000 pts)
                 </button>
             </div>
-            <div id="hist-clue-quote-box" class="history-clue-box" style="display: ${unlockedQuoteClue ? 'block' : 'none'};">
-                <span class="clue-quote">${getFigQuoteClue(activeHistoryTarget)}</span>
-            </div>
-            <div id="hist-clue-event-box" class="history-clue-box" style="display: ${unlockedEventClue ? 'block' : 'none'};">
-                <span style="color:var(--cyan-glow);font-weight:700;">${t('hist_event_label')}</span> ${getFigEventClue(activeHistoryTarget)}
-            </div>
+
+            ${historyQuoteUnlocked ? `<div class="history-clue-box"><span class="clue-quote">"${getFigQuote(activeHistoryFigure)}"</span></div>` : ''}
+            ${historyEventUnlocked ? `<div class="history-clue-box"><span><strong>${t('hist_event_label')}</strong> ${getFigEvent(activeHistoryFigure)}</span></div>` : ''}
         </div>
 
-        <div id="history-input-section" class="guess-controls" style="display: ${historyCompleted ? 'none' : 'flex'};">
-            <div class="guess-input-wrapper">
-                <div id="history-autocomplete-list" class="autocomplete-items"></div>
-                <input 
-                    type="text" 
-                    id="history-guess-input" 
-                    class="guess-input" 
-                    placeholder="${t('hist_input_placeholder')}" 
-                    autocomplete="off"
-                >
-            </div>
-            <button class="btn-guess" onclick="submitHistoryGuess()">${t('guess_btn')}</button>
-        </div>
-
-        <div id="history-round-feedback" class="round-feedback"></div>
-
-        <div class="loldle-board-scroll" style="display: ${hasGuessedOnce ? 'block' : 'none'};">
+        <div class="loldle-board-scroll">
             <div class="loldle-grid">
                 <div class="loldle-header-row">
                     <div class="loldle-col-header">${t('hist_col_char')}</div>
@@ -210,100 +261,32 @@ function renderHistoryScreen() {
                     <div class="loldle-col-header">${t('hist_col_region')}</div>
                     <div class="loldle-col-header">${t('hist_col_era')}</div>
                 </div>
-                <div id="loldle-rows-container" style="display:flex;flex-direction:column;gap:10px;"></div>
+                ${gridHtml}
             </div>
         </div>
 
-        <div class="loldle-legend-box" style="display: ${hasGuessedOnce ? 'flex' : 'none'};">
-            <div class="legend-item"><span class="legend-swatch correct"></span> ${t('hist_legend_correct')}</div>
-            <div class="legend-item"><span class="legend-swatch partial"></span> ${t('hist_legend_partial')}</div>
-            <div class="legend-item"><span class="legend-swatch wrong"></span> ${t('hist_legend_wrong')}</div>
-        </div>
+        ${inputAreaHtml}
 
-        <div id="history-victory-container" style="width:100%;display:flex;justify-content:center;"></div>
+        <div class="loldle-legend-box">
+            <div class="legend-item"><div class="legend-swatch correct"></div><span>${t('hist_legend_correct')}</span></div>
+            <div class="legend-item"><div class="legend-swatch partial"></div><span>${t('hist_legend_partial')}</span></div>
+            <div class="legend-item"><div class="legend-swatch wrong"></div><span>${t('hist_legend_wrong')}</span></div>
+        </div>
 
         <div class="yesterday-answer-line">
             ${t('yesterday_single')} <strong>${yesterdayFig.name}</strong>
         </div>
     `;
 
-    if (hasGuessedOnce) {
-        renderGuessedHistoryRows();
-    }
-
-    if (historyCompleted) {
-        renderHistoryVictoryBanner();
-    } else {
-        setupHistoryAutocomplete();
+    if (!historyGameOver) {
+        setupHistoryAutocomplete(figureNames);
     }
 }
 
-function renderGuessedHistoryRows() {
-    const rowsContainer = document.getElementById('loldle-rows-container');
-    if (!rowsContainer) return;
-    rowsContainer.innerHTML = '';
-
-    const reversedIds = [...guessedHistoryIds].reverse();
-    reversedIds.forEach(id => {
-        const fig = HISTORY_DATABASE.find(item => item.id === id);
-        if (!fig) return;
-
-        const roleClass = compareAttribute(fig.role, activeHistoryTarget.role);
-        const eventClass = compareAttribute(fig.event, activeHistoryTarget.event);
-        const regionClass = compareAttribute(fig.region, activeHistoryTarget.region);
-        const eraClass = compareAttribute(fig.era, activeHistoryTarget.era);
-
-        let eraArrowIcon = '';
-        if (activeHistoryTarget.eraOrder > fig.eraOrder) {
-            eraArrowIcon = '<i class="fa-solid fa-arrow-up"></i>';
-        } else if (activeHistoryTarget.eraOrder < fig.eraOrder) {
-            eraArrowIcon = '<i class="fa-solid fa-arrow-down"></i>';
-        }
-
-        const row = document.createElement('div');
-        row.className = 'loldle-guess-row';
-        row.innerHTML = `
-            <div class="loldle-tile tile-character">${fig.name}</div>
-            <div class="loldle-tile ${roleClass}">${getFigRole(fig)}</div>
-            <div class="loldle-tile ${eventClass}">${getFigEvent(fig)}</div>
-            <div class="loldle-tile ${regionClass}">${getFigRegion(fig)}</div>
-            <div class="loldle-tile ${eraClass}">
-                ${eraArrowIcon ? `<div class="era-bg-arrow">${eraArrowIcon}</div>` : ''}
-                <span class="era-tile-content">${getFigEra(fig)} ${eraArrowIcon}</span>
-            </div>
-        `;
-        rowsContainer.appendChild(row);
-    });
-}
-
-function unlockHistoryClue(type) {
-    if (historyCompleted) return;
-    const guessCount = guessedHistoryIds.length;
-
-    if (type === 'quote' && guessCount >= CLUE_1_REQUIRED_GUESSES && !unlockedQuoteClue) {
-        playClickSound();
-        unlockedQuoteClue = true;
-        saveHistoryDailyStatus();
-        renderHistoryScreen();
-    } else if (type === 'event' && guessCount >= CLUE_2_REQUIRED_GUESSES && !unlockedEventClue) {
-        playClickSound();
-        unlockedEventClue = true;
-        saveHistoryDailyStatus();
-        renderHistoryScreen();
-    }
-}
-
-
-// Autocomplete & Guess Submission
-
-function setupHistoryAutocomplete() {
+function setupHistoryAutocomplete(figureNames) {
     const inputEl = document.getElementById('history-guess-input');
     const dropdown = document.getElementById('history-autocomplete-list');
     if (!inputEl || !dropdown) return;
-
-    function getRemainingFigures() {
-        return HISTORY_DATABASE.filter(fig => !guessedHistoryIds.includes(fig.id));
-    }
 
     function renderSuggestions(rawVal) {
         dropdown.innerHTML = '';
@@ -314,25 +297,22 @@ function setupHistoryAutocomplete() {
             return;
         }
 
-        const remaining = getRemainingFigures();
-        const matches = remaining.filter(fig => normalizeVN(fig.name).includes(normalizedVal));
+        const guessedSet = new Set(historyGuesses.map(name => normalizeVN(name)));
+        const matches = figureNames.filter(name => {
+            return normalizeVN(name).includes(normalizedVal) && !guessedSet.has(normalizeVN(name));
+        });
+
         if (matches.length === 0) {
             dropdown.classList.remove('show');
             return;
         }
 
-        matches.sort((a, b) => {
-            const aStarts = normalizeVN(a.name).startsWith(normalizedVal) ? 0 : 1;
-            const bStarts = normalizeVN(b.name).startsWith(normalizedVal) ? 0 : 1;
-            return aStarts - bStarts;
-        });
-
-        matches.forEach(fig => {
+        matches.forEach(name => {
             const item = document.createElement('div');
-            item.innerHTML = `<i class="fa-solid fa-landmark" style="margin-right:8px; color:var(--cyan-dim);"></i> ${fig.name}`;
+            item.innerHTML = `<i class="fa-solid fa-landmark" style="margin-right:8px; color:var(--cyan-dim);"></i> ${name}`;
             item.addEventListener('mousedown', function (e) {
                 e.preventDefault();
-                inputEl.value = fig.name;
+                inputEl.value = name;
                 dropdown.innerHTML = '';
                 dropdown.classList.remove('show');
                 inputEl.focus();
@@ -366,15 +346,15 @@ function setupHistoryAutocomplete() {
 }
 
 function submitHistoryGuess() {
-    if (historyCompleted) return;
+    if (historyGameOver) return;
     playClickSound();
 
     const inputEl = document.getElementById('history-guess-input');
     const feedbackEl = document.getElementById('history-round-feedback');
     if (!inputEl) return;
 
-    const rawGuess = normalizeVN(inputEl.value);
-    if (!rawGuess) {
+    const rawVal = inputEl.value.trim();
+    if (!rawVal) {
         if (feedbackEl) {
             feedbackEl.textContent = t('hist_empty_warning');
             feedbackEl.className = 'round-feedback warning';
@@ -382,11 +362,8 @@ function submitHistoryGuess() {
         return;
     }
 
-    const matchedFig = HISTORY_DATABASE.find(
-        fig => normalizeVN(fig.name) === rawGuess || normalizeVN(fig.name).includes(rawGuess)
-    );
-
-    if (!matchedFig) {
+    const matchedFigure = HISTORY_DATABASE.find(item => normalizeVN(item.name) === normalizeVN(rawVal));
+    if (!matchedFigure) {
         if (feedbackEl) {
             feedbackEl.textContent = t('hist_not_found_warning');
             feedbackEl.className = 'round-feedback warning';
@@ -394,7 +371,8 @@ function submitHistoryGuess() {
         return;
     }
 
-    if (guessedHistoryIds.includes(matchedFig.id)) {
+    const alreadyGuessed = historyGuesses.some(name => normalizeVN(name) === normalizeVN(matchedFigure.name));
+    if (alreadyGuessed) {
         if (feedbackEl) {
             feedbackEl.textContent = t('hist_already_guessed');
             feedbackEl.className = 'round-feedback warning';
@@ -402,55 +380,19 @@ function submitHistoryGuess() {
         return;
     }
 
-    if (feedbackEl) feedbackEl.textContent = '';
-    const currentPotential = getHistoryPotentialScore();
-    guessedHistoryIds.push(matchedFig.id);
+    historyGuesses.push(matchedFigure.name);
 
-    if (matchedFig.id === activeHistoryTarget.id) {
-        historyCompleted = true;
-        historyEarnedScore = currentPotential;
-        saveModeScore('history', historyEarnedScore);
-        saveHistoryDailyStatus();
-        if (typeof updateCountdownTimers === 'function') {
-            updateCountdownTimers();
-        }
-        renderHistoryScreen();
-    } else {
-        saveHistoryDailyStatus();
-        renderHistoryScreen();
+    const isCorrect = normalizeVN(matchedFigure.name) === normalizeVN(activeHistoryFigure.name);
+    if (isCorrect) {
+        historyGameOver = true;
+        const earnedScore = calculateHistoryScore();
+        saveModeScore('history', earnedScore);
     }
-}
 
-function renderHistoryVictoryBanner() {
-    const box = document.getElementById('history-victory-container');
-    if (!box) return;
-
-    const descHtml = t('hist_victory_desc')
-        .replace('{tries}', guessedHistoryIds.length)
-        .replace('{score}', historyEarnedScore.toLocaleString('en-US'));
-
-    box.innerHTML = `
-        <div class="history-victory-banner">
-            <div class="round-result-title" style="color:var(--cyan-glow);">${t('hist_victory_title')} ${activeHistoryTarget.name}</div>
-            <div class="round-result-origin" style="border:none;padding:0;text-align:center;">
-                ${descHtml}
-            </div>
-            <button class="btn-action" onclick="backToMainMenu()" style="margin-top: 6px;">
-                <i class="fa-solid fa-house"></i> ${t('back_menu_btn')}
-            </button>
-        </div>
-    `;
-
-    if (historyKeydownHandler) {
-        document.removeEventListener('keydown', historyKeydownHandler);
+    saveHistoryDailyStatus(historyGameOver, historyGuesses, historyGameOver, historyQuoteUnlocked, historyEventUnlocked);
+    if (typeof updateCountdownTimers === 'function') {
+        updateCountdownTimers();
     }
-    historyKeydownHandler = function (e) {
-        if (e.key === 'Enter' && localStorage.getItem('vietnamguesser_active_mode') === 'history' && historyCompleted) {
-            e.preventDefault();
-            document.removeEventListener('keydown', historyKeydownHandler);
-            historyKeydownHandler = null;
-            backToMainMenu();
-        }
-    };
-    document.addEventListener('keydown', historyKeydownHandler);
+
+    renderHistoryScreen();
 }

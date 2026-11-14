@@ -1,18 +1,28 @@
 // Image Mode Mechanics
 
-const IMAGE_EPOCH_DAY = 20454; // 2026-01-01
+const IMAGE_EPOCH_DAY = 20750; // Mốc cố định để tính chuỗi không lặp 4 ngày
 const MIN_NON_REPEAT_DAYS = 4;
 
+// Cloud Name trên Cloudinary của bạn
+const CLOUDINARY_CLOUD_NAME = 'ncb2tthl';
+
 function getDishName(item) {
-    return item.name ? item.name : String.fromCharCode(...item.nameCodes);
+    if (!item) return '';
+    if (item.name) return item.name;
+    if (Array.isArray(item.nameCodes)) {
+        return String.fromCharCode(...item.nameCodes);
+    }
+    return '';
 }
 
 function getDishFeature(item) {
-    return isEn() && item.featureClueEn ? item.featureClueEn : item.featureClue;
+    if (!item) return '';
+    return isEn() && item.featureClueEn ? item.featureClueEn : (item.featureClue || '');
 }
 
 function getDishOrigin(item) {
-    return isEn() && item.originClueEn ? item.originClueEn : item.originClue;
+    if (!item) return '';
+    return isEn() && item.originClueEn ? item.originClueEn : (item.originClue || '');
 }
 
 function getDifficultyLabel(diffKey) {
@@ -21,32 +31,93 @@ function getDifficultyLabel(diffKey) {
     return t('diff_hard');
 }
 
-function handleDishImgError(imgEl) {
-    const rawSrc = imgEl.getAttribute('data-orig-src') || imgEl.getAttribute('src') || '';
-    if (!imgEl.getAttribute('data-orig-src')) {
-        imgEl.setAttribute('data-orig-src', rawSrc);
+function buildDishImageCandidates(item) {
+    if (!item) return [];
+    if (item.image && /^https?:\/\//i.test(item.image)) {
+        return [item.image];
     }
 
-    const baseNoExt = rawSrc.replace(/\.(jpg|jpeg|png|webp)$/i, '');
-    const altBase = baseNoExt.includes('_')
-        ? baseNoExt.replace(/_/g, '-')
-        : baseNoExt.replace(/-/g, '_');
+    const rawId = (item.id || '').trim();
+    let fileFromPath = rawId;
+    if (item.image) {
+        fileFromPath = item.image.split('/').pop().replace(/\.(jpg|jpeg|png|webp)$/i, '');
+    }
 
-    const candidates = [
-        `${baseNoExt}.jpg`,
-        `${baseNoExt}.webp`,
-        `${baseNoExt}.png`,
-        `${baseNoExt}.jpeg`,
-        `${altBase}.jpg`,
-        `${altBase}.webp`,
-        `${altBase}.png`,
-        `${altBase}.jpeg`
+    const underscoreId = (rawId || fileFromPath).replace(/-/g, '_');
+    const hyphenId = (rawId || fileFromPath).replace(/_/g, '-');
+    const nameVariants = Array.from(new Set([rawId, fileFromPath, underscoreId, hyphenId].filter(Boolean)));
+
+    const urls = [];
+
+    // 1. Thử tải từ Cloudinary (cả ngoài thư mục gốc lẫn trong thư mục dishes/)
+    if (CLOUDINARY_CLOUD_NAME && CLOUDINARY_CLOUD_NAME !== 'TEN_CLOUD_CUA_BAN') {
+        nameVariants.forEach(name => {
+            urls.push(`https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_900/${name}`);
+            urls.push(`https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_900/dishes/${name}`);
+        });
+    }
+
+    // 2. Dự phòng về thư mục img/ cục bộ trong project
+    if (item.image) {
+        urls.push(item.image);
+    }
+    nameVariants.forEach(name => {
+        urls.push(
+            `img/${name}.jpg`,
+            `img/${name}.webp`,
+            `img/${name}.png`,
+            `img/${name}.jpeg`
+        );
+    });
+
+    return Array.from(new Set(urls));
+}
+
+function getDishImageUrl(item) {
+    const candidates = buildDishImageCandidates(item);
+    return candidates.length > 0 ? candidates[0] : '';
+}
+
+function handleDishImgError(imgEl) {
+    const allItems = [
+        ...(DISH_DATABASE.easy || []),
+        ...(DISH_DATABASE.medium || []),
+        ...(DISH_DATABASE.hard || [])
     ];
+    const targetId = imgEl.getAttribute('data-dish-id') || '';
+    const matchedItem = allItems.find(d => d.id === targetId);
 
-    const step = Number(imgEl.getAttribute('data-retry-step') || 0);
-    if (step < candidates.length) {
-        imgEl.setAttribute('data-retry-step', String(step + 1));
-        imgEl.src = candidates[step];
+    let candidates = [];
+    if (matchedItem) {
+        candidates = buildDishImageCandidates(matchedItem);
+    } else {
+        const rawSrc = imgEl.getAttribute('data-orig-src') || imgEl.getAttribute('src') || '';
+        if (!imgEl.getAttribute('data-orig-src')) {
+            imgEl.setAttribute('data-orig-src', rawSrc);
+        }
+        const baseName = rawSrc.split('/').pop().replace(/\.(jpg|jpeg|png|webp)$/i, '');
+        const altName = baseName.includes('_') ? baseName.replace(/_/g, '-') : baseName.replace(/-/g, '_');
+        candidates = [
+            `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_900/${baseName}`,
+            `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_900/dishes/${baseName}`,
+            `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_900/${altName}`,
+            `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_900/dishes/${altName}`,
+            `img/${baseName}.jpg`,
+            `img/${baseName}.webp`,
+            `img/${baseName}.png`,
+            `img/${baseName}.jpeg`,
+            `img/${altName}.jpg`,
+            `img/${altName}.webp`
+        ];
+    }
+
+    const nextStep = Number(imgEl.getAttribute('data-retry-step') || 1);
+    if (nextStep < candidates.length) {
+        imgEl.setAttribute('data-retry-step', String(nextStep + 1));
+        imgEl.src = candidates[nextStep];
+    } else {
+        // Ngắt sự kiện onerror khi đã thử hết tất cả đường dẫn để tránh lặp vô tận
+        imgEl.onerror = null;
     }
 }
 
@@ -62,11 +133,11 @@ function buildMaskedTitleClue(fullName) {
 
 function getAllDatabaseDishNames() {
     const allItems = [
-        ...DISH_DATABASE.easy,
-        ...DISH_DATABASE.medium,
-        ...DISH_DATABASE.hard
+        ...(DISH_DATABASE.easy || []),
+        ...(DISH_DATABASE.medium || []),
+        ...(DISH_DATABASE.hard || [])
     ];
-    return Array.from(new Set(allItems.map(item => getDishName(item))));
+    return Array.from(new Set(allItems.map(item => getDishName(item)).filter(Boolean)));
 }
 
 
@@ -166,15 +237,17 @@ function initImageMode() {
     const dailyStatus = getImageDailyStatus();
 
     if (dailyStatus) {
-        roundScores = dailyStatus.scores || [0, 0, 0];
+        roundScores = Array.isArray(dailyStatus.scores) && dailyStatus.scores.length === 3
+            ? dailyStatus.scores
+            : [0, 0, 0];
 
         if (dailyStatus.completed) {
             renderFinalScoreScreen(roundScores);
             return;
         }
 
-        currentRoundIndex = dailyStatus.currentRoundIndex || 0;
-        unlockedCluesCount = dailyStatus.unlockedCluesCount || 0;
+        currentRoundIndex = Math.min(2, Math.max(0, Number(dailyStatus.currentRoundIndex) || 0));
+        unlockedCluesCount = Math.min(3, Math.max(0, Number(dailyStatus.unlockedCluesCount) || 0));
         roundFinished = Boolean(dailyStatus.roundFinished);
 
         if (roundFinished) {
@@ -209,6 +282,8 @@ function loadRoundScreen(index, savedClues = 0) {
     roundFinished = false;
 
     const container = document.getElementById('image-mode-view');
+    if (!container || !data) return;
+
     container.innerHTML = `
         <h2 class="game-mode-heading">${t('img_heading')}</h2>
 
@@ -219,7 +294,7 @@ function loadRoundScreen(index, savedClues = 0) {
         </div>
 
         <div class="image-stage">
-            <img id="dish-image" src="${data.image}" alt="Dish" onerror="handleDishImgError(this)">
+            <img id="dish-image" data-dish-id="${data.id}" src="${getDishImageUrl(data)}" alt="Dish" onerror="handleDishImgError(this)">
         </div>
 
         <div class="clues-bar">
@@ -272,7 +347,7 @@ function updateClueButtonsAndLines() {
     const line2 = document.getElementById('clue-line-2');
     const line3 = document.getElementById('clue-line-3');
 
-    if (!btnClue1) return;
+    if (!btnClue1 || !data) return;
 
     btnClue1.disabled = false;
     if (unlockedCluesCount >= 1) {
@@ -313,7 +388,10 @@ function updateClueButtonsAndLines() {
         line3.style.display = 'none';
     }
 
-    document.getElementById('img-potential-score').textContent = `+${getCurrentRoundMaxScore()} ${t('points_suffix')}`;
+    const scoreEl = document.getElementById('img-potential-score');
+    if (scoreEl) {
+        scoreEl.textContent = `+${getCurrentRoundMaxScore()} ${t('points_suffix')}`;
+    }
 }
 
 function handleClueButtonClick(clueLevel) {
@@ -436,6 +514,8 @@ let imageResultKeydownHandler = null;
 
 function renderRoundResultScreen(index, earnedScore) {
     const data = activeDailyRounds[index];
+    if (!data) return;
+
     const dishName = getDishName(data);
     const nextButtonText = index < activeDailyRounds.length - 1 ? t('next_round_btn') : t('view_final_btn');
 
@@ -449,7 +529,7 @@ function renderRoundResultScreen(index, earnedScore) {
         </div>
 
         <div class="round-result-card">
-            <img src="${data.image}" class="round-result-img" alt="Dish" onerror="handleDishImgError(this)">
+            <img data-dish-id="${data.id}" src="${getDishImageUrl(data)}" class="round-result-img" alt="Dish" onerror="handleDishImgError(this)">
             <div class="round-result-details">
                 <div class="round-result-title">${dishName}</div>
                 <div class="round-result-origin">${getDishOrigin(data)}</div>
@@ -510,7 +590,7 @@ function renderFinalScoreScreen(scoresArray) {
     let roundsHtml = '';
     activeDailyRounds.forEach((round, idx) => {
         const dishName = getDishName(round);
-        const pts = scoresArray[idx];
+        const pts = scoresArray[idx] || 0;
         roundsHtml += `
             <div class="round-recap-card">
                 <div class="recap-header">
@@ -518,7 +598,7 @@ function renderFinalScoreScreen(scoresArray) {
                     <span class="recap-points">${pts.toLocaleString('en-US')} pts</span>
                 </div>
                 <div class="recap-body">
-                    <img src="${round.image}" class="recap-thumb" alt="Dish" onerror="handleDishImgError(this)">
+                    <img data-dish-id="${round.id}" src="${getDishImageUrl(round)}" class="recap-thumb" alt="Dish" onerror="handleDishImgError(this)">
                     <div class="recap-info">
                         <h4>${dishName}</h4>
                         <p>${getDishOrigin(round)}</p>

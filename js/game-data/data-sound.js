@@ -696,5 +696,367 @@ const SONG_DATABASE = [
         youtubeId: '6V1k8pM2x9L',
         startSeconds: 60,
         clipDuration: 30
-    }   
+    },
+    {
+        id: 'co_doi_dieu',
+        title: 'Có Đôi Điều',
+        artist: 'Shiki',
+        youtubeId: '5X9k2L8m1vQ',
+        startSeconds: 55,
+        clipDuration: 30
+    },
+    {
+        id: 'doi_den_thang_13',
+        title: 'Đợi Đến Tháng 13',
+        artist: 'Shiki',
+        youtubeId: '9P2m8K1x4vL',
+        startSeconds: 60,
+        clipDuration: 30
+    },
+
+    {
+        id: 'chim_sau',
+        title: 'Chìm Sâu',
+        artist: 'RPT MCK ft. Trung Trần',
+        youtubeId: 'Yw9Ra2UiVLw',
+        startSeconds: 52,
+        clipDuration: 30
+    },
+    {
+        id: 'tai_vi_sao',
+        title: 'Tại Vì Sao',
+        artist: 'RPT MCK',
+        youtubeId: 'U0Vr1zotKIo',
+        startSeconds: 60,
+        clipDuration: 30
+    },
+    {
+        id: 'anh_da_on_hon',
+        title: 'Anh Đã Ổn Hơn',
+        artist: 'RPT MCK',
+        youtubeId: 'dz6xe0xXqYE',
+        startSeconds: 68,
+        clipDuration: 30
+    },
+    // --- DANGRANGTO ---
+    {
+        id: 'wrong_times',
+        title: 'Wrong Times',
+        artist: 'Puppy x Dangrangto',
+        youtubeId: '7X3p9M2k8vL',
+        startSeconds: 50,
+        clipDuration: 30
+    },
+    {
+        id: 'love_is_dangrangto',
+        title: 'Love Is',
+        artist: 'Dangrangto',
+        youtubeId: '4K9x2L1m8vP',
+        startSeconds: 58,
+        clipDuration: 30
+    },
+
+    {
+        id: 'bong_hoa_dep_nhat',
+        title: 'Bông Hoa Đẹp Nhất',
+        artist: 'Quân A.P',
+        youtubeId: 'fC2m9W8k3xL',
+        startSeconds: 72,
+        clipDuration: 30
+    },
+    {
+        id: 'ai_la_nguoi_thuong_em',
+        title: 'Ai Là Người Thương Em',
+        artist: 'Quân A.P',
+        youtubeId: 'P9k2M8x3v1L',
+        startSeconds: 76,
+        clipDuration: 30
+    },
+    {
+        id: 'con_gi_dau_hon_chu_da_tung',
+        title: 'Còn Gì Đau Hơn Chữ Đã Từng',
+        artist: 'Quân A.P',
+        youtubeId: '2M8x9K3p1vL',
+        startSeconds: 80,
+        clipDuration: 30
+    },
+
+    {
+        id: 'can_gi_noi_it_hieu_nhieu',
+        title: 'Cần Gì Nói Ít Hiểu Nhiều',
+        artist: 'Wxrdie',
+        youtubeId: '3L8k9M2x1vP',
+        startSeconds: 48,
+        clipDuration: 30
+    },
+    {
+        id: 'em_iu',
+        title: 'Em Iu',
+        artist: 'Andree Right Hand x Wxrdie x Bình Gold',
+        youtubeId: '8M2x9L3k1vP',
+        startSeconds: 55,
+        clipDuration: 30
+    },
+
+    {
+        id: 'simp_gai_808',
+        title: 'Simp Gái 808',
+        artist: 'Low G',
+        youtubeId: '6P2m9K8x1vL',
+        startSeconds: 45,
+        clipDuration: 30
+    },
+    {
+        id: 'an_than',
+        title: 'An Thần',
+        artist: 'Low G ft. Thắng',
+        youtubeId: '1K9x8M2p3vL',
+        startSeconds: 54,
+        clipDuration: 30
+    },
+    {
+        id: 'cang_cua',
+        title: 'Càng Cua',
+        artist: 'Low G x Last Fire Crew',
+        youtubeId: '9M3k2L8x1vP',
+        startSeconds: 50,
+        clipDuration: 30
+    },
+
+    {
+        id: 'du_bao_thoi_tiet_hom_nay_mua',
+        title: 'Dự Báo Thời Tiết Hôm Nay Mưa',
+        artist: 'GREY D',
+        youtubeId: 'heMYSO62t9o',
+        startSeconds: 65,
+        clipDuration: 30
+    },
+    {
+        id: 'dua_em_ve_nhaa',
+        title: 'Đưa Em Về Nhàa',
+        artist: 'GREY D x Chillies',
+        youtubeId: '2P9k8M3x1vL',
+        startSeconds: 60,
+        clipDuration: 30
+    },
+    {
+        id: 'vai_cau_noi_co_khien_nguoi_thay_doi',
+        title: 'Vài Câu Nói Có Khiến Người Thay Đổi',
+        artist: 'GREY D x tlinh',
+        youtubeId: '2iidlwQ-NfU',
+        startSeconds: 58,
+        clipDuration: 30
+    },
+
+    {
+        id: 'phong_long',
+        title: 'Phong Long',
+        artist: 'VSTRA x Obito',
+        youtubeId: '4M9k2L8x1vP',
+        startSeconds: 55,
+        clipDuration: 30
+    },
+    {
+        id: 'internet_love',
+        title: 'Internet Love',
+        artist: 'hnhngan ft. Tyronee x VSTRA',
+        youtubeId: '7L2k9M8x1vP',
+        startSeconds: 52,
+        clipDuration: 30
+    },
+
+    {
+        id: 'loi_yeu_ngay_dai',
+        title: 'Lời Yêu Ngây Dại',
+        artist: 'Kha',
+        youtubeId: 'UBv-GcD3jHE',
+        startSeconds: 62,
+        clipDuration: 30
+    },
+    {
+        id: 'em_co_nghe',
+        title: 'Em Có Nghe',
+        artist: 'Kha',
+        youtubeId: '5P9k2M8x1vL',
+        startSeconds: 68,
+        clipDuration: 30
+    },
+
+    {
+        id: '3107',
+        title: '3107',
+        artist: 'W/n ft. Duongg, Nâu',
+        youtubeId: 'GatNL0mmQGc',
+        startSeconds: 60,
+        clipDuration: 30
+    },
+    {
+        id: '3107_3',
+        title: '3107 3',
+        artist: 'W/n ft. Nâu, Duongg, Titie',
+        youtubeId: 'kfw7MYah2n0',
+        startSeconds: 64,
+        clipDuration: 30
+    },
+    {
+        id: 'id_072019',
+        title: 'id 072019',
+        artist: 'W/n ft. 267',
+        youtubeId: '8P2k9M3x1vL',
+        startSeconds: 58,
+        clipDuration: 30
+    },
+
+    {
+        id: 'mot_doi',
+        title: 'Một Đời',
+        artist: '14 Casper x Bon Nghiêm ft. buitruonglinh',
+        youtubeId: '3K9m2L8x1vP',
+        startSeconds: 66,
+        clipDuration: 30
+    },
+    {
+        id: 'bao_tien_mot_mo_binh_yen',
+        title: 'Bao Tiền Một Mớ Bình Yên?',
+        artist: '14 Casper x Bon Nghiêm',
+        youtubeId: '1M9k2L8x3vP',
+        startSeconds: 70,
+        clipDuration: 30
+    },
+
+    {
+        id: 'thich_em_hoi_nhieu',
+        title: 'Thích Em Hơi Nhiều',
+        artist: 'Wren Evans',
+        youtubeId: 'faSVTByG0LQ',
+        startSeconds: 50,
+        clipDuration: 30
+    },
+    {
+        id: 'tung_quen',
+        title: 'Từng Quen',
+        artist: 'Wren Evans',
+        youtubeId: '6K9m2L8x1vP',
+        startSeconds: 56,
+        clipDuration: 30
+    },
+    {
+        id: 'phong_do_tim_em',
+        title: 'Phóng Đổ Tim Em',
+        artist: 'Wren Evans',
+        youtubeId: '2K9m8L3x1vP',
+        startSeconds: 48,
+        clipDuration: 30
+    },
+
+    {
+        id: 'tinh_dang_nhu_ly_ca_phe',
+        title: 'Tình Đắng Như Ly Cà Phê',
+        artist: 'Nân x Ngơ',
+        youtubeId: '9K2m8L3x1vP',
+        startSeconds: 55,
+        clipDuration: 30
+    },
+    {
+        id: 'em_khong_khoc',
+        title: 'Em Không Khóc',
+        artist: 'buitruonglinh ft. Vừng, Ngơ',
+        youtubeId: '4P9m2L8x1vK',
+        startSeconds: 60,
+        clipDuration: 30
+    },
+
+    {
+        id: 'mat_moc',
+        title: 'Mặt Mộc',
+        artist: 'Phạm Nguyên Ngọc x VAnh x Ân Nhi',
+        youtubeId: '5K9m2L8x3vP',
+        startSeconds: 62,
+        clipDuration: 30
+    },
+    {
+        id: 'sao_em_lai_tat_may',
+        title: 'Sao Em Lại Tắt Máy?',
+        artist: 'Phạm Nguyên Ngọc ft. VAnh',
+        youtubeId: '7P9m2L8x1vK',
+        startSeconds: 58,
+        clipDuration: 30
+    },
+
+    {
+        id: 'forget_me_now',
+        title: 'Forget Me Now',
+        artist: 'Fishy x Trí Dũng',
+        youtubeId: '8K9m2L3x1vP',
+        startSeconds: 54,
+        clipDuration: 30
+    },
+
+    {
+        id: 'da_lo_yeu_em_nhieu',
+        title: 'Đã Lỡ Yêu Em Nhiều',
+        artist: 'JustaTee',
+        youtubeId: 'KhTCatAKVpk',
+        startSeconds: 65,
+        clipDuration: 30
+    },
+    {
+        id: 'thang_dien',
+        title: 'Thằng Điên',
+        artist: 'JustaTee x Phương Ly',
+        youtubeId: 'HXkh7EOqcQ4',
+        startSeconds: 68,
+        clipDuration: 30
+    },
+
+    {
+        id: 'bigcityboi',
+        title: 'Bigcityboi',
+        artist: 'Binz x Touliver',
+        youtubeId: 'jgZkrA8E5do',
+        startSeconds: 52,
+        clipDuration: 30
+    },
+    {
+        id: 'hit_me_up',
+        title: 'Hit Me Up',
+        artist: 'Binz ft. Nomovodka',
+        youtubeId: 'aJ9m2L8x1vP',
+        startSeconds: 60,
+        clipDuration: 30
+    },
+
+    {
+        id: 'em_khong_hieu',
+        title: 'Em Không Hiểu',
+        artist: 'Changg',
+        youtubeId: 'bK9m2L8x1vP',
+        startSeconds: 58,
+        clipDuration: 30
+    },
+    {
+        id: 'lo_say_bye_la_bye',
+        title: 'Lỡ Say Bye Là Bye',
+        artist: 'Lemese x Changg',
+        youtubeId: 'cK9m2L8x1vP',
+        startSeconds: 55,
+        clipDuration: 30
+    },
+
+    {
+        id: 'vet_mua',
+        title: 'Vết Mưa',
+        artist: 'Vũ Cát Tường',
+        youtubeId: 'dK9m2L8x1vP',
+        startSeconds: 68,
+        clipDuration: 30
+    },
+    {
+        id: 'tung_la',
+        title: 'Từng Là',
+        artist: 'Vũ Cát Tường',
+        youtubeId: 'eK9m2L8x1vP',
+        startSeconds: 64,
+        clipDuration: 30
+    }
 ];

@@ -121,7 +121,6 @@ const MAP_DATABASE = [
         regionClue: 'Khu vực quảng trường trung tâm thị xã vùng cao Sa Pa, tỉnh Lào Cai.',
         regionClueEn: 'Central square area of the highland town of Sa Pa, Lao Cai Province.'
     },
-    // --- MIỀN BẮC (Hà Nội, Đồng bằng sông Hồng, Đông Bắc, Tây Bắc) ---
     {
         id: 'quang_truong_ba_dinh_ha_noi',
         title: 'Quảng trường Ba Đình - Hà Nội',
@@ -623,5 +622,505 @@ const MAP_DATABASE = [
         heading: 240,
         regionClue: 'Điểm cuối đường Hồ Chí Minh tại vùng đất cực Nam Tổ quốc thuộc xã Đất Mũi, huyện Ngọc Hiển, tỉnh Cà Mau.',
         regionClueEn: 'Southernmost cape of Vietnam marking the end of the Ho Chi Minh Highway in Dat Mui, Ca Mau Province.'
+    },
+    {
+        id: 'cot_co_lung_cu_ha_giang',
+        title: 'Cột cờ Lũng Cú - Hà Giang',
+        titleEn: 'Lung Cu Flag Tower - Ha Giang',
+        lat: 23.364812,
+        lng: 105.318412,
+        heading: 45,
+        regionClue: 'Điểm cực Bắc thiêng liêng của Tổ quốc trên đỉnh núi Rồng, huyện Đồng Văn, tỉnh Hà Giang.',
+        regionClueEn: 'Sacred northernmost point of Vietnam atop Dragon Mountain, Dong Van District, Ha Giang Province.'
+    },
+    {
+        id: 'dinh_thu_vua_meo_ha_giang',
+        title: 'Dinh thự Vua Mèo - Sủng Là, Hà Giang',
+        titleEn: 'Vuong Family Mansion - Sung La, Ha Giang',
+        lat: 23.281245,
+        lng: 105.354182,
+        heading: 135,
+        regionClue: 'Công trình kiến trúc cổ của dòng họ Vương nằm tại thung lũng Sủng Là, huyện Đồng Văn, tỉnh Hà Giang.',
+        regionClueEn: 'Unique historic mansion of the Hmong chieftains nestled in Sung La Valley, Dong Van, Ha Giang.'
+    },
+    {
+        id: 'khu_di_tich_tan_trao_tuyen_quang',
+        title: 'Khu di tích Quốc gia đặc biệt Tân Trào - Tuyên Quang',
+        titleEn: 'Tan Trao Historical Relic Site - Tuyen Quang',
+        lat: 21.824125,
+        lng: 105.479182,
+        heading: 180,
+        regionClue: 'Thủ đô khu giải phóng gắn liền với cây đa Tân Trào và lịch sử cách mạng tại huyện Sơn Dương, tỉnh Tuyên Quang.',
+        regionClueEn: 'Revolutionary historical capital associated with the historic banyan tree in Son Duong District, Tuyen Quang.'
+    },
+    {
+        id: 'dong_nguom_ngao_cao_bang',
+        title: 'Động Ngườm Ngao - Trùng Khánh, Cao Bằng',
+        titleEn: 'Nguom Ngao Cave - Trung Khanh, Cao Bang',
+        lat: 22.846512,
+        lng: 106.741256,
+        heading: 90,
+        regionClue: 'Hang động kỳ vĩ với hệ thống nhũ đá tự nhiên tuyệt đẹp gần thác Bản Giốc, tỉnh Cao Bằng.',
+        regionClueEn: 'Stunning natural limestone cavern with magnificent stalactites near Ban Gioc Waterfall, Cao Bang.'
+    },
+    {
+        id: 'dao_ba_goa_ho_ba_be_bac_kan',
+        title: 'Đảo Bà Góa - Hồ Ba Bể, Bắc Kạn',
+        titleEn: 'Ba Goa Islet - Ba Be Lake, Bac Kan',
+        lat: 22.424156,
+        lng: 105.623412,
+        heading: 210,
+        regionClue: 'Hòn đảo nhỏ xinh xắn giữa lòng hồ nước ngọt tự nhiên lớn nhất Việt Nam, tỉnh Bắc Kạn.',
+        regionClueEn: 'Picturesque islet in the middle of Vietnam’s largest natural mountain lake in Bac Kan Province.'
+    },
+    {
+        id: 'chua_yen_tu_quang_ninh',
+        title: 'Khu di tích danh thắng Yên Tử - Uông Bí, Quảng Ninh',
+        titleEn: 'Yen Tu Scenic and Relic Site - Quang Ninh',
+        lat: 21.151812,
+        lng: 106.713412,
+        heading: 60,
+        regionClue: 'Trung tâm Phật giáo lớn của Thiền phái Trúc Lâm trên đỉnh núi thiêng Yên Tử, TP. Uông Bí, Quảng Ninh.',
+        regionClueEn: 'Major Buddhist center of the Truc Lam Zen sect on the sacred Yen Tu Mountain, Uong Bi, Quang Ninh.'
+    },
+    {
+        id: 'hon_trong_mai_vinh_ha_long',
+        title: 'Hòn Trống Mái - Vịnh Hạ Long, Quảng Ninh',
+        titleEn: 'Fighting Cocks Islet - Ha Long Bay, Quang Ninh',
+        lat: 20.915412,
+        lng: 107.078124,
+        heading: 150,
+        regionClue: 'Biểu tượng thiên nhiên nổi tiếng của kỳ quan thế giới vịnh Hạ Long, tỉnh Quảng Ninh.',
+        regionClueEn: 'World-famous natural limestone icon of Ha Long Bay in Quang Ninh Province.'
+    },
+    {
+        id: 'chua_dau_bac_ninh',
+        title: 'Chùa Dâu - Thuận Thành, Bắc Ninh',
+        titleEn: 'Dau Pagoda - Thuan Thanh, Bac Ninh',
+        lat: 21.031245,
+        lng: 106.061245,
+        heading: 300,
+        regionClue: 'Ngôi chùa cổ nhất Việt Nam có lịch sử gần hai thiên niên kỷ tại thị xã Thuận Thành, tỉnh Bắc Ninh.',
+        regionClueEn: 'Vietnam’s oldest Buddhist pagoda with a history spanning nearly two millennia in Thuan Thanh, Bac Ninh.'
+    },
+    {
+        id: 'lang_gom_bat_trang_ha_noi',
+        title: 'Làng gốm Bát Tràng - Gia Lâm, Hà Nội',
+        titleEn: 'Bat Trang Ceramic Village - Hanoi',
+        lat: 20.978124,
+        lng: 105.931245,
+        heading: 120,
+        regionClue: 'Làng nghề truyền thống lâu đời bên bờ sông Hồng nổi tiếng với các sản phẩm gốm sứ tinh xảo, Hà Nội.',
+        regionClueEn: 'Century-old traditional ceramic artisan village along the Red River on the outskirts of Hanoi.'
+    },
+    {
+        id: 'thanh_co_son_tay_ha_noi',
+        title: 'Thành cổ Sơn Tây - Thị xã Sơn Tây, Hà Nội',
+        titleEn: 'Son Tay Ancient Citadel - Hanoi',
+        lat: 21.144125,
+        lng: 105.508124,
+        heading: 190,
+        regionClue: 'Công trình kiến trúc quân sự bằng đá ong độc đáo thời nhà Nguyễn tại thị xã Sơn Tây, Hà Nội.',
+        regionClueEn: 'Unique Nguyen Dynasty laterite military fortress architecture in Son Tay Town, Hanoi.'
+    },
+    {
+        id: 'lang_co_duong_lam_ha_noi',
+        title: 'Làng cổ Đường Lâm - Sơn Tây, Hà Nội',
+        titleEn: 'Duong Lam Ancient Village - Hanoi',
+        lat: 21.129412,
+        lng: 105.474125,
+        heading: 75,
+        regionClue: 'Ngôi làng cổ kính mang đậm dấu ấn kiến trúc nhà ở truyền thống vùng đồng bằng Bắc Bộ, Hà Nội.',
+        regionClueEn: 'Ancient heritage village preserving traditional Northern Vietnamese rural architecture near Hanoi.'
+    },
+    {
+        id: 'con_son_kiep_bac_hai_duong',
+        title: 'Khu di tích Côn Sơn - Kiếp Bạc, Hải Dương',
+        titleEn: 'Con Son - Kiep Bac Relic Site, Hai Duong',
+        lat: 21.121812,
+        lng: 106.354125,
+        heading: 140,
+        regionClue: 'Quần thể di tích lịch sử gắn liền với danh nhân Nguyễn Trãi và Hưng Đạo Đại Vương Trần Quốc Tuấn, tỉnh Hải Dương.',
+        regionClueEn: 'Historical site complex dedicated to national heroes Nguyen Trai and Tran Hung Dao in Hai Duong Province.'
+    },
+    {
+        id: 'pho_hien_hung_yen',
+        title: 'Khu di tích Phố Hiến - TP. Hưng Yên',
+        titleEn: 'Pho Hien Historical Site - Hung Yen City',
+        lat: 20.648124,
+        lng: 106.051245,
+        heading: 220,
+        regionClue: 'Thương cảng sầm uất nổi tiếng thời xưa bên bờ sông Hồng thuộc thành phố Hưng Yên.',
+        regionClueEn: 'Historic bustling riverside port city famous in Vietnamese folklore in Hung Yen City.'
+    },
+    {
+        id: 'den_tran_nam_dinh',
+        title: 'Khu di tích Đền Trần - TP. Nam Định',
+        titleEn: 'Tran Temple Relic Site - Nam Dinh City',
+        lat: 20.428124,
+        lng: 106.181245,
+        heading: 330,
+        regionClue: 'Quần thể đền thờ các vua nhà Trần và Hưng Đạo Đại Vương tại phường Lộc Vượng, thành phố Nam Định.',
+        regionClueEn: 'Temple complex dedicated to the emperors of the Tran Dynasty in Nam Dinh City.'
+    },
+    {
+        id: 'nha_tho_phat_diem_ninh_binh',
+        title: 'Nhà thờ đá Phát Diệm - Kim Sơn, Ninh Bình',
+        titleEn: 'Phat Diem Stone Cathedral - Kim Son, Ninh Binh',
+        lat: 20.075412,
+        lng: 106.091245,
+        heading: 45,
+        regionClue: 'Công trình kiến trúc nhà thờ Công giáo độc đáo được xây dựng hoàn toàn bằng đá và gỗ lim tại huyện Kim Sơn, Ninh Bình.',
+        regionClueEn: 'Unique Catholic cathedral complex built entirely of stone and ironwood in Kim Son, Ninh Binh.'
+    },
+    {
+        id: 'vuon_quoc_gia_cuc_phuong_ninh_binh',
+        title: 'Vườn Quốc gia Cúc Phương - Nho Quan, Ninh Bình',
+        titleEn: 'Cuc Phuong National Park - Ninh Binh',
+        lat: 20.311245,
+        lng: 105.714124,
+        heading: 100,
+        regionClue: 'Khu bảo tồn thiên nhiên rừng nguyên sinh đầu tiên của Việt Nam tại huyện Nho Quan, tỉnh Ninh Bình.',
+        regionClueEn: 'Vietnam’s first and oldest primeval tropical rainforest nature reserve in Ninh Binh Province.'
+    },
+    {
+        id: 'thanh_nha_ho_thanh_hoa',
+        title: 'Thành Nhà Hồ - Vĩnh Lộc, Thanh Hóa',
+        titleEn: 'Ho Dynasty Citadel - Vinh Loc, Thanh Hoa',
+        lat: 20.081245,
+        lng: 105.608124,
+        heading: 110,
+        regionClue: 'Di sản văn hóa thế giới với những phiến đá khổng lồ xếp liền mạch không cần chất kết dính tại huyện Vĩnh Lộc, Thanh Hóa.',
+        regionClueEn: 'UNESCO World Heritage massive stone block fortress built in the 14th century in Thanh Hoa Province.'
+    },
+    {
+        id: 'bai_bien_cua_lo_nghe_an',
+        title: 'Bãi biển Cửa Lò - Nghệ An',
+        titleEn: 'Cua Lo Beach - Nghe An',
+        lat: 18.803412,
+        lng: 105.714125,
+        heading: 90,
+        regionClue: 'Bãi biển du lịch nổi tiếng với bờ cát phẳng mịn và nước trong xanh tại tỉnh Nghệ An.',
+        regionClueEn: 'Popular coastal resort beach with smooth white sand and clear waters in Cua Lo, Nghe An.'
+    },
+    {
+        id: 'nga_ba_dong_loc_ha_tinh',
+        title: 'Khu di tích Ngã ba Đồng Lộc - Can Lộc, Hà Tĩnh',
+        titleEn: 'Dong Loc Junction Relic Site - Ha Tinh',
+        lat: 18.351245,
+        lng: 105.671245,
+        heading: 160,
+        regionClue: 'Di tích lịch sử anh hùng gắn liền với sự hy sinh của 10 nữ thanh niên xung phong tại huyện Can Lộc, Hà Tĩnh.',
+        regionClueEn: 'Heroic historic junction honoring ten young female volunteer martyrs in Can Loc District, Ha Tinh.'
+    },
+    {
+        id: 'hoanh_son_quan_deo_ngang',
+        title: 'Hoành Sơn Quan - Đèo Ngang, Hà Tĩnh & Quảng Bình',
+        titleEn: 'Hoanh Son Quan Gate - Deo Ngang Pass',
+        lat: 17.931245,
+        lng: 106.438124,
+        heading: 270,
+        regionClue: 'Cổng thành cổ trên đỉnh Đèo Ngang nằm ngay ranh giới giữa hai tỉnh Hà Tĩnh và Quảng Bình.',
+        regionClueEn: 'Ancient mountain gateway perched atop Deo Ngang Pass between Ha Tinh and Quang Binh provinces.'
+    },
+    {
+        id: 'thanh_dia_la_vang_quang_tri',
+        title: 'Thánh địa La Vang - Hải Lăng, Quảng Trị',
+        titleEn: 'Our Lady of La Vang Shrine - Quang Tri',
+        lat: 16.681245,
+        lng: 107.134125,
+        heading: 20,
+        regionClue: 'Trung tâm hành hương Công giáo lớn nằm tại huyện Hải Lăng, tỉnh Quảng Trị.',
+        regionClueEn: 'Prominent national Catholic pilgrimage sanctuary in Hai Lang District, Quang Tri Province.'
+    },
+    {
+        id: 'ngo_mon_dai_noi_hue',
+        title: 'Ngọ Môn - Đại Nội Huế, Thừa Thiên Huế',
+        titleEn: 'Ngo Mon Gate - Imperial City of Hue',
+        lat: 16.471245,
+        lng: 107.579124,
+        heading: 130,
+        regionClue: 'Cổng chính phía nam hướng vào Hoàng thành và Tử Cấm Thành Huế.',
+        regionClueEn: 'Principal southern gateway leading into the historic Imperial Citadel of Hue.'
+    },
+    {
+        id: 'chua_thien_mu_hue',
+        title: 'Chùa Thiên Mụ - Huế',
+        titleEn: 'Thien Mu Pagoda - Hue',
+        lat: 16.452145,
+        lng: 107.544124,
+        heading: 85,
+        regionClue: 'Ngôi cổ tự uy nghiêm gắn liền với biểu tượng tháp Phước Duyên bên bờ sông Hương, thành phố Huế.',
+        regionClueEn: 'Historic seven-story octagonal pagoda overlooking the Perfume River in Hue.'
+    },
+    {
+        id: 'lang_tu_duc_hue',
+        title: 'Lăng Tự Đức - Huế',
+        titleEn: 'Tomb of Tu Duc - Hue',
+        lat: 16.435124,
+        lng: 107.581245,
+        heading: 310,
+        regionClue: 'Quần thể lăng tẩm mang nét thơ mộng, trữ tình bậc nhất của các vua triều Nguyễn tại Huế.',
+        regionClueEn: 'Poetic and expansive imperial mausoleum complex of Emperor Tu Duc in Hue.'
+    },
+    {
+        id: 'cau_ngoi_thanh_toan_hue',
+        title: 'Cầu ngói Thanh Toàn - Hương Thủy, Thừa Thiên Huế',
+        titleEn: 'Thanh Toan Tile-Roofed Bridge - Hue',
+        lat: 16.512456,
+        lng: 107.501245,
+        heading: 45,
+        regionClue: 'Cây cầu gỗ lợp ngói cổ kính mang kiến trúc thượng gia hạ kiều ở ngoại ô thành phố Huế.',
+        regionClueEn: 'Historic arched tile-roofed footbridge featuring traditional rural Vietnamese architecture near Hue.'
+    },
+    {
+        id: 'ngu_hanh_son_da_nang',
+        title: 'Danh thắng Ngũ Hành Sơn - Đà Nẵng',
+        titleEn: 'Marble Mountains - Da Nang',
+        lat: 16.001812,
+        lng: 108.263124,
+        heading: 170,
+        regionClue: 'Cụm 5 ngọn núi đá vôi với các hang động huyền ảo và chùa cổ tại quận Ngũ Hành Sơn, TP. Đà Nẵng.',
+        regionClueEn: 'Cluster of five limestone and marble hills featuring sacred grottoes and pagodas in Da Nang.'
+    },
+    {
+        id: 'cau_vang_ba_na_hills_da_nang',
+        title: 'Cầu Vàng - Bà Nà Hills, Đà Nẵng',
+        titleEn: 'Golden Bridge - Ba Na Hills, Da Nang',
+        lat: 15.998124,
+        lng: 107.994124,
+        heading: 220,
+        regionClue: 'Cây cầu đi bộ nổi tiếng thế giới được nâng đỡ bởi đôi bàn tay khổng lồ trên đỉnh núi Bà Nà, Đà Nẵng.',
+        regionClueEn: 'World-famous pedestrian bridge supported by giant stone hands on Ba Na Mountain, Da Nang.'
+    },
+    {
+        id: 'bien_my_khe_da_nang',
+        title: 'Bãi biển Mỹ Khê - Đà Nẵng',
+        titleEn: 'My Khe Beach - Da Nang',
+        lat: 16.058124,
+        lng: 108.246124,
+        heading: 90,
+        regionClue: 'Bãi biển du lịch nổi tiếng dọc theo tuyến đường Võ Nguyên Giáp, TP. Đà Nẵng.',
+        regionClueEn: 'Renowned pristine coastal beach along Vo Nguyen Giap Boulevard in Da Nang City.'
+    },
+    {
+        id: 'thap_banh_it_binh_dinh',
+        title: 'Tháp Bánh Ít - Tuy Phước, Bình Định',
+        titleEn: 'Banh It Cham Towers - Binh Dinh',
+        lat: 13.882124,
+        lng: 109.181245,
+        heading: 160,
+        regionClue: 'Quần thể tháp Chăm Pa cổ kính nằm trên ngọn đồi tại huyện Tuy Phước, tỉnh Bình Định.',
+        regionClueEn: 'Well-preserved cluster of ancient Cham Hindu temple towers on a hill in Binh Dinh Province.'
+    },
+    {
+        id: 'nha_tho_chinh_toa_nha_trang',
+        title: 'Nhà thờ Chánh tòa Nha Trang - Khánh Hòa',
+        titleEn: 'Nha Trang Cathedral - Khanh Hoa',
+        lat: 12.245124,
+        lng: 109.189124,
+        heading: 200,
+        regionClue: 'Ngôi nhà thờ đá mang phong cách Gothic cổ kính trên đỉnh đồi Hoàng Lân giữa trung tâm TP. Nha Trang.',
+        regionClueEn: 'Historic Gothic-style stone cathedral perched on Hoang Lan Hill in downtown Nha Trang.'
+    },
+    {
+        id: 'vien_hai_duong_hoc_nha_trang',
+        title: 'Viện Hải dương học Nha Trang - Khánh Hòa',
+        titleEn: 'Institute of Oceanography - Nha Trang',
+        lat: 12.211245,
+        lng: 109.214124,
+        heading: 80,
+        regionClue: 'Trung tâm nghiên cứu và bảo tàng sinh vật biển lớn nằm tại khu vực Cầu Đá, TP. Nha Trang.',
+        regionClueEn: 'Leading marine life research facility and aquarium museum located at Cau Da, Nha Trang.'
+    },
+    {
+        id: 'nha_tho_domaine_de_marie_da_lat',
+        title: 'Nhà thờ Domaine de Marie - Đà Lạt, Lâm Đồng',
+        titleEn: 'Domaine de Marie Church - Da Lat',
+        lat: 11.944125,
+        lng: 108.431245,
+        heading: 50,
+        regionClue: 'Ngôi nhà thờ mang kiến trúc Pháp kết hợp mái nhà rông Tây Nguyên với tông màu hồng trên đồi Mai Anh, TP. Đà Lạt.',
+        regionClueEn: 'Pink-walled Catholic convent blending French and indigenous architectural styles in Da Lat.'
+    },
+    {
+        id: 'thien_vien_truc_lam_da_lat',
+        title: 'Thiền viện Trúc Lâm - Đà Lạt, Lâm Đồng',
+        titleEn: 'Truc Lam Zen Monastery - Da Lat',
+        lat: 11.905124,
+        lng: 108.441245,
+        heading: 180,
+        regionClue: 'Thiền viện lớn nằm trên núi Phượng Hoàng phía trên hồ Tuyền Lâm thơ mộng tại thành phố Đà Lạt.',
+        regionClueEn: 'Serene mountain Zen monastery overlooking Tuyen Lam Lake in Da Lat, Lam Dong.'
+    },
+    {
+        id: 'thac_datanla_da_lat',
+        title: 'Thác Datanla - Đà Lạt, Lâm Đồng',
+        titleEn: 'Datanla Waterfall - Da Lat',
+        lat: 11.916124,
+        lng: 108.448124,
+        heading: 240,
+        regionClue: 'Khu du lịch thác nước hùng vĩ nổi tiếng với hệ thống máng trượt xuyên rừng thông trên đèo Prenn, Đà Lạt.',
+        regionClueEn: 'Scenic multi-tiered waterfall famous for its alpine coaster ride through pine forests near Da Lat.'
+    },
+    {
+        id: 'doi_che_cau_dat_da_lat',
+        title: 'Đồi chè Cầu Đất - Xuân Trường, Đà Lạt',
+        titleEn: 'Cau Dat Tea Hill - Da Lat',
+        lat: 11.854124,
+        lng: 108.561245,
+        heading: 50,
+        regionClue: 'Đồi chè xanh mướt lịch sử hơn một thế kỷ ẩn mình trong sương sớm tại xã Xuân Trường, ngoại ô Đà Lạt.',
+        regionClueEn: 'Century-old misty green tea plantation hills located in Xuan Truong commune, rural Da Lat.'
+    },
+    {
+        id: 'thac_pongour_lam_dong',
+        title: 'Thác Pongour - Đức Trọng, Lâm Đồng',
+        titleEn: 'Pongour Waterfall - Duc Trong, Lam Dong',
+        lat: 11.681245,
+        lng: 108.261245,
+        heading: 140,
+        regionClue: 'Ngọn thác 7 tầng hùng vĩ bậc nhất khu vực Nam Tây Nguyên tại huyện Đức Trọng, tỉnh Lâm Đồng.',
+        regionClueEn: 'Majestic 7-tiered terraced waterfall in Vietnam’s Central Highlands, Lam Dong Province.'
+    },
+    {
+        id: 'nha_tho_tan_dinh_sai_gon',
+        title: 'Nhà thờ Tân Định - Quận 3, TP.HCM',
+        titleEn: 'Tan Dinh Church - District 3, HCMC',
+        lat: 10.787124,
+        lng: 106.691245,
+        heading: 35,
+        regionClue: 'Ngôi nhà thờ Công giáo mang sắc hồng đặc trưng trên đường Hai Bà Trưng, Quận 3, TP. Hồ Chí Minh.',
+        regionClueEn: 'Striking rose-colored Roman Catholic church on Hai Ba Trung Street, District 3, HCMC.'
+    },
+    {
+        id: 'ben_nha_rong_sai_gon',
+        title: 'Bến Nhà Rồng - Quận 4, TP.HCM',
+        titleEn: 'Nha Rong Wharf - District 4, HCMC',
+        lat: 10.768124,
+        lng: 106.706812,
+        heading: 300,
+        regionClue: 'Di tích lịch sử bên sông Sài Gòn, nơi Chủ tịch Hồ Chí Minh ra đi tìm đường cứu nước năm 1911.',
+        regionClueEn: 'Historic wharf along the Saigon River where President Ho Chi Minh embarked on his journey in 1911.'
+    },
+    {
+        id: 'dia_dao_cu_chi_tphcm',
+        title: 'Khu di tích Địa đạo Củ Chi - TP.HCM',
+        titleEn: 'Cu Chi Tunnels Historical Site - HCMC',
+        lat: 11.141245,
+        lng: 106.461245,
+        heading: 90,
+        regionClue: 'Hệ thống đường hầm phòng thủ ngầm kiên cố trong lòng đất tại huyện Củ Chi, TP. Hồ Chí Minh.',
+        regionClueEn: 'Famous underground defense tunnel network located in Cu Chi District, Ho Chi Minh City.'
+    },
+    {
+        id: 'lang_hoa_sa_dec_dong_thap',
+        title: 'Làng hoa kiểng Sa Đéc - TP. Sa Đéc, Đồng Tháp',
+        titleEn: 'Sa Dec Flower Village - Dong Thap',
+        lat: 10.291245,
+        lng: 105.751245,
+        heading: 190,
+        regionClue: 'Làng nghề trồng hoa kiểng trăm năm tuổi rực rỡ bên dòng sông Tiền thuộc thành phố Sa Đéc, tỉnh Đồng Tháp.',
+        regionClueEn: 'Century-old traditional ornamental flower and plant village in Sa Dec City, Dong Thap.'
+    },
+    {
+        id: 'nha_co_huynh_thuy_le_dong_thap',
+        title: 'Nhà cổ Huỳnh Thủy Lê - Sa Đéc, Đồng Tháp',
+        titleEn: 'Huynh Thuy Le Ancient House - Sa Dec, Dong Thap',
+        lat: 10.298124,
+        lng: 105.761245,
+        heading: 260,
+        regionClue: 'Ngôi nhà cổ giao thoa kiến trúc Đông – Tây nổi tiếng bên bờ sông Sa Đéc, tỉnh Đồng Tháp.',
+        regionClueEn: 'Historic mansion blending French and traditional Vietnamese architecture in Sa Dec, Dong Thap.'
+    },
+    {
+        id: 'vuon_quoc_gia_tram_chim_dong_thap',
+        title: 'Vườn Quốc gia Tràm Chim - Tam Nông, Đồng Tháp',
+        titleEn: 'Tram Chim National Park - Dong Thap',
+        lat: 10.724124,
+        lng: 105.541245,
+        heading: 70,
+        regionClue: 'Khu bảo tồn đất ngập nước vùng Đồng Tháp Mười nổi tiếng với loài sếu đầu đỏ quý hiếm tại huyện Tam Nông.',
+        regionClueEn: 'Wetland nature reserve in the Dong Thap Muoi region famous for rare Sarus cranes.'
+    },
+    {
+        id: 'cho_noi_cai_rang_can_tho',
+        title: 'Chợ nổi Cái Răng - Cần Thơ',
+        titleEn: 'Cai Rang Floating Market - Can Tho',
+        lat: 10.012456,
+        lng: 105.741245,
+        heading: 110,
+        regionClue: 'Chợ nổi sầm uất đặc trưng văn hóa giao thương trên sông nước miền Tây Nam Bộ tại TP. Cần Thơ.',
+        regionClueEn: 'Iconic bustling river trade market representing the vibrant waterway culture of the Mekong Delta.'
+    },
+    {
+        id: 'nha_co_binh_thuy_can_tho',
+        title: 'Nhà cổ Bình Thủy - Cần Thơ',
+        titleEn: 'Binh Thuy Ancient House - Can Tho',
+        lat: 10.068124,
+        lng: 105.748124,
+        heading: 180,
+        regionClue: 'Ngôi nhà cổ năm gian hai chái hơn 150 năm tuổi mang kiến trúc Pháp tại quận Bình Thủy, TP. Cần Thơ.',
+        regionClueEn: 'Over 150-year-old heritage residence in Binh Thuy District, Can Tho City.'
+    },
+    {
+        id: 'lang_mac_cuu_ha_tien_kien_giang',
+        title: 'Khu di tích Lăng Mạc Cửu - Hà Tiên, Kiên Giang',
+        titleEn: 'Mac Cuu Family Tombs - Ha Tien, Kien Giang',
+        lat: 10.385412,
+        lng: 104.491245,
+        heading: 30,
+        regionClue: 'Quần thể lăng mộ người có công khai phá vùng đất Hà Tiên xưa nằm dưới chân núi Bình San, tỉnh Kiên Giang.',
+        regionClueEn: 'Historic mausoleum complex of the founding pioneer family of Ha Tien at the foot of Binh San Mountain.'
+    },
+    {
+        id: 'vuon_quoc_gia_u_minh_thuong',
+        title: 'Vườn Quốc gia U Minh Thượng - Kiên Giang',
+        titleEn: 'U Minh Thuong National Park - Kien Giang',
+        lat: 9.612456,
+        lng: 105.101245,
+        heading: 160,
+        regionClue: 'Hệ sinh thái rừng tràm ngập nước trên đất than bùn quý hiếm tại tỉnh Kiên Giang.',
+        regionClueEn: 'Unique peat-swamp melaleuca forest ecosystem of immense biodiversity in Kien Giang Province.'
+    },
+    {
+        id: 'grand_world_phu_quoc',
+        title: 'Grand World Phú Quốc - Bắc đảo Phú Quốc, Kiên Giang',
+        titleEn: 'Grand World Phu Quoc - Kien Giang',
+        lat: 10.334125,
+        lng: 103.854124,
+        heading: 150,
+        regionClue: 'Quần thể du lịch giải trí sầm uất với kênh đào sắc màu tại khu vực Bãi Dài, bắc đảo Phú Quốc, tỉnh Kiên Giang.',
+        regionClueEn: 'Vibrant entertainment and resort complex featuring a scenic canal in northern Phu Quoc.'
+    },
+    {
+        id: 'cap_treo_hon_thom_phu_quoc',
+        title: 'Ga An Thới - Cáp treo Hòn Thơm, Phú Quốc',
+        titleEn: 'An Thoi Station - Hon Thom Cable Car, Phu Quoc',
+        lat: 9.991812,
+        lng: 104.011245,
+        heading: 320,
+        regionClue: 'Nhà ga mang kiến trúc đấu trường La Mã cổ đại của tuyến cáp treo vượt biển tại nam đảo Phú Quốc, Kiên Giang.',
+        regionClueEn: 'Roman Colosseum-inspired cable car station connecting An Thoi town to Hon Thom island in Phu Quoc.'
+    },
+    {
+        id: 'moc_toa_do_mui_ca_mau',
+        title: 'Mốc tọa độ Quốc gia GPS 0001 - Mũi Cà Mau',
+        titleEn: 'National GPS 0001 Coordinate Marker - Ca Mau Cape',
+        lat: 8.611245,
+        lng: 104.718124,
+        heading: 210,
+        regionClue: 'Biểu tượng con tàu căng buồm hướng ra biển khơi tại điểm mốc cực Nam đất liền Việt Nam, tỉnh Cà Mau.',
+        regionClueEn: 'Iconic ship-shaped monument marking the southernmost continental coordinate tip of Vietnam.'
+    },
+    {
+        id: 'bao_tang_lich_su_quan_su_viet_nam_hn',
+        title: 'Bảo tàng Lịch sử Quân sự Việt Nam - Hà Nội',
+        titleEn: 'Vietnam Military History Museum - Hanoi',
+        lat: 21.002456,
+        lng: 105.748124,
+        heading: 280,
+        regionClue: 'Khuôn viên bảo tàng hiện đại quy mô lớn nằm bên Đại lộ Thăng Long, quận Nam Từ Liêm, thủ đô Hà Nội.',
+        regionClueEn: 'Sprawling modern national military museum complex located along Thang Long Boulevard in Hanoi.'
     }
 ];

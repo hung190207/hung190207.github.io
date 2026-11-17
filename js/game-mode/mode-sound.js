@@ -1,16 +1,25 @@
 // Sound Mode Mechanics
 
-const SOUND_INITIAL_DB_SIZE = 22; // Số bài hát trước khi mở rộng ngày 2026-11-15
+const SOUND_INITIAL_DB_SIZE = 22;
 const SOUND_ANSWER_LOG_KEY = 'vietnamguesser_sound_answer_log';
 
 function getYtThumb(youtubeId) {
+    if (activeDailySong && activeDailySong.resolvedThumb) {
+        return activeDailySong.resolvedThumb;
+    }
     return `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
 }
 
 function handleYtThumbError(imgEl, youtubeId) {
+    if (activeDailySong && activeDailySong.resolvedThumb && imgEl.src !== activeDailySong.resolvedThumb) {
+        imgEl.src = activeDailySong.resolvedThumb;
+        return;
+    }
     const fallbackUrl = `https://img.youtube.com/vi/${youtubeId}/0.jpg`;
     if (imgEl.src !== fallbackUrl) {
         imgEl.src = fallbackUrl;
+    } else {
+        imgEl.onerror = null;
     }
 }
 
@@ -35,7 +44,7 @@ function pickDailySoundSong() {
     if (song) {
         recordDailySoundAnswer(todayStr, song.id);
     }
-    return song;
+    return { ...song };
 }
 
 function getYesterdaySoundSong() {
@@ -48,7 +57,6 @@ function getYesterdaySoundSong() {
         }
     } catch (e) {}
 
-    // Nếu ngày hôm qua là từ 2026-11-14 trở về trước (lúc DB có 22 bài), chia theo đúng 22 bài để khớp "The Playah"
     const poolSize = yesterdayStr <= '2026-11-14'
         ? Math.min(SOUND_INITIAL_DB_SIZE, SONG_DATABASE.length)
         : SONG_DATABASE.length;
@@ -92,15 +100,21 @@ function getSoundMaxScore() {
 }
 
 
-// YouTube Fixed-Segment Player (30s Default)
+// Dual-Engine Audio & YouTube Player
+
+let htmlAudio = null;
+let htmlAudioReady = false;
+let usingHtmlAudio = false;
 
 let ytPlayer = null;
 let ytPlayerReady = false;
 let ytApiReady = false;
 let pendingSongLoad = null;
+let pendingPlayRequest = false;
 let progressTimer = null;
 let isPlayingAudio = false;
 let isMutedAudio = false;
+let currentVolume = 80;
 
 function ensureYouTubeApi() {
     if (window.YT && window.YT.Player) {
@@ -123,8 +137,107 @@ window.onYouTubeIframeAPIReady = function () {
     }
 };
 
+async function prepareHtmlAudioBackup(song) {
+    if (htmlAudio) {
+        try {
+            htmlAudio.pause();
+            htmlAudio.src = '';
+        } catch (e) {}
+        htmlAudio = null;
+    }
+    htmlAudioReady = false;
+    usingHtmlAudio = false;
+
+    const cleanArtist = (song.artist || '').split(/ft\.|x|,/i)[0].trim();
+    const query = encodeURIComponent(`${song.title} ${cleanArtist}`);
+    const url = `https://itunes.apple.com/search?term=${query}&country=VN&entity=song&limit=5`;
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!data || !Array.isArray(data.results) || data.results.length === 0) return;
+
+        const targetNorm = normalizeVN(song.title);
+        const bestMatch = data.results.find(item => normalizeVN(item.trackName || '').includes(targetNorm)) || data.results[0];
+
+        if (bestMatch && bestMatch.artworkUrl100 && activeDailySong && activeDailySong.id === song.id) {
+            activeDailySong.resolvedThumb = bestMatch.artworkUrl100.replace('100x100bb', '600x600bb');
+            const stageEl = document.getElementById('sound-video-stage');
+            if (stageEl) {
+                stageEl.style.setProperty('--thumb-url', `url('${activeDailySong.resolvedThumb}')`);
+            }
+        }
+
+        if (bestMatch && bestMatch.previewUrl && activeDailySong && activeDailySong.id === song.id) {
+            const audio = new Audio(bestMatch.previewUrl);
+            audio.preload = 'auto';
+            audio.volume = currentVolume / 100;
+            audio.muted = isMutedAudio;
+
+            audio.addEventListener('canplay', function () {
+                htmlAudioReady = true;
+                usingHtmlAudio = true;
+                if (pendingPlayRequest && !isPlayingAudio) {
+                    pendingPlayRequest = false;
+                    startHtmlAudioPlayback();
+                }
+            });
+
+            audio.addEventListener('play', function () {
+                isPlayingAudio = true;
+                updatePlayButtonIcon();
+                startProgressSync();
+            });
+
+            audio.addEventListener('pause', function () {
+                if (usingHtmlAudio) {
+                    isPlayingAudio = false;
+                    updatePlayButtonIcon();
+                    stopProgressSync();
+                }
+            });
+
+            audio.addEventListener('ended', function () {
+                resetToClipStart();
+            });
+
+            htmlAudio = audio;
+            htmlAudio.load();
+        }
+    } catch (e) {}
+}
+
+function startHtmlAudioPlayback() {
+    if (!htmlAudio) return;
+    usingHtmlAudio = true;
+    const clipLen = activeDailySong ? (activeDailySong.clipDuration || 30) : 30;
+    if (htmlAudio.currentTime >= clipLen - 0.3 || htmlAudio.ended) {
+        htmlAudio.currentTime = 0;
+    }
+    isPlayingAudio = true;
+    updatePlayButtonIcon();
+
+    htmlAudio.play().then(() => {
+        isPlayingAudio = true;
+        updatePlayButtonIcon();
+        startProgressSync();
+    }).catch(() => {
+        isPlayingAudio = false;
+        updatePlayButtonIcon();
+    });
+
+    if (ytPlayer && ytPlayerReady && isShowingVideoClue) {
+        try {
+            ytPlayer.mute();
+            ytPlayer.playVideo();
+        } catch (e) {}
+    }
+}
+
 function mountYouTubePlayer(song) {
+    prepareHtmlAudioBackup(song);
     ensureYouTubeApi();
+
     if (!ytApiReady) {
         pendingSongLoad = song;
         return;
@@ -137,35 +250,47 @@ function mountYouTubePlayer(song) {
         ytPlayer = null;
     }
 
-    ytPlayerReady = false;
-    isPlayingAudio = false;
+    const playerEl = document.getElementById('yt-audio-player');
+    if (!playerEl) return;
 
+    ytPlayerReady = false;
     const startSec = song.startSeconds || 60;
-    const durationSec = song.clipDuration || 30;
+
+    const vars = {
+        autoplay: 0,
+        controls: 0,
+        disablekb: 1,
+        fs: 0,
+        rel: 0,
+        modestbranding: 1,
+        playsinline: 1,
+        start: startSec
+    };
+
+    if (window.location.protocol.startsWith('http')) {
+        vars.origin = window.location.origin;
+    }
 
     ytPlayer = new YT.Player('yt-audio-player', {
         height: '100%',
         width: '100%',
         videoId: song.youtubeId,
-        playerVars: {
-            autoplay: 0,
-            controls: 0,
-            disablekb: 1,
-            fs: 0,
-            rel: 0,
-            modestbranding: 1,
-            playsinline: 1,
-            start: startSec,
-            end: startSec + durationSec,
-            origin: window.location.origin
-        },
+        playerVars: vars,
         events: {
             onReady: function (e) {
                 ytPlayerReady = true;
-                e.target.setVolume(80);
+                e.target.setVolume(currentVolume);
+                if (isMutedAudio) e.target.mute();
+                if (pendingPlayRequest && !usingHtmlAudio) {
+                    pendingPlayRequest = false;
+                    e.target.seekTo(startSec, true);
+                    e.target.playVideo();
+                }
             },
             onStateChange: function (e) {
+                if (usingHtmlAudio) return;
                 if (e.data === YT.PlayerState.PLAYING) {
+                    pendingPlayRequest = false;
                     isPlayingAudio = true;
                     updatePlayButtonIcon();
                     startProgressSync();
@@ -176,45 +301,100 @@ function mountYouTubePlayer(song) {
                 } else if (e.data === YT.PlayerState.ENDED) {
                     resetToClipStart();
                 }
+            },
+            onError: function () {
+                if (htmlAudio) {
+                    usingHtmlAudio = true;
+                    if (pendingPlayRequest || isPlayingAudio) {
+                        pendingPlayRequest = false;
+                        startHtmlAudioPlayback();
+                    }
+                }
             }
         }
     });
 }
 
 function resetToClipStart() {
-    if (!ytPlayer || !ytPlayerReady || !activeDailySong) return;
-    const startSec = activeDailySong.startSeconds || 60;
     stopProgressSync();
     isPlayingAudio = false;
+    pendingPlayRequest = false;
     updatePlayButtonIcon();
-    ytPlayer.pauseVideo();
-    ytPlayer.seekTo(startSec, true);
+
+    if (htmlAudio) {
+        try {
+            htmlAudio.pause();
+            htmlAudio.currentTime = 0;
+        } catch (e) {}
+    }
+
+    if (ytPlayer && ytPlayerReady && activeDailySong) {
+        try {
+            const startSec = activeDailySong.startSeconds || 60;
+            ytPlayer.pauseVideo();
+            ytPlayer.seekTo(startSec, true);
+        } catch (e) {}
+    }
+
     const seekEl = document.getElementById('sound-seek-slider');
     if (seekEl) seekEl.value = 0;
 }
 
 function toggleSoundPlay() {
-    if (!ytPlayer || !ytPlayerReady || !activeDailySong) return;
-    const startSec = activeDailySong.startSeconds || 60;
-    const maxSec = startSec + (activeDailySong.clipDuration || 30);
-    const state = ytPlayer.getPlayerState ? ytPlayer.getPlayerState() : -1;
-    const cur = ytPlayer.getCurrentTime ? ytPlayer.getCurrentTime() : 0;
+    if (!activeDailySong) return;
 
-    if (isPlayingAudio || state === YT.PlayerState.PLAYING) {
-        ytPlayer.pauseVideo();
-    } else {
-        if (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED) {
-            if (cur < startSec || cur >= maxSec - 0.3) {
-                ytPlayer.seekTo(startSec, true);
-            }
+    if (isPlayingAudio || pendingPlayRequest) {
+        pendingPlayRequest = false;
+        isPlayingAudio = false;
+        updatePlayButtonIcon();
+        stopProgressSync();
+        if (htmlAudio) {
+            try { htmlAudio.pause(); } catch (e) {}
+        }
+        if (ytPlayer && ytPlayerReady) {
+            try { ytPlayer.pauseVideo(); } catch (e) {}
+        }
+        return;
+    }
+
+    if (htmlAudio && (htmlAudioReady || htmlAudio.readyState >= 2)) {
+        startHtmlAudioPlayback();
+        return;
+    }
+
+    if (ytPlayer && ytPlayerReady && typeof ytPlayer.playVideo === 'function') {
+        const startSec = activeDailySong.startSeconds || 60;
+        const maxSec = startSec + (activeDailySong.clipDuration || 30);
+        const cur = ytPlayer.getCurrentTime ? ytPlayer.getCurrentTime() : 0;
+
+        isPlayingAudio = true;
+        updatePlayButtonIcon();
+
+        if (cur < startSec || cur >= maxSec - 0.3) {
+            ytPlayer.seekTo(startSec, true);
         }
         ytPlayer.playVideo();
+        startProgressSync();
+        return;
+    }
+
+    pendingPlayRequest = true;
+    isPlayingAudio = true;
+    updatePlayButtonIcon();
+    if (htmlAudio) {
+        startHtmlAudioPlayback();
     }
 }
 
 function stopSoundPlayer() {
     stopProgressSync();
     isPlayingAudio = false;
+    pendingPlayRequest = false;
+    if (htmlAudio) {
+        try {
+            htmlAudio.pause();
+        } catch (e) {}
+    }
     if (ytPlayer && ytPlayerReady && typeof ytPlayer.pauseVideo === 'function') {
         try {
             ytPlayer.pauseVideo();
@@ -225,7 +405,7 @@ function stopSoundPlayer() {
 function updatePlayButtonIcon() {
     const btn = document.getElementById('sound-play-btn');
     if (!btn) return;
-    btn.innerHTML = isPlayingAudio
+    btn.innerHTML = (isPlayingAudio || pendingPlayRequest)
         ? '<i class="fa-solid fa-pause"></i>'
         : '<i class="fa-solid fa-play"></i>';
 }
@@ -233,23 +413,41 @@ function updatePlayButtonIcon() {
 function startProgressSync() {
     stopProgressSync();
     progressTimer = setInterval(() => {
-        if (!ytPlayer || !ytPlayerReady || typeof ytPlayer.getCurrentTime !== 'function' || !activeDailySong) return;
-        const startSec = activeDailySong.startSeconds || 60;
+        if (!activeDailySong) return;
         const clipLen = activeDailySong.clipDuration || 30;
-        const current = ytPlayer.getCurrentTime() || startSec;
-        const elapsed = Math.max(0, current - startSec);
 
-        if (elapsed >= clipLen) {
-            resetToClipStart();
+        if (usingHtmlAudio && htmlAudio) {
+            const elapsed = Math.max(0, htmlAudio.currentTime || 0);
+            const effectiveMax = htmlAudio.duration ? Math.min(clipLen, htmlAudio.duration) : clipLen;
+            if (elapsed >= effectiveMax - 0.15) {
+                resetToClipStart();
+                return;
+            }
+            const seekEl = document.getElementById('sound-seek-slider');
+            if (seekEl) {
+                seekEl.max = effectiveMax;
+                seekEl.value = Math.min(effectiveMax, elapsed.toFixed(1));
+            }
             return;
         }
 
-        const seekEl = document.getElementById('sound-seek-slider');
-        if (seekEl) {
-            seekEl.max = clipLen;
-            seekEl.value = Math.min(clipLen, elapsed.toFixed(1));
+        if (ytPlayer && ytPlayerReady && typeof ytPlayer.getCurrentTime === 'function') {
+            const startSec = activeDailySong.startSeconds || 60;
+            const current = ytPlayer.getCurrentTime() || startSec;
+            const elapsed = Math.max(0, current - startSec);
+
+            if (elapsed >= clipLen) {
+                resetToClipStart();
+                return;
+            }
+
+            const seekEl = document.getElementById('sound-seek-slider');
+            if (seekEl) {
+                seekEl.max = clipLen;
+                seekEl.value = Math.min(clipLen, elapsed.toFixed(1));
+            }
         }
-    }, 200);
+    }, 150);
 }
 
 function stopProgressSync() {
@@ -274,6 +472,7 @@ function initSoundMode() {
 
         if (dailyStatus.completed) {
             soundRoundFinished = true;
+            prepareHtmlAudioBackup(activeDailySong);
             renderSoundFinalScreen(soundEarnedScore);
             return;
         }
@@ -297,6 +496,8 @@ function loadSoundRoundScreen() {
     const yesterdaySong = getYesterdaySoundSong();
     const clipLen = song.clipDuration || 30;
     soundRoundFinished = false;
+    isPlayingAudio = false;
+    pendingPlayRequest = false;
 
     const container = document.getElementById('sound-mode-view');
     container.innerHTML = `
@@ -324,7 +525,7 @@ function loadSoundRoundScreen() {
                 <button id="sound-mute-btn" class="audio-btn" onclick="toggleSoundMute()">
                     <i class="fa-solid fa-volume-high"></i>
                 </button>
-                <input type="range" id="sound-vol-slider" class="audio-vol-slider" min="0" max="100" value="80">
+                <input type="range" id="sound-vol-slider" class="audio-vol-slider" min="0" max="100" value="${currentVolume}">
             </div>
         </div>
 
@@ -369,9 +570,11 @@ function bindAudioControls() {
 
     if (seekSlider) {
         seekSlider.addEventListener('input', function () {
-            if (ytPlayer && ytPlayerReady && typeof ytPlayer.seekTo === 'function' && activeDailySong) {
+            const offset = Number(this.value);
+            if (usingHtmlAudio && htmlAudio) {
+                htmlAudio.currentTime = offset;
+            } else if (ytPlayer && ytPlayerReady && typeof ytPlayer.seekTo === 'function' && activeDailySong) {
                 const startSec = activeDailySong.startSeconds || 60;
-                const offset = Number(this.value);
                 ytPlayer.seekTo(startSec + offset, true);
             }
         });
@@ -379,27 +582,41 @@ function bindAudioControls() {
 
     if (volSlider) {
         volSlider.addEventListener('input', function () {
-            if (ytPlayer && ytPlayerReady && typeof ytPlayer.setVolume === 'function') {
-                const val = Number(this.value);
-                ytPlayer.setVolume(val);
+            const val = Number(this.value);
+            currentVolume = val;
+            if (htmlAudio) {
+                htmlAudio.volume = val / 100;
                 if (val > 0 && isMutedAudio) {
-                    ytPlayer.unMute();
-                    isMutedAudio = false;
-                    updateMuteIcon();
+                    htmlAudio.muted = false;
                 }
+            }
+            if (ytPlayer && ytPlayerReady && typeof ytPlayer.setVolume === 'function') {
+                ytPlayer.setVolume(val);
+                if (val > 0 && isMutedAudio && !usingHtmlAudio) {
+                    ytPlayer.unMute();
+                }
+            }
+            if (val > 0 && isMutedAudio) {
+                isMutedAudio = false;
+                updateMuteIcon();
             }
         });
     }
 }
 
 function toggleSoundMute() {
-    if (!ytPlayer || !ytPlayerReady || typeof ytPlayer.isMuted !== 'function') return;
-    if (isMutedAudio) {
-        ytPlayer.unMute();
-        isMutedAudio = false;
-    } else {
-        ytPlayer.mute();
-        isMutedAudio = true;
+    isMutedAudio = !isMutedAudio;
+    if (htmlAudio) {
+        htmlAudio.muted = isMutedAudio;
+    }
+    if (ytPlayer && ytPlayerReady) {
+        try {
+            if (isMutedAudio || usingHtmlAudio) {
+                ytPlayer.mute();
+            } else {
+                ytPlayer.unMute();
+            }
+        } catch (e) {}
     }
     updateMuteIcon();
 }
